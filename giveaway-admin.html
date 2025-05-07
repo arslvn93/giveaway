@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway Admin Configuration</title> <!-- Updated Title -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex; /* For password prompt centering if needed */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .admin-layout {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        #sideNav {
+            width: 240px;
+            background-color: #2c3e50; /* Darker sidebar */
+            color: #ecf0f1;
+            padding: 20px 0;
+            height: 100%;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        #sideNav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #sideNav li a {
+            display: block;
+            color: #ecf0f1;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 15px;
+            border-left: 3px solid transparent;
+            transition: background-color 0.2s ease, border-left-color 0.2s ease;
+        }
+
+        #sideNav li a:hover {
+            background-color: #34495e;
+        }
+
+        #sideNav li a.active {
+            background-color: #1abc9c; /* Accent color for active */
+            color: #fff;
+            font-weight: 500;
+            border-left-color: #16a085; /* Slightly darker accent */
+        }
+
+        #contentPanels {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: #f9fafb; /* Lighter content background */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack children vertically */
+        }
+
+        #contentPanels h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 24px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+
+        #configForm {
+             flex-grow: 1; /* Allow form to take remaining space */
+             display: flex;
+             flex-direction: column;
+        }
+
+        .content-panel-container {
+             flex-grow: 1; /* Allow panels container to grow */
+             overflow-y: auto; /* Add scroll to panels if needed, separate from main area */
+             margin-bottom: 20px; /* Space before save area */
+        }
+
+
+        .content-panel {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-panel h2 { /* Replaces fieldset legend */
+            font-size: 20px;
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        /* Form element styling */
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="datetime-local"], /* Added for end date */
+        textarea,
+        input[type="checkbox"] /* Added for boolean */
+         {
+            width: 100%; /* Full width within its container */
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #d1d5db; /* Softer border */
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="checkbox"] {
+             width: auto; /* Checkboxes shouldn't be full width */
+             margin-right: 8px;
+             vertical-align: middle;
+        }
+        label.checkbox-label { /* Style label next to checkbox */
+             display: inline-block;
+             vertical-align: middle;
+             margin-top: 0;
+             margin-bottom: 0;
+             font-weight: normal;
+        }
+
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="datetime-local"]:focus,
+        textarea:focus {
+            border-color: #1abc9c;
+            box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.2);
+            outline: none;
+        }
+
+
+        textarea { min-height: 100px; resize: vertical; }
+
+        .save-area {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0; /* Prevent save area from shrinking */
+        }
+
+        button[type="submit"] {
+            background-color: #1abc9c; /* Primary action color */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #16a085; /* Darker shade on hover */
+        }
+
+        .hidden { display: none !important; } /* Ensure password protection works */
+
+        .form-group { margin-bottom: 20px; }
+
+        /* Styles for dynamic items (like prize images, steps, faq) */
+        .dynamic-item-group {
+            border: 1px solid #e0e0e0;
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+        .dynamic-item-group h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        .dynamic-item-controls {
+             text-align: right;
+             margin-top: 10px;
+        }
+        .dynamic-item-controls button {
+             background: none;
+             border: none;
+             color: #e74c3c; /* Red for remove */
+             cursor: pointer;
+             font-size: 1.2em;
+             padding: 5px;
+             margin-left: 5px;
+        }
+         .dynamic-item-controls button.add-item {
+             color: #2ecc71; /* Green for add */
+             font-size: 1em;
+             background-color: #e8f8f0;
+             padding: 5px 10px;
+             border-radius: 4px;
+             margin-left: 0;
+         }
+         .dynamic-item-controls button:hover {
+             opacity: 0.7;
+         }
+
+
+        #message {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .success { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        fieldset {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+            background-color: #fff;
+        }
+        legend {
+            font-weight: 500;
+            font-size: 16px;
+            padding: 0 10px;
+            color: #2c3e50;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="admin-layout hidden" id="adminLayout">
+        <nav id="sideNav">
+            <ul> <!-- Updated Nav -->
+                <li><a href="#" data-target="giveawaySection" class="active">Giveaway Details</a></li>
+                <li><a href="#" data-target="prizeSection">Prize Details</a></li>
+                <li><a href="#" data-target="howToEnterSection">How To Enter</a></li>
+                <li><a href="#" data-target="entryFormSection">Entry Form</a></li>
+                <li><a href="#" data-target="rulesSection">Rules & FAQ</a></li>
+                <li><a href="#" data-target="footerContactSection">Footer Contact</a></li>
+                <li><a href="#" data-target="metaSection">Meta/Site Info</a></li>
+                <li><a href="#" data-target="settingsSection">Settings</a></li>
+            </ul>
+        </nav>
+        <main id="contentPanels">
+            <h1>Giveaway Admin Configuration</h1> <!-- Updated H1 -->
+            <form id="configForm">
+                <div class="content-panel-container"> <!-- Wrapper for scrollable panels -->
+
+                    <!-- Giveaway Details -->
+                    <div id="giveawaySection" class="content-panel active">
+                        <h2>Giveaway Details</h2>
+                        <div class="form-group">
+                            <label for="giveawayName">Giveaway Name (for internal reference, modal):</label>
+                            <input type="text" id="giveawayName" name="giveawayName">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayHeroHeadline">Hero Headline (HTML allowed):</label>
+                            <textarea id="giveawayHeroHeadline" name="giveawayHeroHeadline"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayHeroSubheadline">Hero Subheadline:</label>
+                            <textarea id="giveawayHeroSubheadline" name="giveawayHeroSubheadline"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayPromotionDates">Promotion Dates Text:</label>
+                            <input type="text" id="giveawayPromotionDates" name="giveawayPromotionDates">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayEndDate">End Date & Time (for countdown):</label>
+                            <input type="datetime-local" id="giveawayEndDate" name="giveawayEndDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayHeroBackgroundImageUrl">Hero Background Image URL:</label>
+                            <input type="url" id="giveawayHeroBackgroundImageUrl" name="giveawayHeroBackgroundImageUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayHeroCtaText">Hero CTA Button Text:</label>
+                            <input type="text" id="giveawayHeroCtaText" name="giveawayHeroCtaText">
+                        </div>
+                         <div class="form-group">
+                            <label for="giveawayEntryFormCtaText">Entry Form Submit Button Text:</label>
+                            <input type="text" id="giveawayEntryFormCtaText" name="giveawayEntryFormCtaText">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawaySuccessModalHeaderText">Success Modal Header Text:</label>
+                            <input type="text" id="giveawaySuccessModalHeaderText" name="giveawaySuccessModalHeaderText">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawaySuccessModalMainMessage">Success Modal Main Message (HTML allowed):</label>
+                            <textarea id="giveawaySuccessModalMainMessage" name="giveawaySuccessModalMainMessage"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawaySuccessModalEmailPrompt">Success Modal Email Prompt:</label>
+                            <textarea id="giveawaySuccessModalEmailPrompt" name="giveawaySuccessModalEmailPrompt"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Prize Details -->
+                    <div id="prizeSection" class="content-panel">
+                        <h2>Prize Details</h2>
+                        <div class="form-group">
+                            <label for="prizeName">Prize Name:</label>
+                            <input type="text" id="prizeName" name="prizeName">
+                        </div>
+                        <div class="form-group">
+                            <label for="prizeValue">Prize Value Text (e.g., "$100 Value"):</label>
+                            <input type="text" id="prizeValue" name="prizeValue">
+                        </div>
+                        <div class="form-group">
+                            <label for="prizeDescription">Prize Description:</label>
+                            <textarea id="prizeDescription" name="prizeDescription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="prizeLimitedTimeOfferText">Limited Time Offer Text (optional):</label>
+                            <input type="text" id="prizeLimitedTimeOfferText" name="prizeLimitedTimeOfferText">
+                        </div>
+                         <div class="form-group">
+                            <label for="prizeCtaButtonText">Prize Section CTA Button Text:</label>
+                            <input type="text" id="prizeCtaButtonText" name="prizeCtaButtonText">
+                        </div>
+                        <fieldset>
+                             <legend>Prize Images (First image is main, others are thumbnails)</legend>
+                             <div id="prizeImagesContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                             <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addPrizeImage()">Add Image</button>
+                             </div>
+                        </fieldset>
+                         <fieldset>
+                             <legend>Prize "What's Included" Items</legend>
+                             <div id="prizeIncludedItemsContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                              <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addIncludedItem()">Add Item</button>
+                             </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- How To Enter -->
+                    <div id="howToEnterSection" class="content-panel">
+                        <h2>How To Enter Section</h2>
+                         <fieldset>
+                             <legend>Steps to Enter</legend>
+                             <div id="howToEnterStepsContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                             <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addHowToEnterStep()">Add Step</button>
+                             </div>
+                        </fieldset>
+                        <fieldset>
+                             <legend>Highlight Items</legend>
+                             <div id="howToEnterHighlightsContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                             <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addHowToEnterHighlight()">Add Highlight</button>
+                             </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Entry Form Section -->
+                    <div id="entryFormSection" class="content-panel">
+                        <h2>Entry Form Section</h2>
+                        <div class="form-group">
+                            <label for="entryFormSubtitle">Form Subtitle:</label>
+                            <textarea id="entryFormSubtitle" name="entryFormSubtitle"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="entryFormEntryCountText">Entry Count Text (e.g., "Over 500+ entries"):</label>
+                            <input type="text" id="entryFormEntryCountText" name="entryFormEntryCountText">
+                        </div>
+                        <div class="form-group">
+                            <label for="entryFormSocialSharePrompt">Social Share Prompt Text:</label>
+                            <textarea id="entryFormSocialSharePrompt" name="entryFormSocialSharePrompt"></textarea>
+                        </div>
+                         <div class="form-group">
+                            <label for="entryFormTermsText">Terms Text (Use placeholders YOUR_TERMS_LINK_HERE and YOUR_PRIVACY_POLICY_LINK_HERE):</label>
+                            <textarea id="entryFormTermsText" name="entryFormTermsText"></textarea>
+                        </div>
+                         <!-- Note: Share platform URLs are generated dynamically in the main page script -->
+                    </div>
+
+                     <!-- Rules & FAQ Section -->
+                    <div id="rulesSection" class="content-panel">
+                        <h2>Rules & FAQ Section</h2>
+                        <fieldset>
+                            <legend>Fair Selection Info</legend>
+                            <div class="form-group">
+                                <label for="rulesFairSelectionTitle">Title:</label>
+                                <input type="text" id="rulesFairSelectionTitle" name="rulesFairSelectionTitle">
+                            </div>
+                            <div class="form-group">
+                                <label for="rulesFairSelectionText">Text:</label>
+                                <textarea id="rulesFairSelectionText" name="rulesFairSelectionText"></textarea>
+                            </div>
+                        </fieldset>
+                         <fieldset>
+                            <legend>Important Notice (Winner Notification)</legend>
+                            <div class="form-group">
+                                <label for="rulesImportantNoticeTitle">Title:</label>
+                                <input type="text" id="rulesImportantNoticeTitle" name="rulesImportantNoticeTitle">
+                            </div>
+                            <div class="form-group">
+                                <label for="rulesImportantNoticeText">Text:</label>
+                                <textarea id="rulesImportantNoticeText" name="rulesImportantNoticeText"></textarea>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                             <legend>FAQ Items</legend>
+                             <div id="rulesFaqContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                             <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addFaqItem()">Add FAQ</button>
+                             </div>
+                        </fieldset>
+                         <div class="form-group">
+                            <label for="rulesFullRulesPdfLink">Full Rules PDF Link (optional, leave blank or '#' to hide):</label>
+                            <input type="url" id="rulesFullRulesPdfLink" name="rulesFullRulesPdfLink">
+                        </div>
+                         <fieldset>
+                             <legend>Tips for Entering</legend>
+                             <div id="rulesTipsContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                             <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addTipItem()">Add Tip</button>
+                             </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Footer Contact Section -->
+                    <div id="footerContactSection" class="content-panel">
+                        <h2>Footer Contact Information</h2>
+                        <div class="form-group">
+                            <label for="footerContactOrganizerName">Organizer Name:</label>
+                            <input type="text" id="footerContactOrganizerName" name="footerContactOrganizerName">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactOrganizerLogoUrl">Organizer Logo URL:</label>
+                            <input type="url" id="footerContactOrganizerLogoUrl" name="footerContactOrganizerLogoUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactEmail">Contact Email:</label>
+                            <input type="email" id="footerContactEmail" name="footerContactEmail">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactPhone">Contact Phone:</label>
+                            <input type="tel" id="footerContactPhone" name="footerContactPhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactAddress">Organizer Address:</label>
+                            <input type="text" id="footerContactAddress" name="footerContactAddress">
+                        </div>
+                        <fieldset>
+                            <legend>Social Media Links</legend>
+                            <div class="form-group">
+                                <label for="footerContactSocialFacebook">Facebook URL:</label>
+                                <input type="url" id="footerContactSocialFacebook" name="footerContactSocialFacebook">
+                            </div>
+                            <div class="form-group">
+                                <label for="footerContactSocialInstagram">Instagram URL:</label>
+                                <input type="url" id="footerContactSocialInstagram" name="footerContactSocialInstagram">
+                            </div>
+                             <!-- Add other platforms if needed -->
+                        </fieldset>
+                        <div class="form-group">
+                            <label for="footerContactCopyrightOwner">Copyright Owner Name:</label>
+                            <input type="text" id="footerContactCopyrightOwner" name="footerContactCopyrightOwner">
+                        </div>
+                    </div>
+
+                    <!-- Meta/Site Info Section -->
+                    <div id="metaSection" class="content-panel">
+                        <h2>Meta / Site Information</h2>
+                        <div class="form-group">
+                            <label for="metaPageTitle">Page Title:</label>
+                            <input type="text" id="metaPageTitle" name="metaPageTitle">
+                        </div>
+                        <div class="form-group">
+                            <label for="metaNavBrandLogoText">Navigation Brand Text:</label>
+                            <input type="text" id="metaNavBrandLogoText" name="metaNavBrandLogoText">
+                        </div>
+                        <div class="form-group">
+                            <label for="metaPrivacyPolicyLink">Privacy Policy Link:</label>
+                            <input type="url" id="metaPrivacyPolicyLink" name="metaPrivacyPolicyLink">
+                        </div>
+                        <div class="form-group">
+                            <label for="metaTermsLink">Terms & Conditions Link:</label>
+                            <input type="url" id="metaTermsLink" name="metaTermsLink">
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settingsSection" class="content-panel">
+                        <h2>Settings</h2>
+                        <div class="form-group">
+                            <label for="settingsWebhookUrl">Webhook URL (read-only):</label>
+                            <input type="url" id="settingsWebhookUrl" name="settingsWebhookUrl" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsConfettiColors">Confetti Colors (hex codes, one per line):</label>
+                            <textarea id="settingsConfettiColors" name="settingsConfettiColors"></textarea>
+                        </div>
+                         <div class="form-group">
+                             <input type="checkbox" id="settingsShowCountdownInHero" name="settingsShowCountdownInHero">
+                             <label for="settingsShowCountdownInHero" class="checkbox-label">Show Countdown Timer in Hero?</label>
+                        </div>
+                    </div>
+
+                </div> <!-- End content-panel-container -->
+
+                <div class="save-area">
+                    <button type="submit">Save Configuration</button>
+                    <div id="message"></div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Load config first -->
+    <script src="giveaway-config.js"></script>
+    <script>
+        // Config object is now loaded from giveaway-config.js
+
+        const adminLayout = document.getElementById('adminLayout');
+        const configForm = document.getElementById('configForm');
+        const messageDiv = document.getElementById('message');
+
+        // --- Helper Functions (getVal, setVal, arrayFromTextarea) ---
+        function getVal(id) { const el = document.getElementById(id); return el ? (el.type === 'checkbox' ? el.checked : el.value) : ''; }
+        function setVal(id, value) { const el = document.getElementById(id); if (el) { if (el.type === 'checkbox') { el.checked = !!value; } else { el.value = value === undefined || value === null ? '' : value; } } }
+        function arrayFromTextarea(id) { const val = getVal(id); return val.split('\n').map(s => s.trim()).filter(s => s !== ''); }
+        function textareaFromArray(id, arr) { if (Array.isArray(arr)) { setVal(id, arr.join('\n')); } else { setVal(id, ''); } }
+
+        // --- Dynamic Item Rendering Functions (Placeholders - Need Implementation) ---
+        function renderDynamicItems(containerId, items, renderItemFn, addItemFnName) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = ''; // Clear existing
+            if (Array.isArray(items)) {
+                items.forEach((item, index) => {
+                    container.appendChild(renderItemFn(item, index));
+                });
+            }
+            // Add button is now static in HTML, associated via onclick
+        }
+
+        function createPrizeImageInputs(item, index) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-group';
+            div.innerHTML = `
+                <h4>Image ${index + 1}</h4>
+                <div class="form-group">
+                    <label for="prizeImageSrc${index}">Image URL:</label>
+                    <input type="url" id="prizeImageSrc${index}" value="${item.src || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="prizeImageAlt${index}">Alt Text:</label>
+                    <input type="text" id="prizeImageAlt${index}" value="${item.alt || ''}">
+                </div>
+                <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
+            return div;
+        }
+         function addPrizeImage() { addDynamicItem('prizeImagesContainer', { src: '', alt: '' }, createPrizeImageInputs, addPrizeImage); }
+
+        function createIncludedItemInputs(item, index) {
+             const div = document.createElement('div');
+             div.className = 'dynamic-item-group';
+             div.innerHTML = `
+                <h4>Included Item ${index + 1}</h4>
+                <div class="form-group">
+                    <label for="includedIcon${index}">Icon (Font Awesome class):</label>
+                    <input type="text" id="includedIcon${index}" value="${item.icon || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="includedText${index}">Text:</label>
+                    <input type="text" id="includedText${index}" value="${item.text || ''}">
+                </div>
+                 <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
+             return div;
+        }
+        function addIncludedItem() { addDynamicItem('prizeIncludedItemsContainer', { icon: '', text: '' }, createIncludedItemInputs, addIncludedItem); }
+
+        function createHowToEnterStepInputs(item, index) {
+             const div = document.createElement('div');
+             div.className = 'dynamic-item-group';
+             div.innerHTML = `
+                <h4>Step ${index + 1}</h4>
+                <div class="form-group">
+                    <label for="stepIcon${index}">Icon (Font Awesome class):</label>
+                    <input type="text" id="stepIcon${index}" value="${item.icon || ''}">
+                </div>
+                 <div class="form-group">
+                    <label for="stepTitle${index}">Title:</label>
+                    <input type="text" id="stepTitle${index}" value="${item.title || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="stepDescription${index}">Description:</label>
+                    <textarea id="stepDescription${index}">${item.description || ''}</textarea>
+                </div>
+                 <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
+             return div;
+        }
+         function addHowToEnterStep() { addDynamicItem('howToEnterStepsContainer', { icon: '', title: '', description: '' }, createHowToEnterStepInputs, addHowToEnterStep); }
+
+         function createHowToEnterHighlightInputs(item, index) {
+             const div = document.createElement('div');
+             div.className = 'dynamic-item-group';
+             div.innerHTML = `
+                <h4>Highlight ${index + 1}</h4>
+                <div class="form-group">
+                    <label for="highlightIcon${index}">Icon (Font Awesome class):</label>
+                    <input type="text" id="highlightIcon${index}" value="${item.icon || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="highlightText${index}">Text:</label>
+                    <input type="text" id="highlightText${index}" value="${item.text || ''}">
+                </div>
+                 <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
+             return div;
+        }
+        function addHowToEnterHighlight() { addDynamicItem('howToEnterHighlightsContainer', { icon: '', text: '' }, createHowToEnterHighlightInputs, addHowToEnterHighlight); }
+
+        function createFaqItemInputs(item, index) {
+             const div = document.createElement('div');
+             div.className = 'dynamic-item-group';
+             div.innerHTML = `
+                <h4>FAQ ${index + 1}</h4>
+                <div class="form-group">
+                    <label for="faqQ${index}">Question:</label>
+                    <input type="text" id="faqQ${index}" value="${item.q || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="faqA${index}">Answer:</label>
+                    <textarea id="faqA${index}">${item.a || ''}</textarea>
+                </div>
+                 <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
+             return div;
+        }
+        function addFaqItem() { addDynamicItem('rulesFaqContainer', { q: '', a: '' }, createFaqItemInputs, addFaqItem); }
+
+        function createTipItemInputs(item, index) {
+             const div = document.createElement('div');
+             div.className = 'dynamic-item-group';
+             div.innerHTML = `
+                <h4>Tip ${index + 1}</h4>
+                <div class="form-group">
+                    <label for="tipText${index}">Tip Text:</label>
+                    <input type="text" id="tipText${index}" value="${item || ''}"> <!-- Tips are just strings -->
+                </div>
+                 <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `;
+             return div;
+        }
+        function addTipItem() { addDynamicItem('rulesTipsContainer', '', createTipItemInputs, addTipItem); } // Pass empty string for new tip
+
+        // Generic Add/Remove Logic
+        function addDynamicItem(containerId, defaultItem, createFn, addFn) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                const newItemElement = createFn(defaultItem, container.children.length);
+                container.appendChild(newItemElement);
+            }
+        }
+        function removeDynamicItem(buttonElement) {
+            const itemGroup = buttonElement.closest('.dynamic-item-group');
+            if (itemGroup) {
+                itemGroup.remove();
+                // Note: Renumbering items after removal is complex and often not necessary
+                // unless strict ordering is critical for the backend.
+            }
+        }
+
+
+        // --- Populate Form Function (Needs Full Implementation) ---
+        function populateForm() {
+            if (typeof config === 'undefined') { console.error("Config not loaded!"); return; }
+            const c = config;
+
+            // Giveaway Details
+            setVal('giveawayName', c.giveaway?.name);
+            setVal('giveawayHeroHeadline', c.giveaway?.heroHeadline);
+            setVal('giveawayHeroSubheadline', c.giveaway?.heroSubheadline);
+            setVal('giveawayPromotionDates', c.giveaway?.promotionDates);
+            // Convert ISO string to datetime-local format if needed
+            if (c.giveaway?.endDate) {
+                 try {
+                     const date = new Date(c.giveaway.endDate);
+                     // Format YYYY-MM-DDTHH:mm
+                     const localDateTime = date.getFullYear() + '-' +
+                                          ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                                          ('0' + date.getDate()).slice(-2) + 'T' +
+                                          ('0' + date.getHours()).slice(-2) + ':' +
+                                          ('0' + date.getMinutes()).slice(-2);
+                     setVal('giveawayEndDate', localDateTime);
+                 } catch (e) { console.error("Error parsing end date:", e); setVal('giveawayEndDate', ''); }
+            } else { setVal('giveawayEndDate', ''); }
+            setVal('giveawayHeroBackgroundImageUrl', c.giveaway?.heroBackgroundImageUrl);
+            setVal('giveawayHeroCtaText', c.giveaway?.heroCtaText);
+            setVal('giveawayEntryFormCtaText', c.giveaway?.entryFormCtaText);
+            setVal('giveawaySuccessModalHeaderText', c.giveaway?.successModalHeaderText);
+            setVal('giveawaySuccessModalMainMessage', c.giveaway?.successModalMainMessage);
+            setVal('giveawaySuccessModalEmailPrompt', c.giveaway?.successModalEmailPrompt);
+
+            // Prize Details
+            setVal('prizeName', c.prize?.name);
+            setVal('prizeValue', c.prize?.value);
+            setVal('prizeDescription', c.prize?.description);
+            setVal('prizeLimitedTimeOfferText', c.prize?.limitedTimeOfferText);
+            setVal('prizeCtaButtonText', c.prize?.ctaButtonText);
+            renderDynamicItems('prizeImagesContainer', c.prize?.images, createPrizeImageInputs, addPrizeImage);
+            renderDynamicItems('prizeIncludedItemsContainer', c.prize?.includedItems, createIncludedItemInputs, addIncludedItem);
+
+            // How To Enter
+            renderDynamicItems('howToEnterStepsContainer', c.howToEnter?.steps, createHowToEnterStepInputs, addHowToEnterStep);
+            renderDynamicItems('howToEnterHighlightsContainer', c.howToEnter?.highlights, createHowToEnterHighlightInputs, addHowToEnterHighlight);
+
+            // Entry Form
+            setVal('entryFormSubtitle', c.entryForm?.subtitle);
+            setVal('entryFormEntryCountText', c.entryForm?.entryCountText);
+            setVal('entryFormSocialSharePrompt', c.entryForm?.socialSharePrompt);
+            setVal('entryFormTermsText', c.entryForm?.termsText);
+
+            // Rules & FAQ
+            setVal('rulesFairSelectionTitle', c.rules?.fairSelectionInfo?.title);
+            setVal('rulesFairSelectionText', c.rules?.fairSelectionInfo?.text);
+            setVal('rulesImportantNoticeTitle', c.rules?.importantNotice?.title);
+            setVal('rulesImportantNoticeText', c.rules?.importantNotice?.text);
+            renderDynamicItems('rulesFaqContainer', c.rules?.faq, createFaqItemInputs, addFaqItem);
+            setVal('rulesFullRulesPdfLink', c.rules?.fullRulesPdfLink);
+            renderDynamicItems('rulesTipsContainer', c.rules?.tips, createTipItemInputs, addTipItem);
+
+
+            // Footer Contact
+            setVal('footerContactOrganizerName', c.footerContact?.organizerName);
+            setVal('footerContactOrganizerLogoUrl', c.footerContact?.organizerLogoUrl);
+            setVal('footerContactEmail', c.footerContact?.email);
+            setVal('footerContactPhone', c.footerContact?.phone);
+            setVal('footerContactAddress', c.footerContact?.address);
+            setVal('footerContactSocialFacebook', c.footerContact?.social?.facebook);
+            setVal('footerContactSocialInstagram', c.footerContact?.social?.instagram);
+            setVal('footerContactCopyrightOwner', c.footerContact?.copyrightOwner);
+
+            // Meta/Site Info
+            setVal('metaPageTitle', c.meta?.pageTitle);
+            setVal('metaNavBrandLogoText', c.meta?.navBrandLogoText);
+            setVal('metaPrivacyPolicyLink', c.meta?.privacyPolicyLink);
+            setVal('metaTermsLink', c.meta?.termsLink);
+
+            // Settings
+            setVal('settingsWebhookUrl', c.settings?.webhookUrl); // Readonly field
+            textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
+            setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
+
+            console.log("Form population complete.");
+        }
+
+
+        // --- Handle Form Submit Function (Needs Full Implementation) ---
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            messageDiv.textContent = 'Saving...';
+            messageDiv.className = '';
+
+            // Create a new config object matching the structure of giveaway-config.js
+            const updatedConfig = {
+                giveaway: {}, prize: { images: [], includedItems: [] }, howToEnter: { steps: [], highlights: [] },
+                entryForm: { sharePlatforms: {} }, rules: { faq: [], tips: [] }, footerContact: { social: {} },
+                meta: {}, settings: { confettiColors: [] }, modalQuestions: [] // Keep structure consistent
+            };
+
+            try {
+                // Giveaway Details
+                updatedConfig.giveaway.name = getVal('giveawayName');
+                updatedConfig.giveaway.heroHeadline = getVal('giveawayHeroHeadline');
+                updatedConfig.giveaway.heroSubheadline = getVal('giveawayHeroSubheadline');
+                updatedConfig.giveaway.promotionDates = getVal('giveawayPromotionDates');
+                // Convert datetime-local back to ISO string or keep as is depending on backend needs
+                const endDateVal = getVal('giveawayEndDate');
+                if (endDateVal) {
+                    try { updatedConfig.giveaway.endDate = new Date(endDateVal).toISOString(); }
+                    catch(e) { console.warn("Could not parse end date, leaving empty", e); updatedConfig.giveaway.endDate = ""; }
+                } else { updatedConfig.giveaway.endDate = ""; }
+                updatedConfig.giveaway.heroBackgroundImageUrl = getVal('giveawayHeroBackgroundImageUrl');
+                updatedConfig.giveaway.heroCtaText = getVal('giveawayHeroCtaText');
+                updatedConfig.giveaway.entryFormCtaText = getVal('giveawayEntryFormCtaText');
+                updatedConfig.giveaway.successModalHeaderText = getVal('giveawaySuccessModalHeaderText');
+                updatedConfig.giveaway.successModalMainMessage = getVal('giveawaySuccessModalMainMessage');
+                updatedConfig.giveaway.successModalEmailPrompt = getVal('giveawaySuccessModalEmailPrompt');
+
+                // Prize Details
+                updatedConfig.prize.name = getVal('prizeName');
+                updatedConfig.prize.value = getVal('prizeValue');
+                updatedConfig.prize.description = getVal('prizeDescription');
+                updatedConfig.prize.limitedTimeOfferText = getVal('prizeLimitedTimeOfferText');
+                updatedConfig.prize.ctaButtonText = getVal('prizeCtaButtonText');
+                // Collect dynamic prize images
+                document.querySelectorAll('#prizeImagesContainer .dynamic-item-group').forEach((group, index) => {
+                    const src = group.querySelector(`#prizeImageSrc${index}`)?.value;
+                    const alt = group.querySelector(`#prizeImageAlt${index}`)?.value;
+                    if (src || alt) { updatedConfig.prize.images.push({ src: src || '', alt: alt || '' }); }
+                });
+                 // Collect dynamic included items
+                document.querySelectorAll('#prizeIncludedItemsContainer .dynamic-item-group').forEach((group, index) => {
+                    const icon = group.querySelector(`#includedIcon${index}`)?.value;
+                    const text = group.querySelector(`#includedText${index}`)?.value;
+                     if (icon || text) { updatedConfig.prize.includedItems.push({ icon: icon || '', text: text || '' }); }
+                });
+
+
+                // How To Enter
+                 document.querySelectorAll('#howToEnterStepsContainer .dynamic-item-group').forEach((group, index) => {
+                    const icon = group.querySelector(`#stepIcon${index}`)?.value;
+                    const title = group.querySelector(`#stepTitle${index}`)?.value;
+                    const description = group.querySelector(`#stepDescription${index}`)?.value;
+                     if (icon || title || description) { updatedConfig.howToEnter.steps.push({ icon: icon || '', title: title || '', description: description || '' }); }
+                });
+                 document.querySelectorAll('#howToEnterHighlightsContainer .dynamic-item-group').forEach((group, index) => {
+                    const icon = group.querySelector(`#highlightIcon${index}`)?.value;
+                    const text = group.querySelector(`#highlightText${index}`)?.value;
+                     if (icon || text) { updatedConfig.howToEnter.highlights.push({ icon: icon || '', text: text || '' }); }
+                });
+
+                // Entry Form
+                updatedConfig.entryForm.subtitle = getVal('entryFormSubtitle');
+                updatedConfig.entryForm.entryCountText = getVal('entryFormEntryCountText');
+                updatedConfig.entryForm.socialSharePrompt = getVal('entryFormSocialSharePrompt');
+                updatedConfig.entryForm.termsText = getVal('entryFormTermsText');
+                // Share platforms are generated dynamically, so we don't collect them here.
+                // We copy the existing ones from the loaded config to preserve structure.
+                updatedConfig.entryForm.sharePlatforms = config.entryForm?.sharePlatforms || {};
+
+
+                // Rules & FAQ
+                updatedConfig.rules.fairSelectionInfo = { title: getVal('rulesFairSelectionTitle'), text: getVal('rulesFairSelectionText') };
+                updatedConfig.rules.importantNotice = { title: getVal('rulesImportantNoticeTitle'), text: getVal('rulesImportantNoticeText') };
+                 document.querySelectorAll('#rulesFaqContainer .dynamic-item-group').forEach((group, index) => {
+                    const q = group.querySelector(`#faqQ${index}`)?.value;
+                    const a = group.querySelector(`#faqA${index}`)?.value;
+                     if (q || a) { updatedConfig.rules.faq.push({ q: q || '', a: a || '' }); }
+                });
+                updatedConfig.rules.fullRulesPdfLink = getVal('rulesFullRulesPdfLink');
+                 document.querySelectorAll('#rulesTipsContainer .dynamic-item-group').forEach((group, index) => {
+                    const text = group.querySelector(`#tipText${index}`)?.value;
+                     if (text) { updatedConfig.rules.tips.push(text); }
+                });
+
+
+                // Footer Contact
+                updatedConfig.footerContact.organizerName = getVal('footerContactOrganizerName');
+                updatedConfig.footerContact.organizerLogoUrl = getVal('footerContactOrganizerLogoUrl');
+                updatedConfig.footerContact.email = getVal('footerContactEmail');
+                updatedConfig.footerContact.phone = getVal('footerContactPhone');
+                updatedConfig.footerContact.address = getVal('footerContactAddress');
+                updatedConfig.footerContact.social.facebook = getVal('footerContactSocialFacebook');
+                updatedConfig.footerContact.social.instagram = getVal('footerContactSocialInstagram');
+                updatedConfig.footerContact.copyrightOwner = getVal('footerContactCopyrightOwner');
+
+                // Meta/Site Info
+                updatedConfig.meta.pageTitle = getVal('metaPageTitle');
+                updatedConfig.meta.navBrandLogoText = getVal('metaNavBrandLogoText');
+                updatedConfig.meta.privacyPolicyLink = getVal('metaPrivacyPolicyLink');
+                updatedConfig.meta.termsLink = getVal('metaTermsLink');
+
+                // Settings
+                updatedConfig.settings.webhookUrl = config.settings?.webhookUrl; // Keep original webhook URL (read-only field)
+                updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
+                updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
+
+                // Preserve empty modalQuestions array from original structure if needed
+                updatedConfig.modalQuestions = Array.isArray(config.modalQuestions) ? [] : undefined;
+
+
+                console.log("Submitting updated config:", updatedConfig);
+
+                // --- Webhook Submission ---
+                const webhookUrl = config.settings?.webhookUrl; // Get webhook URL from original loaded config
+                if (!webhookUrl || webhookUrl === "YOUR_N8N_OR_FORM_HANDLER_WEBHOOK_URL") {
+                     throw new Error("Webhook URL is not configured in giveaway-config.js");
+                }
+
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedConfig),
+                });
+
+                if (response.ok) {
+                    messageDiv.textContent = 'Configuration saved successfully! Reload page to see changes reflected if n8n updated config.js.';
+                    messageDiv.className = 'success';
+                } else {
+                    const errorData = await response.text();
+                    throw new Error(`Error saving configuration: ${response.status} ${errorData}`);
+                }
+            } catch (error) {
+                console.error("Error during form submission:", error);
+                messageDiv.textContent = `Error: ${error.message}`;
+                messageDiv.className = 'error';
+            }
+        }
+
+        // --- Side Navigation Logic ---
+        function initSideNav() {
+            const navLinks = document.querySelectorAll('#sideNav a');
+            const contentPanels = document.querySelectorAll('.content-panel');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    const targetId = link.getAttribute('data-target');
+                    contentPanels.forEach(panel => {
+                        panel.classList.toggle('active', panel.id === targetId);
+                    });
+                });
+            });
+            if (navLinks.length > 0) { navLinks[0].click(); } // Activate first tab
+        }
+
+        // --- Initialization ---
+        function init() {
+            const password = prompt("Enter password to access admin page:", "");
+            if (password === "123456") { // Replace with a secure method if needed
+                if (typeof config === 'undefined') {
+                     alert("Error: Configuration file (giveaway-config.js) failed to load. Cannot initialize admin page.");
+                     document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px; font-size:18px; width:100%;">Configuration Error</p>';
+                     return;
+                }
+                document.body.style.justifyContent = 'flex-start';
+                document.body.style.alignItems = 'flex-start';
+                adminLayout.classList.remove('hidden');
+                populateForm();
+                initSideNav();
+                configForm.addEventListener('submit', handleFormSubmit);
+            } else {
+                alert("Incorrect password. Access denied.");
+                document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px; font-size:18px; width:100%;">Access Denied</p>';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
