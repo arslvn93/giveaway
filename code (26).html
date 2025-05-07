@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway Page - Final Polish</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- CSS RESET (Basic) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--body-bg-color-theme);
+            color: var(--text-color-dark-theme);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.nav-open { overflow-y: hidden; }
+        img { max-width: 100%; height: auto; display: block; }
+        button, input { font-family: inherit; font-size: inherit; border: none; background: none; }
+        button { cursor: pointer; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- THEME VARIABLES --- */
+        :root {
+            --border-radius-s: 8px; --border-radius-m: 15px;
+            --primary-color-theme: #FF7A00; --secondary-color-theme: #4CAF50; --accent-color-theme: #FFC107;
+            --body-bg-color-theme: #FFF8F0; --card-bg-color-theme: #FFFFFF;
+            --text-color-dark-theme: #333333; --text-color-medium-theme: #555555; --text-color-light-theme: #777777;
+            --header-bg-color-theme: rgba(255, 248, 240, 0.85);
+            --glass-border-color-theme: rgba(255, 122, 0, 0.2);
+            --shadow-color-theme: rgba(0, 0, 0, 0.08);
+        }
+        body.theme-dark {
+            --primary-color-theme: #FFA726; --secondary-color-theme: #66BB6A; --accent-color-theme: #FFEE58;
+            --body-bg-color-theme: #1C1C1E; --card-bg-color-theme: #2C2C2E;
+            --text-color-dark-theme: #F5F5F5; --text-color-medium-theme: #B0B0B0; --text-color-light-theme: #808080;
+            --header-bg-color-theme: rgba(28, 28, 30, 0.85);
+            --glass-border-color-theme: rgba(255, 167, 38, 0.3);
+            --shadow-color-theme: rgba(0, 0, 0, 0.2);
+        }
+        body.theme-pastel {
+            --primary-color-theme: #A2D5AB; --secondary-color-theme: #F2BDBD; --accent-color-theme: #FFEAB6;
+            --body-bg-color-theme: #FAF7F2; --card-bg-color-theme: #FFFFFF;
+            --text-color-dark-theme: #5C5470; --text-color-medium-theme: #8A8195; --text-color-light-theme: #B3ADB9;
+            --header-bg-color-theme: rgba(250, 247, 242, 0.85);
+            --glass-border-color-theme: rgba(162, 213, 171, 0.3);
+            --shadow-color-theme: rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- UTILITY & BUTTONS --- */
+        .container { width: 90%; max-width: 1000px; margin-left: auto; margin-right: auto; }
+        .text-center { text-align: center; }
+        .button-primary { display: inline-flex; background-color: var(--primary-color-theme); color: var(--body-bg-color-theme); padding: 0.75rem 1.5rem; border-radius: var(--border-radius-s); font-weight: 600; transition: background-color 0.3s ease, transform 0.2s ease; box-shadow: 0 2px 5px var(--shadow-color-theme); min-height: 44px; line-height: normal; align-items: center; justify-content: center; }
+        body.theme-dark .button-primary { color: #1C1C1E; } body.theme-pastel .button-primary { color: var(--text-color-dark-theme); }
+        .button-primary:hover { filter: brightness(110%); transform: translateY(-2px); }
+        .button-primary:active { transform: translateY(0px); filter: brightness(95%); }
+        .button-primary i { margin-left: 0.5rem; }
+
+        /* --- HEADER & NAVIGATION --- */
+        .main-nav { position: fixed; top: 0; left: 0; width: 100%; background-color: var(--header-bg-color-theme); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 0.75rem 0; z-index: 1000; border-bottom: 1px solid var(--glass-border-color-theme); transition: background-color 0.3s ease, padding 0.3s ease; }
+        .main-nav.scrolled { padding: 0.5rem 0; box-shadow: 0 1px 5px var(--shadow-color-theme); }
+        .main-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .main-nav .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary-color-theme); }
+        .nav-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; font-size: 1.5rem; color: var(--text-color-dark-theme); z-index: 1002; }
+        .nav-links { position: fixed; top: 0; right: -100%; width: min(75vw, 280px); height: 100vh; background-color: var(--body-bg-color-theme); padding: 4rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; z-index: 1001; transition: right 0.3s ease-in-out; box-shadow: -2px 0 10px var(--shadow-color-theme); border-left: 1px solid var(--glass-border-color-theme); }
+        .nav-links.nav-open { right: 0; }
+        .nav-links li a { display: block; padding: 0.75rem 0.5rem; font-weight: 500; color: var(--text-color-medium-theme); transition: color 0.3s ease; border-radius: var(--border-radius-s); }
+        .nav-links li a:hover, .nav-links li a.active { color: var(--primary-color-theme); background-color: rgba(var(--primary-color-theme), 0.1); }
+
+        /* --- SECTION STYLING --- */
+        .section {
+            padding: 2.5rem 0;
+            opacity: 0; /* ALL sections start hidden (except hero itself) */
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out 0.1s, transform 0.8s ease-out 0.1s;
+        }
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #hero.section { /* Hero container is visible by default, its content animates */
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+        .section-title { font-family: 'Playfair Display', sans-serif; font-size: 1.75rem; color: var(--primary-color-theme); text-align: center; margin-bottom: 1.5rem; }
+        .section-subtitle { font-size: 1rem; color: var(--text-color-medium-theme); text-align: center; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        /* --- CARD STYLING --- */
+        .content-card { background-color: rgba(var(--card-bg-color-theme), 0.7); border: 1px solid var(--glass-border-color-theme); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border-radius: var(--border-radius-m); padding: 1.5rem; box-shadow: 0 4px 15px var(--shadow-color-theme); margin-bottom: 1.5rem; }
+
+        /* --- ENHANCED HERO SECTION --- */
+        #hero {
+            min-height: 100vh; min-height: 100svh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 5rem 15px 2rem; /* Adjust top padding if nav height changes */
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .hero-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.25)); z-index: 1; opacity: 0; transition: opacity 1s ease-in-out 0.5s; }
+        body.theme-dark .hero-bg-overlay { background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)); }
+        body.theme-pastel .hero-bg-overlay { background: linear-gradient(rgba(var(--primary-color-theme),0.03), rgba(var(--secondary-color-theme),0.08)); }
+        #hero.content-loaded .hero-bg-overlay { opacity: 1; }
+
+        .hero-content-wrapper { position: relative; z-index: 2; max-width: 90%; width: 650px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+        #heroTitle { font-family: 'Playfair Display', sans-serif; font-size: clamp(1.8rem, 7vw, 3.5rem); color: var(--text-color-dark-theme); line-height: 1.2; margin-bottom: 0.75rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.15); opacity: 0; min-height: 1.2em; }
+        body.theme-light #heroTitle, body.theme-pastel #heroTitle { color: #fff; }
+        body.theme-dark #heroTitle { color: var(--text-color-dark-theme); }
+        #heroTitle .highlight { color: var(--primary-color-theme); }
+        #heroTitle.typing::after { content: '|'; display: inline-block; margin-left: 0.15em; font-weight: 300; animation: heroBlink 0.7s step-end infinite; color: var(--primary-color-theme); font-size: 0.9em; }
+        @keyframes heroBlink { 50% { opacity: 0; } }
+
+        .hero-subtitle-animated, .hero-dates-animated, .hero-countdown-animated, .hero-cta-animated { opacity: 0; transform: translateY(15px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        #hero.content-loaded .hero-subtitle-animated { transition-delay: 0.1s; }
+        #hero.content-loaded .hero-dates-animated { transition-delay: 0.25s; }
+        #hero.content-loaded .hero-countdown-animated { transition-delay: 0.4s; }
+        #hero.content-loaded .hero-cta-animated { transition-delay: 0.55s; }
+        #hero.content-loaded .hero-subtitle-animated, #hero.content-loaded .hero-dates-animated, #hero.content-loaded .hero-countdown-animated, #hero.content-loaded .hero-cta-animated { opacity: 1; transform: translateY(0); }
+
+        #heroSubtitle { font-size: clamp(0.9rem, 3.5vw, 1.15rem); color: var(--text-color-medium-theme); margin-bottom: 1rem; line-height: 1.6; max-width: 550px; }
+        body.theme-light #heroSubtitle, body.theme-pastel #heroSubtitle { color: rgba(255,255,255,0.8); }
+        body.theme-dark #heroSubtitle { color: var(--text-color-medium-theme); }
+        #heroPromotionDates { font-size: clamp(0.75rem, 2.5vw, 0.9rem); color: var(--secondary-color-theme); font-weight: 500; margin-bottom: 1.25rem; letter-spacing: 0.3px; background-color: rgba(var(--card-bg-color-theme), 0.05); padding: 0.2rem 0.6rem; border-radius: 15px; border: 1px solid rgba(var(--secondary-color-theme), 0.2); }
+        body.theme-light #heroPromotionDates, body.theme-pastel #heroPromotionDates { border-color: var(--secondary-color-theme); background-color: rgba(255,255,255,0.1); }
+
+        .countdown-timer-container { margin-bottom: 1.5rem; }
+        .countdown-timer { gap: clamp(0.3rem, 1.5vw, 0.75rem); display:flex; justify-content: center; } /* Ensure flex for alignment */
+        .time-segment { background-color: rgba(var(--card-bg-color-theme), 0.1); border: 1px solid rgba(var(--glass-border-color-theme), 0.2); padding: clamp(0.4rem, 1.8vw, 0.8rem) clamp(0.5rem, 2vw, 1rem); border-radius: var(--border-radius-s); min-width: clamp(50px, 14vw, 70px); box-shadow: 0 1px 5px rgba(var(--shadow-color-theme), 0.15); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        body.theme-light .time-segment, body.theme-pastel .time-segment { background-color: rgba(255,255,255, 0.08); border-color: rgba(255,255,255,0.15); }
+        .time-value { font-size: clamp(1.2rem, 4vw, 2rem); font-weight: 700; color: var(--primary-color-theme); line-height: 1; display: block; }
+        .time-label { font-size: clamp(0.55rem, 1.2vw, 0.7rem); color: var(--text-color-light-theme); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+        body.theme-light .time-label, body.theme-pastel .time-label { color: rgba(255,255,255,0.65); }
+        .giveaway-ended-message { font-size: clamp(0.9rem, 2.5vw, 1.15rem); margin-top: 0.25rem; }
+
+        #heroCta.button-primary { padding: clamp(0.7rem, 2.2vw, 1rem) clamp(1.5rem, 4.5vw, 2.5rem); font-size: clamp(0.9rem, 2.5vw, 1.15rem); border-radius: 30px; font-weight: 600; letter-spacing: 0.8px; box-shadow: 0 4px 15px rgba(var(--primary-color-theme), 0.25), inset 0 -2px 3px rgba(0,0,0,0.1); }
+        #heroCta.button-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 6px 20px rgba(var(--primary-color-theme), 0.3), inset 0 -1px 2px rgba(0,0,0,0.05); }
+
+        /* Staggered animation for children in sections */
+        .step-item, .form-group { opacity: 0; transform: translateY(20px); transition-property: opacity, transform; transition-duration: 0.5s; transition-timing-function: ease-out; }
+        .form-group { transform: translateX(-20px); }
+        .animate-in { opacity: 1 !important; transform: translate(0,0) !important; }
+
+
+        /* --- PRIZE DETAILS, HOW TO ENTER, ETC. (Keep simplified styles from before) --- */
+        #prizeMainImage { border-radius: var(--border-radius-s); margin-bottom: 1rem; box-shadow: 0 2px 8px var(--shadow-color-theme); }
+        .prize-gallery-thumbnails { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1rem; }
+        .thumbnail-image { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+        .thumbnail-image.active, .thumbnail-image:hover { border-color: var(--primary-color-theme); }
+        #prizeName { font-family: 'Playfair Display', sans-serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        #prizeValue { display: inline-block; font-size: 1rem; font-weight: 600; color: var(--secondary-color-theme); border: 1px solid var(--secondary-color-theme); padding: 0.25rem 0.75rem; border-radius: 20px; margin-bottom: 0.75rem; }
+        #prizeDescription { font-size: 0.9rem; color: var(--text-color-medium-theme); margin-bottom: 1rem; }
+        #prizeIncludedList h3 { font-size: 1.1rem; margin-bottom: 0.5rem; text-align: center; }
+        #prizeIncludedList li { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.9rem; border-bottom: 1px dashed var(--glass-border-color-theme); }
+        #prizeIncludedList li:last-child { border-bottom: none; }
+        #prizeIncludedList li i { color: var(--secondary-color-theme); font-size: 1.1rem; }
+
+        .steps-grid { display: grid; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .step-item i { font-size: 2.5rem; color: var(--primary-color-theme); margin-bottom: 0.5rem; }
+        .step-item h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .step-item p { font-size: 0.875rem; color: var(--text-color-medium-theme); }
+        .highlights-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
+        .highlight-item { display: flex; align-items: center; gap: 0.5rem; background-color: rgba(var(--secondary-color-theme), 0.1); color: var(--secondary-color-theme); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .highlight-item i { font-size: 0.9rem; }
+
+        #entryFormSubtitle, #entryFormCount { text-align: center; margin-bottom: 1rem; }
+        #entryFormCount { color: var(--secondary-color-theme); font-weight: 500; }
+        .form-grid { display: grid; gap: 1rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--text-color-medium-theme); }
+        .input-wrapper { position: relative; }
+        .input-wrapper input { width: 100%; padding: 0.75rem 1rem; padding-left: 2.5rem; border: 1px solid var(--glass-border-color-theme); background-color: rgba(var(--card-bg-color-theme), 0.8); border-radius: var(--border-radius-s); font-size: 1rem; color: var(--text-color-dark-theme); min-height: 44px; }
+        .input-wrapper input:focus { outline: none; border-color: var(--primary-color-theme); box-shadow: 0 0 0 2px rgba(var(--primary-color-theme), 0.3); }
+        .input-wrapper i { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--text-color-light-theme); font-size: 0.9rem; }
+        .form-group .button-primary { width: 100%; }
+        .social-share-prompt { text-align: center; font-size: 0.875rem; margin-top: 1.5rem; color: var(--text-color-medium-theme); }
+        .form-social-icons { text-align: center; margin-top: 0.75rem; }
+        .form-social-icons a { font-size: 1.5rem; color: var(--text-color-medium-theme); margin: 0 0.5rem; transition: color 0.3s ease; }
+        .form-social-icons a:hover { color: var(--primary-color-theme); }
+        .form-terms { text-align: center; font-size: 0.75rem; color: var(--text-color-light-theme); margin-top: 1rem; }
+        .form-terms a { color: var(--primary-color-theme); text-decoration: underline; }
+
+        .rules-text-block h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .rules-text-block p, .faq-answer, .tips-list li { font-size: 0.875rem; color: var(--text-color-medium-theme); margin-bottom: 0.75rem; }
+        .faq-list { margin-top: 1.5rem; }
+        .faq-item { border-bottom: 1px solid var(--glass-border-color-theme); padding-bottom: 0.75rem; margin-bottom: 0.75rem; }
+        .faq-question { font-weight: 600; cursor: pointer; position: relative; padding-right: 1.5rem; }
+        .faq-question::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 0.8em; transition: transform 0.3s ease; }
+        .faq-item.open .faq-question::after { transform: translateY(-50%) rotate(180deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding-top: 0; }
+        .faq-item.open .faq-answer { max-height: 200px; padding-top: 0.5rem; }
+        .download-rules-link { display: block; text-align: center; margin: 1.5rem auto 0; max-width: 250px; }
+        .tips-list { margin-top: 1rem; }
+        .tips-list li { display: flex; align-items: flex-start; gap: 0.5rem; }
+        .tips-list li i { color: var(--secondary-color-theme); font-size: 0.9rem; margin-top: 0.125rem; }
+
+        footer { background-color: rgba(var(--body-bg-color-theme), 0.5); border-top: 1px solid var(--glass-border-color-theme); padding: 2rem 0 1.5rem; text-align: center; margin-top: 2rem; }
+        footer .organizer-logo img { max-height: 40px; margin: 0 auto 1rem; }
+        footer h4 { font-size: 1.1rem; color: var(--primary-color-theme); margin-bottom: 0.75rem; }
+        footer p { font-size: 0.875rem; color: var(--text-color-medium-theme); margin-bottom: 0.5rem; }
+        footer p i { margin-right: 0.3rem; }
+        footer .social-icons { margin: 1rem 0; }
+        footer .social-icons a { font-size: 1.3rem; margin: 0 0.5rem; color: var(--text-color-medium-theme); }
+        footer .social-icons a:hover { color: var(--primary-color-theme); }
+        footer .copyright { font-size: 0.75rem; color: var(--text-color-light-theme); margin-top: 1rem; }
+        footer .copyright a { color: var(--primary-color-theme); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+        .modal-overlay.visible { opacity: 1; visibility: visible; transition-delay: 0s; }
+        .modal-content { background-color: var(--card-bg-color-theme); border-radius: var(--border-radius-m); padding: 1.5rem; text-align: center; width: 90%; max-width: 450px; box-shadow: 0 5px 20px var(--shadow-color-theme); position: relative; transform: scale(0.95); opacity: 0; transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+        .modal-overlay.visible .modal-content { transform: scale(1); opacity: 1; transition-delay: 0.05s; }
+        .modal-close-btn { position: absolute; top: 0.5rem; right: 0.5rem; font-size: 1.5rem; color: var(--text-color-light-theme); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+        #modal-step-final i.icon { font-size: 3rem; color: var(--primary-color-theme); margin-bottom: 1rem; }
+        #modal-step-final h2 { font-family: 'Playfair Display', sans-serif; font-size: 1.5rem; color: var(--primary-color-theme); margin-bottom: 0.5rem; }
+        #modal-step-final p { font-size: 0.9rem; color: var(--text-color-medium-theme); margin-bottom: 0.75rem; }
+        #modal-step-final strong { color: var(--text-color-dark-theme); }
+
+        .theme-switcher { position: fixed; bottom: 1rem; right: 1rem; z-index: 150; background-color: var(--card-bg-color-theme); padding: 0.5rem; border-radius: var(--border-radius-m); box-shadow: 0 2px 10px var(--shadow-color-theme); display: flex; gap: 0.5rem; border: 1px solid var(--glass-border-color-theme); }
+        .theme-switcher button { padding: 0.5rem; font-size: 1rem; border-radius: var(--border-radius-s); min-width: 36px; color: var(--text-color-medium-theme); border: 1px solid transparent; }
+        .theme-switcher button:hover { color: var(--primary-color-theme); background-color: rgba(var(--primary-color-theme), 0.1); }
+        .theme-switcher button.active-theme { background-color: var(--primary-color-theme); color: var(--body-bg-color-theme); border-color: var(--primary-color-theme); }
+        body.theme-dark .theme-switcher button.active-theme { color: #1C1C1E; }
+        body.theme-pastel .theme-switcher button.active-theme { color: var(--text-color-dark-theme); }
+
+        /* --- CONFETTI CANVAS FIX --- */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through */
+            z-index: 9999;      /* Ensures it's on top of other content */
+        }
+
+        /* --- DESKTOP STYLES (Enhancements from mobile base) --- */
+        @media (min-width: 768px) {
+            :root { --font-size-h1: clamp(2.5rem, 6vw + 1rem, 4.5rem); --font-size-h2: clamp(2rem, 4vw + 0.8rem, 3rem); /* ... */ }
+            .container { width: 85%; max-width: 1100px; } .section { padding: 3.5rem 0; }
+            .section-title { font-size: var(--font-size-h2); margin-bottom: 2.5rem; } .section-title::after { width: 90px; }
+            .content-card { padding: 2.5rem; margin-bottom: 2.5rem; }
+            .content-card:hover { transform: translateY(-6px); box-shadow: 0 8px 25px rgba(var(--shadow-color-theme), 0.15); }
+            .nav-toggle { display: none; }
+            .nav-links { position: static; width: auto; height: auto; background-color: transparent; padding: 0; flex-direction: row; align-items: center; gap: 1.75rem; transition: none; box-shadow: none; border-left: none; }
+            .nav-links li a { padding: 0.5rem 0; font-size: var(--font-size-small); background-color: transparent !important; }
+            .nav-links li a.active { border-bottom: 2px solid var(--primary-color-theme); padding-bottom: calc(0.5rem - 2px); }
+            #hero { padding: 8rem 15px 5rem; }
+            #heroSubtitle { font-size: clamp(1.1rem, 2.8vw, 1.4rem); margin-bottom: 1.75rem; }
+            #heroPromotionDates { font-size: clamp(0.85rem, 2.2vw, 1.05rem); margin-bottom: 2.25rem; }
+            .countdown-timer-container { margin-bottom: 2.5rem; } .countdown-timer { gap: 1.25rem; }
+            .time-segment { padding: 1rem 1.25rem; min-width: 80px; }
+            .time-value { font-size: clamp(1.75rem, 5.5vw, 2.8rem); } .time-label { font-size: clamp(0.7rem, 1.8vw, 0.85rem); }
+            #heroCta.button-primary { padding: clamp(0.9rem, 2.8vw, 1.3rem) clamp(2rem, 6vw, 3.5rem); font-size: clamp(1.05rem, 3vw, 1.4rem); }
+            #prizeMainImage { margin-bottom: 2rem; max-width: 550px; margin-left:auto; margin-right:auto; }
+            .prize-gallery-thumbnails { gap: 1rem; margin-bottom: 2rem; } .thumbnail-image { width: 70px; height: 70px; }
+            #prizeName { font-size: var(--font-size-h3); } #prizeValue { font-size: var(--font-size-large); }
+            .steps-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; }
+            .step-item i { font-size: 3.5rem; } .form-grid { gap: 1.5rem; }
+            .input-wrapper input { padding: 1rem 1.25rem; padding-left: 3rem; }
+            .input-wrapper i { left: 1.125rem; font-size: 1.05rem; }
+            footer { padding: 3.5rem 0 2.5rem; margin-top: 4rem; }
+            footer .organizer-logo img { max-height: 55px; } footer h4 { font-size: var(--font-size-large); }
+            .modal-content { padding: 2.5rem; max-width: 500px; }
+            #modal-step-final i.icon { font-size: 4rem; } #modal-step-final h2 { font-size: var(--font-size-h3); }
+        }
+    </style>
+</head>
+<body id="pageBody">
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="theme-switcher" id="themeSwitcher">
+        <button data-theme="light" aria-label="Light Theme">☀️</button>
+        <button data-theme="dark" aria-label="Dark Theme">🌙</button>
+        <button data-theme="pastel" aria-label="Pastel Theme">🌸</button>
+    </div>
+
+    <nav class="main-nav" id="mainNav">
+        <div class="container">
+            <a href="#" class="logo" id="navBrandLogo">Giveaway Name</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul id="navLinksList" class="nav-links">
+                <li><a href="#hero" class="active">Home</a></li>
+                <li><a href="#prize-details">Prize</a></li>
+                <li><a href="#how-to-enter">How to Enter</a></li>
+                <li><a href="#entry-form">Enter</a></li>
+                <li><a href="#rules">Rules</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="hero" class="section">
+        <div class="hero-content-wrapper">
+            <h1 class="hero-title-line" id="heroTitle"></h1>
+            <p class="section-subtitle hero-subtitle-animated" id="heroSubtitle"></p>
+            <p id="heroPromotionDates" class="hero-dates-animated"></p>
+            <div class="countdown-timer-container hero-countdown-animated" id="countdownTimerContainer">
+                <div class="countdown-timer">
+                    <div class="time-segment"><span id="days" class="time-value">00</span><span class="time-label">Days</span></div>
+                    <div class="time-segment"><span id="hours" class="time-value">00</span><span class="time-label">Hours</span></div>
+                    <div class="time-segment"><span id="minutes" class="time-value">00</span><span class="time-label">Minutes</span></div>
+                    <div class="time-segment"><span id="seconds" class="time-value">00</span><span class="time-label">Seconds</span></div>
+                </div>
+                <p class="giveaway-ended-message" style="display:none;">This giveaway has ended!</p>
+            </div>
+            <a href="#entry-form" class="button-primary hero-cta-animated" id="heroCta">
+                Enter Now <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <div class="hero-bg-overlay"></div>
+    </section>
+
+    <main>
+        <section id="prize-details" class="section">
+            <div class="container">
+                <div class="content-card">
+                    <h2 class="section-title">Prize Details</h2>
+                    <p class="section-subtitle" id="prizeLimitedOffer"></p>
+                    <img src="https://via.placeholder.com/600x400/eee/ccc?text=Prize+Image" alt="Prize Image" id="prizeMainImage" class="prize-main-image">
+                    <div class="prize-gallery-thumbnails" id="prizeGalleryThumbnails"></div>
+                    <div class="text-center">
+                        <h3 id="prizeName">Awesome Prize Name</h3>
+                        <p id="prizeValue">$XXX Value</p>
+                    </div>
+                    <p id="prizeDescription">A detailed and exciting description of the amazing prize you can win by entering this fantastic giveaway. Make it sound irresistible!</p>
+                    <div id="prizeIncludedList">
+                        <h3 style="margin-top:1rem;">What's Included:</h3>
+                        <ul></ul>
+                    </div>
+                    <div class="text-center" style="margin-top:1.5rem;">
+                         <a href="#entry-form" class="button-primary" id="prizeCta">WIN THIS PRIZE <i class="fas fa-gift"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-to-enter" class="section">
+            <div class="container">
+                <h2 class="section-title">How to Enter</h2>
+                <p class="section-subtitle">It's super easy to enter! Just follow these simple steps.</p>
+                <div class="content-card">
+                    <div class="steps-grid" id="howToEnterSteps"></div>
+                </div>
+                <div class="content-card" style="margin-top:1rem;">
+                    <ul class="highlights-list" id="howToEnterHighlights"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="entry-form" class="section">
+            <div class="container">
+                <div class="content-card" id="entryFormCard">
+                    <h2 class="section-title">Enter Now!</h2>
+                    <p class="section-subtitle" id="entryFormSubtitle">Don't miss your chance to win.</p>
+                    <p class="text-center" id="entryFormCount"></p>
+                    <form id="giveawayEntryForm" style="margin-top:1rem;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="fullName">Your Name:</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="fullName" name="fullName" placeholder="e.g., Alex Winner" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address:</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="email" name="email" placeholder="e.g., alex@example.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="button-primary" id="entryFormSubmitButton">
+                                    <span class="button-text">Enter Giveaway</span>
+                                    <i class="fas fa-spinner fa-spin" style="display:none; margin-left:0.5rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="social-share-prompt" id="entryFormSocialPrompt"></p>
+                    <div class="form-social-icons" id="entryFormSocialIcons"></div>
+                    <p class="form-terms" id="entryFormTerms"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="rules" class="section">
+            <div class="container">
+                 <h2 class="section-title">Rules & Eligibility</h2>
+                <p class="section-subtitle">Please read the fine print before entering.</p>
+                <div class="content-card">
+                    <div class="rules-text-block" id="rulesFairSelection"></div>
+                    <div class="rules-text-block" id="rulesImportantNotice"></div>
+                    <ul class="faq-list" id="rulesFaqList"></ul>
+                    <a href="#" target="_blank" class="button-primary download-rules-link" id="rulesPdfLink" style="display:none;">Download Full Rules <i class="fas fa-file-pdf"></i></a>
+                </div>
+                <div class="content-card" style="margin-top:1rem;">
+                    <h3 style="text-align:center; font-size: 1.25rem; color:var(--primary-color-theme); margin-bottom:1rem;">Tips for Entering:</h3>
+                    <ul class="tips-list" id="rulesTipsList"></ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer-contact">
+        <div class="container">
+            <div class="organizer-logo" style="margin-bottom:1rem;">
+                <img src="https://via.placeholder.com/150x50/ccc/888?text=Organizer+Logo" alt="Organizer Logo" id="footerOrganizerLogo">
+            </div>
+            <h4>Get In Touch</h4>
+            <p id="footerOrganizerName"></p>
+            <p><i class="fas fa-envelope"></i> <a href="" id="footerContactEmailLink"><span id="footerContactEmail"></span></a></p>
+            <p><i class="fas fa-phone"></i> <a href="" id="footerContactPhoneLink"><span id="footerContactPhone"></span></a></p>
+            <p><i class="fas fa-map-marker-alt"></i> <span id="footerOrganizerAddress"></span></p>
+            <div class="social-icons" id="footerSocialIcons"></div>
+            <p class="copyright" id="footerCopyright"></p>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="successModalOverlay">
+        <div class="modal-content" id="successModalContent">
+            <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close"><i class="fas fa-times"></i></button>
+            <div id="modal-step-final" style="display: none;">
+                 <i class="fas fa-gift icon"></i>
+                 <h2 id="modalHeader">You're In!</h2>
+                 <p id="modalMainMessage">Your entry for the <strong id="modalGiveawayName">Giveaway</strong> has been submitted. Good luck!</p>
+                 <p id="modalEmailPrompt">Winners will be notified via email.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+                 // ========================================================================
+         // ★★★ GIVEAWAY CONFIGURATION AREA START ★★★
+         // ========================================================================
+         const config = {
+            giveaway: {
+                name: "Burger Jabs Feast", // Used for modal, etc.
+                heroHeadline: "Win a <span class='highlight'>$100 Burger Feast</span> at Burger Jabs!", // Supports HTML
+                heroSubheadline: "Enter for a chance to indulge in a $100 meal at Burger Jabs—where family, flavor, and community come together!",
+                promotionDates: "Promotion runs from May 9, 2025 until June 9, 2025.",
+                endDate: "2025-06-09T23:59:59", // Format: YYYY-MM-DDTHH:MM:SS (for countdown)
+                heroBackgroundImageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1990&q=80", // Burger specific
+                heroCtaText: "Enter Now for a Feast!",
+                entryFormCtaText: "Count Me In!",
+                successModalHeaderText: "🎉 You're In! 🎉",
+                successModalMainMessage: "Your entry for the <strong>Burger Jabs $100 Feast Giveaway</strong> has been successfully submitted. Best of luck!", // Supports HTML
+                successModalEmailPrompt: "We'll announce the winner via email after the draw date. Keep an eye on your inbox!",
+            },
+            prize: {
+                name: "Burger Jabs $100 Family Feast Voucher",
+                value: "$100 Value",
+                description: "Get ready to treat your family (or yourself!) to an unforgettable meal. You're entering for a chance to win a $100 gift voucher to enjoy juicy burgers, crispy fries, refreshing drinks, and more at Burger Jabs—the newest local hotspot that brings community and incredible flavor together under one roof.",
+                images: [
+                    { src: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80", alt: "Delicious Burger Combo" },
+                    { src: "https://images.unsplash.com/photo-1606131731446-5568087118aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80", alt: "Another view of burgers" },
+                    { src: "https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80", alt: "Fries and Burger" }
+                ],
+                includedItems: [
+                    { icon: "fas fa-ticket-alt", text: "Exclusive $100 gift voucher for anything on the menu" },
+                    { icon: "fas fa-users", text: "Perfect for a family feast or a treat with friends" },
+                    { icon: "fas fa-store-alt", text: "Support a fantastic local business: Burger Jabs" },
+                    { icon: "fas fa-check-circle", text: "No purchase necessary to enter or win" },
+                    { icon: "fas fa-bolt", text: "Quick and easy online entry!" }
+                ],
+                limitedTimeOfferText: "🎁 Limited Time Giveaway!",
+                ctaButtonText: "I WANT TO WIN THIS!"
+            },
+            howToEnter: {
+                steps: [
+                    { icon: "fas fa-keyboard", title: "Fill the Form", description: "Simply enter your name and email address in the form below. It takes less than 30 seconds!" },
+                    { icon: "fas fa-share-alt", title: "Share (Optional)", description: "Spread the word on social media using the links after you enter. (Sharing is caring, but not required for entry!)" },
+                    { icon: "fas fa-envelope-open-text", title: "Check Your Email", description: "We'll contact the winner via email. Make sure you enter a valid email address and check your spam folder too!" }
+                ],
+                highlights: [
+                    { icon: "fas fa-stopwatch", text: "Quick & Easy Entry" },
+                    { icon: "fas fa-gift", text: "Amazing $100 Prize" },
+                    { icon: "fas fa-smile", text: "Free to Enter!" }
+                ]
+            },
+            entryForm: {
+                subtitle: "Provide your details below for a chance to win this delicious prize!",
+                entryCountText: "Over 500+ entries already! Don't miss out!",
+                socialSharePrompt: "Tell your friends about this awesome giveaway:",
+                sharePlatforms: {
+                    facebook: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href),
+                    twitter: "https://twitter.com/intent/tweet?url=" + encodeURIComponent(window.location.href) + "&text=" + encodeURIComponent("Check out this amazing Burger Jabs giveaway!"),
+                },
+                termsText: "By entering, you agree to our <a href='YOUR_TERMS_LINK_HERE' target='_blank'>Terms & Conditions</a> and <a href='YOUR_PRIVACY_POLICY_LINK_HERE' target='_blank'>Privacy Policy</a>."
+            },
+            rules: {
+                fairSelectionInfo: {
+                    title: "Fair & Square Selection",
+                    text: "Our winner selection process is completely random and unbiased, ensuring everyone has an equal chance. The draw will be conducted using a certified random number generator."
+                },
+                importantNotice: {
+                    title: "Winner Notification - Check Your Email!",
+                    text: "The lucky winner will be contacted exclusively via the email address provided during entry. Please ensure your email is correct. We recommend checking your inbox, promotions tab, and spam/junk folder regularly after the giveaway concludes."
+                },
+                faq: [
+                    { q: "Who is eligible to enter?", a: "This giveaway is open to legal residents of [Your City/Region/Country] who are 18 years of age or older at the time of entry." },
+                    { q: "How long does the giveaway run?", a: "The giveaway starts on May 9, 2025, and all entries must be received by June 9, 2025, at 11:59 PM [Your Timezone]." },
+                    { q: "How will the winner be selected?", a: "One (1) winner will be selected in a random drawing from all eligible entries received during the promotion period." },
+                    { q: "When and how will the winner be notified?", a: "The potential winner will be notified by email on or about June 12, 2025. They will have [e.g., 48 hours] to respond and claim their prize." },
+                    { q: "How many times can I enter?", a: "Limit one (1) entry per person/email address during the entire promotion period. Duplicate entries will be disqualified." },
+                    { q: "Is my information secure?", a: "We respect your privacy. Your information will be used solely for the purpose of this giveaway and in accordance with our Privacy Policy. We do not sell your data." }
+                ],
+                fullRulesPdfLink: "#", // Link to a PDF if you have one, or set to null/empty to hide.
+                tips: [
+                    "Double-check your email address for typos before submitting.",
+                    "Add our contact email (if provided in footer) to your address book to ensure you receive notifications.",
+                    "Follow [Organizer Name] on social media for winner announcements (optional)."
+                ]
+            },
+            footerContact: {
+                organizerName: "Burger Jabs Restaurant",
+                organizerLogoUrl: "https://via.placeholder.com/200x60/FF7A00/4A3F35?text=Burger+Jabs",
+                email: "hello@burgerjabs.com",
+                phone: "(555) 123-BURGER",
+                address: "123 Delicious Lane, Foodie Town, USA",
+                social: {
+                    facebook: "#",
+                    instagram: "#",
+                },
+                copyrightOwner: "Burger Jabs Co."
+            },
+            meta: {
+                pageTitle: "Burger Jabs $100 Feast Giveaway!",
+                navBrandLogoText: "Burger Jabs",
+                privacyPolicyLink: "#privacy",
+                termsLink: "#terms",
+            },
+            settings: {
+                webhookUrl: "YOUR_N8N_OR_FORM_HANDLER_WEBHOOK_URL",
+                confettiColors: ['#FF7A00', '#FFC107', '#4CAF50', '#FFFFFF', '#FFF5E6'],
+                showCountdownInHero: true,
+            },
+            modalQuestions: []
+         };
+         // ========================================================================
+         // ★★★ GIVEAWAY CONFIGURATION AREA END ★★★
+         // ========================================================================
+         
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Full Script Loaded. Config available:", !!config);
+            if (!config) { alert("ERROR: Config missing!"); return; }
+
+            const pageBody = document.getElementById('pageBody');
+            const mainNav = document.getElementById('mainNav');
+            const navToggle = document.getElementById('navToggle');
+            const navLinksList = document.getElementById('navLinksList');
+            const heroSection = document.getElementById('hero');
+            const heroTitleElement = document.getElementById('heroTitle');
+            const sectionsToObserve = document.querySelectorAll('.section:not(#hero)');
+
+            const themeSwitcher = document.getElementById('themeSwitcher');
+            const submitButton = document.getElementById('entryFormSubmitButton');
+            const spinnerIcon = submitButton?.querySelector('.fa-spinner');
+            const successModal = document.getElementById('successModalOverlay');
+            const modalClose = document.getElementById('modalCloseBtn');
+            const modalFinalStep = document.getElementById('modal-step-final');
+            const myConfettiInstance = (typeof confetti === 'function' && document.getElementById('confetti-canvas'))
+                ? confetti.create(document.getElementById('confetti-canvas'), { resize: true, useWorker: true }) : null;
+
+            // --- Theme Management ---
+            const THEME_KEY = 'giveawayPageTheme_vFinal4'; // Updated key
+            function applyTheme(theme) {
+                if (!pageBody) return;
+                pageBody.classList.remove('theme-dark', 'theme-pastel');
+                if (theme && theme !== 'light') pageBody.classList.add(`theme-${theme}`);
+                localStorage.setItem(THEME_KEY, theme);
+                if (themeSwitcher) {
+                    themeSwitcher.querySelectorAll('button').forEach(b => {
+                        b.classList.toggle('active-theme', b.dataset.theme === theme);
+                    });
+                }
+                if (config.settings) {
+                    if (theme === 'dark') config.settings.confettiColors = ['#FFA726', '#FFEE58', '#66BB6A', '#424242', '#555555'];
+                    else if (theme === 'pastel') config.settings.confettiColors = ['#A2D5AB', '#F2BDBD', '#FFEAB6', '#FAF7F2', '#E8E8E8'];
+                    else config.settings.confettiColors = ['#FF7A00', '#FFC107', '#4CAF50', '#FFFFFF', '#FFF8F0'];
+                }
+            }
+            if (themeSwitcher) themeSwitcher.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON' && e.target.dataset.theme) applyTheme(e.target.dataset.theme); });
+            applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+
+            // --- Mobile Navigation ---
+            if (navToggle && navLinksList && pageBody) {
+                navToggle.addEventListener('click', () => { const isOpen = navLinksList.classList.toggle('nav-open'); pageBody.classList.toggle('nav-open', isOpen); navToggle.setAttribute('aria-expanded', isOpen); navToggle.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>'; });
+                navLinksList.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { if (navLinksList.classList.contains('nav-open')) { navLinksList.classList.remove('nav-open'); pageBody.classList.remove('nav-open'); navToggle.setAttribute('aria-expanded', 'false'); navToggle.innerHTML = '<i class="fas fa-bars"></i>'; } }); });
+            }
+
+            // --- Scrollspy & Header Scroll ---
+            const allNavSectionsForScroll = document.querySelectorAll('.section, footer#footer-contact');
+            window.addEventListener('scroll', () => {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop; if (mainNav) mainNav.classList.toggle('scrolled', scrollTop > 30); let currentSectionId = 'hero'; const offset = (mainNav ? mainNav.offsetHeight : 0) + 150; allNavSectionsForScroll.forEach(section => { if (section.offsetTop - offset < scrollTop) currentSectionId = section.id; }); if (navLinksList) navLinksList.querySelectorAll('a').forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${currentSectionId}`));
+            }, { passive: true });
+
+
+            // --- Intersection Observer for Section Visibility ---
+            const sectionObserverOptions = {
+                root: null, // relative to the viewport
+                rootMargin: "0px 0px -50px 0px", // trigger when 50px from bottom of viewport
+                threshold: 0.05 // trigger when 5% of the element is visible
+            };
+
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        console.log("Section intersecting, making visible:", entry.target.id);
+                        entry.target.classList.add('visible');
+                        const childrenToAnimate = entry.target.querySelectorAll('.step-item, .form-group');
+                        childrenToAnimate.forEach((child, index) => {
+                            child.style.transitionDelay = `${index * 0.075}s`;
+                            child.classList.add('animate-in');
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, sectionObserverOptions);
+
+            if (sectionsToObserve.length > 0) {
+                sectionsToObserve.forEach(section => {
+                    console.log("Observing section:", section.id);
+                    sectionObserver.observe(section);
+                });
+            } else {
+                console.warn("No sections (excluding hero) found for Intersection Observer.");
+            }
+
+            // --- Helper functions ---
+            function setText(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.textContent = value; else if(!el && value !== undefined) console.warn(`setText: ID '${id}' not found.`);}
+            function setHTML(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.innerHTML = value; else if(!el && value !== undefined) console.warn(`setHTML: ID '${id}' not found.`);}
+            function setSrc(id, value, alt = '') { const el = document.getElementById(id); if (el && value !== undefined) { el.src = value; el.alt = alt; } else if(!el && value !== undefined) console.warn(`setSrc: ID '${id}' not found.`);}
+            function setHref(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.href = value; else if(!el && value !== undefined) console.warn(`setHref: ID '${id}' not found.`);}
+            function populateSocialIcons(containerId, socialLinks) {
+                 const container = document.getElementById(containerId); if (!container) { console.warn(`Social container '${containerId}' not found.`); return; } container.innerHTML = ''; const platformIcons = { facebook: 'fab fa-facebook-f', instagram: 'fab fa-instagram', twitter: 'fab fa-twitter', pinterest: 'fab fa-pinterest-p'}; let shareUrl = window.location.href; let shareText = encodeURIComponent((config.giveaway?.name ? `Check out the ${config.giveaway.name} giveaway!` : "Check out this awesome giveaway!")); if(socialLinks && typeof socialLinks === 'object'){ for (const platform in socialLinks) { let url = socialLinks[platform]; if (platform === 'facebook' && url === "#") url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`; if (platform === 'twitter' && url === "#") url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`; if (url && url !== "") { const iconClass = platformIcons[platform]; if (iconClass) { const link = document.createElement('a'); link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.setAttribute('aria-label', platform); link.innerHTML = `<i class="${iconClass}"></i>`; container.appendChild(link); }}}}
+            }
+
+            // --- Typewriter Effect for Hero ---
+            function typeWriter() {
+                const textToType = config.giveaway?.heroHeadline || "Welcome!"; let i = 0; const speed = 50;
+                if (!heroTitleElement) { if (heroSection) heroSection.classList.add('content-loaded'); console.error("Hero title element not found."); return; }
+                heroTitleElement.innerHTML = ''; heroTitleElement.classList.add('typing'); heroTitleElement.style.opacity = '1';
+                function type() {
+                    if (i < textToType.length) { if (textToType.charAt(i) === '<') { const tagEnd = textToType.indexOf('>', i); if (tagEnd !== -1) { heroTitleElement.innerHTML += textToType.substring(i, tagEnd + 1); i = tagEnd; } else { heroTitleElement.innerHTML += textToType.charAt(i); }} else { heroTitleElement.innerHTML += textToType.charAt(i); } i++; setTimeout(type, speed + Math.random() * 20 - 10); } else { heroTitleElement.classList.remove('typing'); if (heroSection) heroSection.classList.add('content-loaded'); console.log("Typewriter finished."); }
+                } type();
+            }
+
+            // --- Populate Data ---
+            function populateSimpleData() {
+                console.log("Populating data..."); if (!config) { return; }
+                try { document.title = config.meta?.pageTitle || "Giveaway"; setText('navBrandLogo', config.meta?.navBrandLogoText); } catch (e) { console.error("Err Meta:", e); }
+                try { if (config.giveaway) { setText('heroSubtitle', config.giveaway.heroSubheadline); setText('heroPromotionDates', config.giveaway.promotionDates); const hCta = document.getElementById('heroCta'); if (hCta && config.giveaway.heroCtaText) hCta.innerHTML = `${config.giveaway.heroCtaText} <i class="fas fa-arrow-right"></i>`; if (config.giveaway.endDate && document.getElementById('countdownTimerContainer')) startCountdown(); else { const cEl = document.getElementById('countdownTimerContainer'); if (cEl) cEl.style.display = 'none'; } } } catch (e) { console.error("Err Hero Data:", e); }
+                try { if (config.prize) {
+                    if(config.prize.limitedTimeOfferText) setText('prizeLimitedOffer', config.prize.limitedTimeOfferText); else {const el=document.getElementById('prizeLimitedOffer'); if(el)el.style.display='none';}
+                    const pImg = document.getElementById('prizeMainImage'), pThumbs = document.getElementById('prizeGalleryThumbnails');
+                    if (pImg && config.prize.images?.length) {
+                        setSrc('prizeMainImage', config.prize.images[0].src, config.prize.images[0].alt);
+                        if (pThumbs && config.prize.images.length > 1) { pThumbs.innerHTML = ''; config.prize.images.forEach((img, idx) => { const t = document.createElement('img'); t.src = img.src; t.alt = img.alt; t.className = 'thumbnail-image'; if(idx===0)t.classList.add('active'); t.onclick=()=>{setSrc('prizeMainImage',img.src,img.alt);pThumbs.querySelectorAll('.thumbnail-image').forEach(th=>th.classList.remove('active'));t.classList.add('active');}; pThumbs.appendChild(t);}); } else if (pThumbs) pThumbs.style.display = 'none';
+                    } else if (pImg) pImg.style.display = 'none';
+                    setText('prizeName', config.prize.name); setText('prizeValue', config.prize.value); setText('prizeDescription', config.prize.description);
+                    const incList = document.querySelector('#prizeIncludedList ul'); if (incList && config.prize.includedItems) { incList.innerHTML = ''; config.prize.includedItems.forEach(it => {const li=document.createElement('li');li.innerHTML=`<i class="${it.icon||'fas fa-check'}"></i> <span>${it.text}</span>`;incList.appendChild(li);});}
+                    const pCta = document.getElementById('prizeCta'); if (pCta && config.prize.ctaButtonText) pCta.innerHTML = `${config.prize.ctaButtonText} <i class="fas fa-gift"></i>`;
+                } } catch(e) { console.error("Err Prize:", e); }
+                try { if(config.howToEnter){ const stepsC = document.getElementById('howToEnterSteps'); if(stepsC && config.howToEnter.steps){stepsC.innerHTML=''; config.howToEnter.steps.forEach(s => {stepsC.innerHTML+=`<div class="step-item"><i class="${s.icon||'fas fa-info-circle'}"></i><h3>${s.title}</h3><p>${s.description}</p></div>`;});} const hlC = document.getElementById('howToEnterHighlights'); if(hlC && config.howToEnter.highlights){hlC.innerHTML=''; config.howToEnter.highlights.forEach(h => {hlC.innerHTML+=`<li class="highlight-item"><i class="${h.icon||'fas fa-star'}"></i> <span>${h.text}</span></li>`;});} } } catch(e) { console.error("Err HowToEnter:", e); }
+                try { if(config.entryForm){ setText('entryFormSubtitle', config.entryForm.subtitle); setText('entryFormCount', config.entryForm.entryCountText); const subBtnTxt = submitButton?.querySelector('.button-text'); if(subBtnTxt && config.giveaway?.entryFormCtaText) subBtnTxt.textContent = config.giveaway.entryFormCtaText; setText('entryFormSocialPrompt', config.entryForm.socialSharePrompt); populateSocialIcons('entryFormSocialIcons', config.entryForm.sharePlatforms); const termsEl = document.getElementById('entryFormTerms'); if (termsEl && config.entryForm.termsText && config.meta) termsEl.innerHTML = config.entryForm.termsText.replace('YOUR_TERMS_LINK_HERE', config.meta.termsLink||'#').replace('YOUR_PRIVACY_POLICY_LINK_HERE', config.meta.privacyPolicyLink||'#'); } } catch(e) { console.error("Err EntryForm:", e); }
+                try { if(config.rules){ const fairEl = document.getElementById('rulesFairSelection'); if(fairEl && config.rules.fairSelectionInfo) setHTML('rulesFairSelection', `<h3>${config.rules.fairSelectionInfo.title||''}</h3><p>${config.rules.fairSelectionInfo.text||''}</p>`); const noticeEl = document.getElementById('rulesImportantNotice'); if(noticeEl && config.rules.importantNotice) setHTML('rulesImportantNotice', `<h3>${config.rules.importantNotice.title||''}</h3><p>${config.rules.importantNotice.text||''}</p>`); const faqC = document.getElementById('rulesFaqList'); if(faqC && config.rules.faq){faqC.innerHTML='';config.rules.faq.forEach(it=>{const li=document.createElement('li');li.className='faq-item';li.innerHTML=`<div class="faq-question">${it.q}</div><div class="faq-answer">${it.a}</div>`;faqC.appendChild(li);});document.querySelectorAll('.faq-item .faq-question').forEach(q=>q.addEventListener('click',()=>q.parentElement.classList.toggle('open'))); } const pdfL = document.getElementById('rulesPdfLink'); if(pdfL){if(config.rules.fullRulesPdfLink && config.rules.fullRulesPdfLink!=='#'){setHref('rulesPdfLink', config.rules.fullRulesPdfLink);pdfL.style.display='block';}else pdfL.style.display='none';} const tipsC = document.getElementById('rulesTipsList'); if(tipsC && config.rules.tips){tipsC.innerHTML='';const oN=config.footerContact?.organizerName||"organizer";config.rules.tips.forEach(t=>{tipsC.innerHTML+=`<li class="tips-list-item"><i class="fas fa-check-circle"></i> <span>${t.replace("[Organizer Name]",oN)}</span></li>`;});} } } catch(e) { console.error("Err Rules:", e); }
+                try { if(config.footerContact){ const fLogo = document.getElementById('footerOrganizerLogo'); if(fLogo&&config.footerContact.organizerLogoUrl)setSrc('footerOrganizerLogo',config.footerContact.organizerLogoUrl,config.footerContact.organizerName||"Logo");else if(fLogo)fLogo.style.display='none'; setText('footerOrganizerName',config.footerContact.organizerName); const emL=document.getElementById('footerContactEmailLink'),emS=document.getElementById('footerContactEmail');if(emL&&emS&&config.footerContact.email){emL.href=`mailto:${config.footerContact.email}`;emS.textContent=config.footerContact.email;} const phL=document.getElementById('footerContactPhoneLink'),phS=document.getElementById('footerContactPhone');if(phL&&phS&&config.footerContact.phone){phL.href=`tel:${config.footerContact.phone.replace(/\D/g,'')}`;phS.textContent=config.footerContact.phone;} setText('footerOrganizerAddress',config.footerContact.address); populateSocialIcons('footerSocialIcons',config.footerContact.social); const crEl=document.getElementById('footerCopyright');if(crEl&&config.meta)crEl.innerHTML=`© ${new Date().getFullYear()} ${config.footerContact.copyrightOwner||config.footerContact.organizerName||''}. All Rights Reserved. | <a href="${config.meta.privacyPolicyLink||'#'}">Privacy</a> | <a href="${config.meta.termsLink||'#'}">Terms</a>`; } } catch(e) { console.error("Err Footer:", e); }
+                try { if(config.giveaway){ setHTML('modalHeader', config.giveaway.successModalHeaderText);setText('modalGiveawayName',config.giveaway.name);setHTML('modalMainMessage',config.giveaway.successModalMainMessage?.replace('[GiveawayName]',config.giveaway.name||"this giveaway"));setHTML('modalEmailPrompt',config.giveaway.successModalEmailPrompt);} } catch(e) { console.error("Err Modal:", e); }
+                console.log("Data population completed.");
+            }
+            populateSimpleData();
+
+            // --- Countdown Timer ---
+            let countdownIntervalRef; // Ensure this is defined in this scope
+            function startCountdown() {
+                if (countdownIntervalRef) clearInterval(countdownIntervalRef);
+                const timerContainer = document.getElementById('countdownTimerContainer');
+                const endedMessageEl = timerContainer?.querySelector('.giveaway-ended-message');
+                const timeSegmentElements = timerContainer?.querySelectorAll('.time-segment');
+
+                if (!config.giveaway?.endDate || !timerContainer) {
+                    if (timerContainer) timerContainer.style.display = 'none';
+                    console.warn("Countdown: No end date in config or timer container element not found.");
+                    return;
+                }
+                console.log("Starting countdown for date:", config.giveaway.endDate);
+
+                function update() {
+                    const endDate = new Date(config.giveaway.endDate).getTime();
+                    if (isNaN(endDate)) {
+                        clearInterval(countdownIntervalRef);
+                        if (endedMessageEl) {
+                            endedMessageEl.textContent = "Error: Invalid end date provided for countdown.";
+                            endedMessageEl.style.display = 'block';
+                        }
+                        if (timeSegmentElements) timeSegmentElements.forEach(s => s.style.display = 'none');
+                        console.error("Countdown error: Invalid date format from config.", config.giveaway.endDate);
+                        return;
+                    }
+                    const now = new Date().getTime();
+                    const timeLeft = endDate - now;
+
+                    if (timeLeft < 0) {
+                        clearInterval(countdownIntervalRef);
+                        if (timeSegmentElements) timeSegmentElements.forEach(s => s.style.display = 'none');
+                        if (endedMessageEl) endedMessageEl.style.display = 'block';
+                        // Disable buttons
+                        const heroCta = document.getElementById('heroCta');
+                        if (heroCta) { heroCta.innerHTML = "Giveaway Ended"; heroCta.style.pointerEvents = 'none'; heroCta.style.opacity = "0.7"; }
+                        const prizeCta = document.getElementById('prizeCta');
+                        if (prizeCta) { prizeCta.innerHTML = "Giveaway Ended"; prizeCta.style.pointerEvents = 'none'; prizeCta.style.opacity = "0.7"; }
+                        if (submitButton) submitButton.disabled = true;
+                        console.log("Countdown finished.");
+                        return;
+                    }
+
+                    if (endedMessageEl) endedMessageEl.style.display = 'none';
+                    if (timeSegmentElements) timeSegmentElements.forEach(s => { if(s) s.style.display = 'flex';});
+
+
+                    setText('days', String(Math.floor(timeLeft / (1000 * 60 * 60 * 24))).padStart(2, '0'));
+                    setText('hours', String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0'));
+                    setText('minutes', String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0'));
+                    setText('seconds', String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0'));
+                }
+                update();
+                countdownIntervalRef = setInterval(update, 1000);
+            }
+
+
+            // --- Form Submission & Modal ---
+            const giveawayForm = document.getElementById('giveawayEntryForm');
+            if (giveawayForm && submitButton) {
+                giveawayForm.addEventListener('submit', async (e) => { e.preventDefault(); if (submitButton.disabled) return; submitButton.disabled = true; if(spinnerIcon) spinnerIcon.style.display = 'inline-block'; const btnTxt = submitButton.querySelector('.button-text'); if(btnTxt) btnTxt.style.opacity='0.5'; const formData = {fullName:document.getElementById('fullName')?.value,email:document.getElementById('email')?.value,giveawayName:config.giveaway?.name,submittedAt:new Date().toISOString()}; if (config.settings?.webhookUrl && config.settings.webhookUrl !== "YOUR_N8N_OR_FORM_HANDLER_WEBHOOK_URL") { try { /* webhook */ } catch (error) { console.error("Webhook err:", error); }} else { console.log("Demo submit:", formData); await new Promise(r => setTimeout(r, 700));} if (successModal && modalFinalStep) { modalFinalStep.style.display = 'block'; successModal.classList.add('visible'); if (myConfettiInstance && config.settings?.confettiColors) myConfettiInstance({particleCount:100,spread:70,origin:{y:0.6},colors:config.settings.confettiColors});} submitButton.disabled = false; if(spinnerIcon) spinnerIcon.style.display = 'none'; if(btnTxt)btnTxt.style.opacity='1'; giveawayForm.reset(); });
+            }
+            if (modalClose && successModal) { modalClose.addEventListener('click', () => successModal.classList.remove('visible')); successModal.addEventListener('click', (e) => { if(e.target === successModal) successModal.classList.remove('visible'); }); }
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && successModal?.classList.contains('visible')) successModal.classList.remove('visible'); });
+
+            // --- START HERO TYPEWRITER ---
+            if (heroSection) {
+                setTimeout(() => {
+                    if (heroTitleElement) typeWriter();
+                    else if(heroSection) heroSection.classList.add('content-loaded');
+                }, 300); // Adjusted delay
+            }
+
+            console.log("Full script initialization complete.");
+        });
+    </script>
+
+</body>
+</html>
