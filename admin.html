@@ -274,6 +274,7 @@
                 <li><a href="#" data-target="footerContactSection">Footer Contact</a></li>
                 <li><a href="#" data-target="metaSection">Meta/Site Info</a></li>
                 <li><a href="#" data-target="settingsSection">Settings</a></li>
+                <li><a href="#" data-target="deploymentSection">Deployment Info</a></li>
             </ul>
         </nav>
         <main id="contentPanels">
@@ -546,6 +547,31 @@
                         </div>
                     </div>
 
+                    <!-- Deployment Info Section -->
+                    <div id="deploymentSection" class="content-panel">
+                        <h2>Deployment Information</h2>
+                        <div class="form-group">
+                            <label for="deploymentRepoName">Repository Name:</label>
+                            <input type="text" id="deploymentRepoName" name="deploymentRepoName">
+                        </div>
+                        <div class="form-group">
+                            <label for="deploymentRepoUrl">Repository URL:</label>
+                            <input type="url" id="deploymentRepoUrl" name="deploymentRepoUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="deploymentTag">Deployment Tag/Name:</label>
+                            <input type="text" id="deploymentTag" name="deploymentTag">
+                        </div>
+                        <div class="form-group">
+                            <label for="deploymentNetlifyUrl">Netlify URL:</label>
+                            <input type="url" id="deploymentNetlifyUrl" name="deploymentNetlifyUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="deploymentNetlifyId">Netlify Site ID:</label>
+                            <input type="text" id="deploymentNetlifyId" name="deploymentNetlifyId">
+                        </div>
+                    </div>
+
                 </div> <!-- End content-panel-container -->
 
                 <div class="save-area">
@@ -559,7 +585,7 @@
     <!-- Load config first -->
     <script src="config.js"></script>
     <script>
-        // Config object is now loaded from giveaway-config.js
+        // Config object is now loaded from config.js
 
         const adminLayout = document.getElementById('adminLayout');
         const configForm = document.getElementById('configForm');
@@ -808,6 +834,13 @@
             textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
             setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
 
+            // Deployment Info
+            setVal('deploymentRepoName', c.deploymentInfo?.repoName);
+            setVal('deploymentRepoUrl', c.deploymentInfo?.repoUrl);
+            setVal('deploymentTag', c.deploymentInfo?.tag);
+            setVal('deploymentNetlifyUrl', c.deploymentInfo?.netlifyUrl);
+            setVal('deploymentNetlifyId', c.deploymentInfo?.netlifyId);
+
             console.log("Form population complete.");
         }
 
@@ -818,11 +851,11 @@
             messageDiv.textContent = 'Saving...';
             messageDiv.className = '';
 
-            // Create a new config object matching the structure of giveaway-config.js
+            // Create a new config object matching the structure of config.js
             const updatedConfig = {
                 giveaway: {}, prize: { images: [], includedItems: [] }, howToEnter: { steps: [], highlights: [] },
                 entryForm: { sharePlatforms: {} }, rules: { faq: [], tips: [] }, footerContact: { social: {} },
-                meta: {}, settings: { confettiColors: [] }, modalQuestions: [] // Keep structure consistent
+                meta: {}, settings: { confettiColors: [] }, deploymentInfo: {}, modalQuestions: [] // Keep structure consistent, added deploymentInfo
             };
 
             try {
@@ -922,6 +955,13 @@
                 updatedConfig.settings.webhookUrl = config.settings?.webhookUrl; // Keep original webhook URL (read-only field)
                 updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
                 updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
+
+                // Deployment Info
+                updatedConfig.deploymentInfo.repoName = getVal('deploymentRepoName');
+                updatedConfig.deploymentInfo.repoUrl = getVal('deploymentRepoUrl');
+                updatedConfig.deploymentInfo.tag = getVal('deploymentTag');
+                updatedConfig.deploymentInfo.netlifyUrl = getVal('deploymentNetlifyUrl');
+                updatedConfig.deploymentInfo.netlifyId = getVal('deploymentNetlifyId');
 
                 // Preserve empty modalQuestions array from original structure if needed
                 updatedConfig.modalQuestions = Array.isArray(config.modalQuestions) ? [] : undefined;

@@ -448,7 +448,7 @@
     <script src="config.js"></script> <!-- Load config first -->
     <script>
          // ========================================================================
-         // ★★★ GIVEAWAY CONFIGURATION IS NOW IN giveaway-config.js ★★★
+         // ★★★ GIVEAWAY CONFIGURATION IS NOW IN config.js ★★★
          // ========================================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -648,7 +648,58 @@
             // --- Form Submission & Modal ---
             const giveawayForm = document.getElementById('giveawayEntryForm');
             if (giveawayForm && submitButton) {
-                giveawayForm.addEventListener('submit', async (e) => { e.preventDefault(); if (submitButton.disabled) return; submitButton.disabled = true; if(spinnerIcon) spinnerIcon.style.display = 'inline-block'; const btnTxt = submitButton.querySelector('.button-text'); if(btnTxt) btnTxt.style.opacity='0.5'; const formData = {fullName:document.getElementById('fullName')?.value,email:document.getElementById('email')?.value,giveawayName:config.giveaway?.name,submittedAt:new Date().toISOString()}; if (config.settings?.webhookUrl && config.settings.webhookUrl !== "YOUR_N8N_OR_FORM_HANDLER_WEBHOOK_URL") { try { /* webhook */ } catch (error) { console.error("Webhook err:", error); }} else { console.log("Demo submit:", formData); await new Promise(r => setTimeout(r, 700));} if (successModal && modalFinalStep) { modalFinalStep.style.display = 'block'; successModal.classList.add('visible'); if (myConfettiInstance && config.settings?.confettiColors) myConfettiInstance({particleCount:100,spread:70,origin:{y:0.6},colors:config.settings.confettiColors});} submitButton.disabled = false; if(spinnerIcon) spinnerIcon.style.display = 'none'; if(btnTxt)btnTxt.style.opacity='1'; giveawayForm.reset(); });
+                giveawayForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (submitButton.disabled) return;
+                    submitButton.disabled = true;
+                    if(spinnerIcon) spinnerIcon.style.display = 'inline-block';
+                    const btnTxt = submitButton.querySelector('.button-text');
+                    if(btnTxt) btnTxt.style.opacity='0.5';
+
+                    const formData = {
+                        fullName: document.getElementById('fullName')?.value,
+                        email: document.getElementById('email')?.value,
+                        giveawayName: config.giveaway?.name,
+                        submittedAt: new Date().toISOString(),
+                        deploymentInfo: config.deploymentInfo // Added deploymentInfo
+                    };
+
+                    console.log("Form data to be sent:", JSON.stringify(formData, null, 2)); // DEBUGGING LINE
+
+                    if (config.settings?.webhookUrl && config.settings.webhookUrl !== "YOUR_N8N_OR_FORM_HANDLER_WEBHOOK_URL") {
+                        try {
+                            const response = await fetch(config.settings.webhookUrl, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(formData)
+                            });
+                            if (!response.ok) {
+                                console.error("Webhook submission failed:", response.status, await response.text());
+                                // Optionally, show an error to the user
+                            } else {
+                                console.log("Webhook submission successful:", await response.json());
+                            }
+                        } catch (error) {
+                            console.error("Webhook submission error:", error);
+                            // Optionally, show an error to the user
+                        }
+                    } else {
+                        console.log("Demo submit (webhook URL not configured or is placeholder):", formData);
+                        await new Promise(r => setTimeout(r, 700)); // Simulate network delay
+                    }
+
+                    if (successModal && modalFinalStep) {
+                        modalFinalStep.style.display = 'block';
+                        successModal.classList.add('visible');
+                        if (myConfettiInstance && config.settings?.confettiColors) {
+                            myConfettiInstance({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: config.settings.confettiColors });
+                        }
+                    }
+                    submitButton.disabled = false;
+                    if(spinnerIcon) spinnerIcon.style.display = 'none';
+                    if(btnTxt) btnTxt.style.opacity='1';
+                    giveawayForm.reset();
+                });
             }
             if (modalClose && successModal) { modalClose.addEventListener('click', () => successModal.classList.remove('visible')); successModal.addEventListener('click', (e) => { if(e.target === successModal) successModal.classList.remove('visible'); }); }
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && successModal?.classList.contains('visible')) successModal.classList.remove('visible'); });
