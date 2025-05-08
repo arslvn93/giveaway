@@ -113,7 +113,7 @@
             padding: 5rem 15px 2rem; /* Adjust top padding if nav height changes */
             text-align: center; position: relative; overflow: hidden;
         }
-        .hero-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.25)); z-index: 1; opacity: 0; transition: opacity 1s ease-in-out 0.5s; }
+        .hero-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1; opacity: 0; transition: opacity 1s ease-in-out 0.5s; }
         body.theme-dark .hero-bg-overlay { background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)); }
         body.theme-pastel .hero-bg-overlay { background: linear-gradient(rgba(var(--primary-color-theme),0.03), rgba(var(--secondary-color-theme),0.08)); }
         #hero.content-loaded .hero-bg-overlay { opacity: 1; }
@@ -562,7 +562,37 @@
             function populateSimpleData() {
                 console.log("Populating data..."); if (!config) { return; }
                 try { document.title = config.meta?.pageTitle || "Giveaway"; setText('navBrandLogo', config.meta?.navBrandLogoText); } catch (e) { console.error("Err Meta:", e); }
-                try { if (config.giveaway) { setText('heroSubtitle', config.giveaway.heroSubheadline); setText('heroPromotionDates', config.giveaway.promotionDates); const hCta = document.getElementById('heroCta'); if (hCta && config.giveaway.heroCtaText) hCta.innerHTML = `${config.giveaway.heroCtaText} <i class="fas fa-arrow-right"></i>`; if (config.giveaway.endDate && document.getElementById('countdownTimerContainer')) startCountdown(); else { const cEl = document.getElementById('countdownTimerContainer'); if (cEl) cEl.style.display = 'none'; } } } catch (e) { console.error("Err Hero Data:", e); }
+                try {
+                    if (config.giveaway) {
+                        setText('heroSubtitle', config.giveaway.heroSubheadline);
+                        setText('heroPromotionDates', config.giveaway.promotionDates);
+                        const hCta = document.getElementById('heroCta');
+                        if (hCta && config.giveaway.heroCtaText) {
+                            hCta.innerHTML = `${config.giveaway.heroCtaText} <i class="fas fa-arrow-right"></i>`;
+                        }
+
+                        // Set Hero Background Image
+                        // heroSection is defined globally in the DOMContentLoaded scope (const heroSection = document.getElementById('hero');)
+                        if (heroSection && config.giveaway.heroBackgroundImageUrl && config.giveaway.heroBackgroundImageUrl.trim() !== '') {
+                            heroSection.style.backgroundImage = `url('${config.giveaway.heroBackgroundImageUrl}')`;
+                            heroSection.style.backgroundSize = 'cover';
+                            heroSection.style.backgroundPosition = 'center';
+                            heroSection.style.backgroundRepeat = 'no-repeat';
+                        } else if (heroSection) {
+                            // Optional: Clear any existing background image if URL is missing or empty
+                            heroSection.style.backgroundImage = ''; // Clear if no URL
+                        }
+
+                        if (config.giveaway.endDate && document.getElementById('countdownTimerContainer')) {
+                            startCountdown();
+                        } else {
+                            const cEl = document.getElementById('countdownTimerContainer');
+                            if (cEl) cEl.style.display = 'none';
+                        }
+                    }
+                } catch (e) {
+                    console.error("Err Hero Data:", e);
+                }
                 try { if (config.prize) {
                     if(config.prize.limitedTimeOfferText) setText('prizeLimitedOffer', config.prize.limitedTimeOfferText); else {const el=document.getElementById('prizeLimitedOffer'); if(el)el.style.display='none';}
                     const pImg = document.getElementById('prizeMainImage'), pThumbs = document.getElementById('prizeGalleryThumbnails');
