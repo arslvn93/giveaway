@@ -114,7 +114,6 @@ const config = {
       "facebook": "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href),
       "twitter": "https://twitter.com/intent/tweet?url=" + encodeURIComponent(window.location.href) + "&text=" + encodeURIComponent("Check out this amazing Burger Jabs giveaway!")
     },
-    "termsText": "By entering, you agree to our <a href='YOUR_TERMS_LINK_HERE' target='_blank'>Terms & Conditions</a> and <a href='YOUR_PRIVACY_POLICY_LINK_HERE' target='_blank'>Privacy Policy</a>."
   },
   "rules": {
     "fairSelectionInfo": {
@@ -151,7 +150,6 @@ const config = {
         "a": "We respect your privacy. Your information will be used solely for the purpose of this giveaway and in accordance with our Privacy Policy. We do not sell your data."
       }
     ],
-    "fullRulesPdfLink": "",
     "tips": [
       "Double-check your email address for typos before submitting.",
       "Add our contact email (if provided in footer) to your address book to ensure you receive notifications.",
@@ -173,8 +171,6 @@ const config = {
   "meta": {
     "pageTitle": "Burger Jabs $100 Feast Giveaway!",
     "navBrandLogoText": "Burger Jabs",
-    "privacyPolicyLink": "",
-    "termsLink": ""
   },
   "settings": {
     "webhookUrl": "https://n8n.salesgenius.co/webhook/giveawayupdate",

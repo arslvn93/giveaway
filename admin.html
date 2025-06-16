@@ -413,10 +413,6 @@
                             <label for="entryFormSocialSharePrompt">Social Share Prompt Text:</label>
                             <textarea id="entryFormSocialSharePrompt" name="entryFormSocialSharePrompt"></textarea>
                         </div>
-                         <div class="form-group">
-                            <label for="entryFormTermsText">Terms Text (Use placeholders YOUR_TERMS_LINK_HERE and YOUR_PRIVACY_POLICY_LINK_HERE):</label>
-                            <textarea id="entryFormTermsText" name="entryFormTermsText"></textarea>
-                        </div>
                          <!-- Note: Share platform URLs are generated dynamically in the main page script -->
                     </div>
 
@@ -454,10 +450,6 @@
                                  <button type="button" class="add-item" onclick="addFaqItem()">Add FAQ</button>
                              </div>
                         </fieldset>
-                         <div class="form-group">
-                            <label for="rulesFullRulesPdfLink">Full Rules PDF Link (optional, leave blank or '#' to hide):</label>
-                            <input type="url" id="rulesFullRulesPdfLink" name="rulesFullRulesPdfLink">
-                        </div>
                          <fieldset>
                              <legend>Tips for Entering</legend>
                              <div id="rulesTipsContainer">
@@ -520,14 +512,6 @@
                         <div class="form-group">
                             <label for="metaNavBrandLogoText">Navigation Brand Text:</label>
                             <input type="text" id="metaNavBrandLogoText" name="metaNavBrandLogoText">
-                        </div>
-                        <div class="form-group">
-                            <label for="metaPrivacyPolicyLink">Privacy Policy Link:</label>
-                            <input type="url" id="metaPrivacyPolicyLink" name="metaPrivacyPolicyLink">
-                        </div>
-                        <div class="form-group">
-                            <label for="metaTermsLink">Terms & Conditions Link:</label>
-                            <input type="url" id="metaTermsLink" name="metaTermsLink">
                         </div>
                     </div>
 
@@ -875,7 +859,6 @@
             setVal('entryFormSubtitle', c.entryForm?.subtitle);
             setVal('entryFormEntryCountText', c.entryForm?.entryCountText);
             setVal('entryFormSocialSharePrompt', c.entryForm?.socialSharePrompt);
-            setVal('entryFormTermsText', c.entryForm?.termsText);
 
             // Rules & FAQ
             setVal('rulesFairSelectionTitle', c.rules?.fairSelectionInfo?.title);
@@ -883,7 +866,6 @@
             setVal('rulesImportantNoticeTitle', c.rules?.importantNotice?.title);
             setVal('rulesImportantNoticeText', c.rules?.importantNotice?.text);
             renderDynamicItems('rulesFaqContainer', c.rules?.faq, createFaqItemInputs, addFaqItem);
-            setVal('rulesFullRulesPdfLink', c.rules?.fullRulesPdfLink);
             renderDynamicItems('rulesTipsContainer', c.rules?.tips, createTipItemInputs, addTipItem);
 
 
@@ -900,8 +882,6 @@
             // Meta/Site Info
             setVal('metaPageTitle', c.meta?.pageTitle);
             setVal('metaNavBrandLogoText', c.meta?.navBrandLogoText);
-            setVal('metaPrivacyPolicyLink', c.meta?.privacyPolicyLink);
-            setVal('metaTermsLink', c.meta?.termsLink);
 
             // Settings
             setVal('settingsWebhookUrl', c.settings?.webhookUrl); // Readonly field
@@ -996,7 +976,6 @@
                 updatedConfig.entryForm.subtitle = getVal('entryFormSubtitle');
                 updatedConfig.entryForm.entryCountText = getVal('entryFormEntryCountText');
                 updatedConfig.entryForm.socialSharePrompt = getVal('entryFormSocialSharePrompt');
-                updatedConfig.entryForm.termsText = getVal('entryFormTermsText');
                 // Share platforms are generated dynamically, so we don't collect them here.
                 // We copy the existing ones from the loaded config to preserve structure.
                 updatedConfig.entryForm.sharePlatforms = config.entryForm?.sharePlatforms || {};
@@ -1010,7 +989,6 @@
                     const a = group.querySelector(`#faqA${index}`)?.value;
                      if (q || a) { updatedConfig.rules.faq.push({ q: q || '', a: a || '' }); }
                 });
-                updatedConfig.rules.fullRulesPdfLink = getVal('rulesFullRulesPdfLink');
                  document.querySelectorAll('#rulesTipsContainer .dynamic-item-group').forEach((group, index) => {
                     const text = group.querySelector(`#tipText${index}`)?.value;
                      if (text) { updatedConfig.rules.tips.push(text); }
@@ -1030,8 +1008,6 @@
                 // Meta/Site Info
                 updatedConfig.meta.pageTitle = getVal('metaPageTitle');
                 updatedConfig.meta.navBrandLogoText = getVal('metaNavBrandLogoText');
-                updatedConfig.meta.privacyPolicyLink = getVal('metaPrivacyPolicyLink');
-                updatedConfig.meta.termsLink = getVal('metaTermsLink');
 
                 // Settings
                 updatedConfig.settings.webhookUrl = config.settings?.webhookUrl; // Keep original webhook URL (read-only field)

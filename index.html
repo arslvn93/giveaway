@@ -467,7 +467,6 @@
                     </form>
                     <p class="social-share-prompt" id="entryFormSocialPrompt"></p>
                     <div class="form-social-icons" id="entryFormSocialIcons"></div>
-                    <p class="form-terms" id="entryFormTerms"></p>
                 </div>
             </div>
         </section>
@@ -997,12 +996,6 @@ try {
         setText('entryFormSocialPrompt', config.entryForm.socialSharePrompt);
         populateSocialIcons('entryFormSocialIcons', config.entryForm.sharePlatforms);
 
-        const termsEl = document.getElementById('entryFormTerms');
-        if (termsEl && config.entryForm.termsText && config.meta) {
-            termsEl.innerHTML = config.entryForm.termsText
-                .replace('YOUR_TERMS_LINK_HERE', config.meta.termsLink || '#')
-                .replace('YOUR_PRIVACY_POLICY_LINK_HERE', config.meta.privacyPolicyLink || '#');
-        }
     }
 } catch (e) {
     console.error("Err EntryForm:", e);
@@ -1089,7 +1082,7 @@ try {
 
         const crEl = document.getElementById('footerCopyright');
         if (crEl && config.meta) {
-            crEl.innerHTML = `© ${new Date().getFullYear()} ${config.footerContact.copyrightOwner || config.footerContact.organizerName || ''}. All Rights Reserved. | <a href="${config.meta.privacyPolicyLink || '#'}">Privacy</a> | <a href="${config.meta.termsLink || '#'}">Terms</a>`;
+            crEl.innerHTML = `© ${new Date().getFullYear()} ${config.footerContact.copyrightOwner || config.footerContact.organizerName || ''}. All Rights Reserved.`;
         }
     }
 } catch (e) {
