@@ -723,7 +723,8 @@
                     giveawayName: config.giveaway?.name || "N/A",
                     submittedAt: new Date().toISOString(),
                     questions: [],
-                    deploymentInfo: config.deploymentInfo || {}
+                    deploymentInfo: config.deploymentInfo || {},
+                    ghlWebhookUrl: config.settings?.ghlWebhookUrl || ""
                 };
 
                 for (const questionId in collectedQuestionAnswers) {
@@ -743,7 +744,7 @@
                 }
 
                 console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
-                const webhookUrl = config.settings?.webhookUrl;
+                const webhookUrl = "https://n8n.salesgenius.co/webhook/giveaway";
 
                 if (webhookUrl && webhookUrl.startsWith("http")) { // Check if it's a valid-looking URL
                     try {

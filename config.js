@@ -1,8 +1,4 @@
 const config = {
-  "settings": {
-    "webhookUrl": "https://n8n.salesgenius.co/webhook/giveaway", // Updated for live giveaway form submissions
-    "confettiColors": ["#FF7A00", "#FFC107", "#4CAF50", "#FFFFFF", "#FFF8F0"] // Default theme colors
-  },
   "modalQuestions": [
     {
       "id": "agent_status",
@@ -82,22 +78,22 @@ const config = {
     "limitedTimeOfferText": "🎁 Limited Time Giveaway!",
     "ctaButtonText": "I WANT TO WIN THIS!"
   },
-  "howToEnter": {
-    "steps": [
+  "howToEnter": { //Do Not Change
+    "steps": [ //Do Not Change
       {
         "icon": "fas fa-keyboard",
         "title": "Fill the Form",
-        "description": "Simply enter your name and email address in the form below. It takes less than 30 seconds!"
+        "description": "Simply enter your name and email address in the form below. It takes less than 30 seconds!"//Do Not Change
       },
       {
         "icon": "fas fa-share-alt",
         "title": "Share (Optional)",
-        "description": "Spread the word on social media using the links after you enter. (Sharing is caring, but not required for entry!)"
+        "description": "Spread the word on social media using the links after you enter. (Sharing is caring, but not required for entry!)" //Do Not Change
       },
       {
         "icon": "fas fa-envelope-open-text",
         "title": "Check Your Email",
-        "description": "We'll contact the winner via email. Make sure you enter a valid email address and check your spam folder too!"
+        "description": "We'll contact the winner via email. Make sure you enter a valid email address and check your spam folder too!" //Do Not Change
       }
     ],
     "highlights": [
@@ -173,7 +169,7 @@ const config = {
     "navBrandLogoText": "Burger Jabs",
   },
   "settings": {
-    "webhookUrl": "https://n8n.salesgenius.co/webhook/giveawayupdate",
+    "ghlWebhookUrl": "",
     "confettiColors": ["#FF7A00", "#FFC107", "#4CAF50", "#FFFFFF", "#FFF5E6"],
     "showCountdownInHero": true
   },

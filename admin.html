@@ -519,8 +519,8 @@
                     <div id="settingsSection" class="content-panel">
                         <h2>Settings</h2>
                         <div class="form-group">
-                            <label for="settingsWebhookUrl">Webhook URL (read-only):</label>
-                            <input type="url" id="settingsWebhookUrl" name="settingsWebhookUrl" readonly>
+                            <label for="settingsGhlWebhookUrl">GHL Webhook URL:</label>
+                            <input type="url" id="settingsGhlWebhookUrl" name="settingsGhlWebhookUrl">
                         </div>
                         <div class="form-group">
                             <label for="settingsConfettiColors">Confetti Colors (hex codes, one per line):</label>
@@ -884,7 +884,7 @@
             setVal('metaNavBrandLogoText', c.meta?.navBrandLogoText);
 
             // Settings
-            setVal('settingsWebhookUrl', c.settings?.webhookUrl); // Readonly field
+            setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
             textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
             setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
 
@@ -1010,7 +1010,8 @@
                 updatedConfig.meta.navBrandLogoText = getVal('metaNavBrandLogoText');
 
                 // Settings
-                updatedConfig.settings.webhookUrl = config.settings?.webhookUrl; // Keep original webhook URL (read-only field)
+                updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
+                updatedConfig.settings.webhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate";
                 updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
                 updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
 
@@ -1057,7 +1058,7 @@
                 console.log("Submitting updated config:", updatedConfig);
 
                 // --- Webhook Submission ---
-                const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveaway"; // Hardcoded webhook URL for admin submissions
+                const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate"; // Hardcoded webhook URL for admin submissions
                 console.log(`Admin panel submitting to hardcoded URL: ${adminWebhookUrl}`);
 
                 if (!adminWebhookUrl) { // Should not happen with hardcoded URL but good practice
