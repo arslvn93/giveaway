@@ -167,6 +167,7 @@ const config = {
   "meta": {
     "pageTitle": "Burger Jabs $100 Feast Giveaway!",
     "navBrandLogoText": "Burger Jabs",
+    "privacyPolicyLink": "",
   },
   "settings": {
     "ghlWebhookUrl": "",

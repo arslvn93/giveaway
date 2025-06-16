@@ -513,6 +513,10 @@
                             <label for="metaNavBrandLogoText">Navigation Brand Text:</label>
                             <input type="text" id="metaNavBrandLogoText" name="metaNavBrandLogoText">
                         </div>
+                        <div class="form-group">
+                            <label for="metaPrivacyPolicyLink">Privacy Policy Link:</label>
+                            <input type="url" id="metaPrivacyPolicyLink" name="metaPrivacyPolicyLink">
+                        </div>
                     </div>
 
                     <!-- Settings Section -->
@@ -890,6 +894,7 @@
             // Meta/Site Info
             setVal('metaPageTitle', c.meta?.pageTitle);
             setVal('metaNavBrandLogoText', c.meta?.navBrandLogoText);
+            setVal('metaPrivacyPolicyLink', c.meta?.privacyPolicyLink);
 
             // Settings
             setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
@@ -1017,6 +1022,7 @@
                 // Meta/Site Info
                 updatedConfig.meta.pageTitle = getVal('metaPageTitle');
                 updatedConfig.meta.navBrandLogoText = getVal('metaNavBrandLogoText');
+                updatedConfig.meta.privacyPolicyLink = getVal('metaPrivacyPolicyLink');
 
                 // Settings
                 updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');

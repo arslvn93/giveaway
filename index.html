@@ -1070,7 +1070,7 @@ try {
 
         const crEl = document.getElementById('footerCopyright');
         if (crEl && config.meta) {
-            crEl.innerHTML = `© ${new Date().getFullYear()} ${config.footerContact.copyrightOwner || config.footerContact.organizerName || ''}. All Rights Reserved.`;
+            crEl.innerHTML = `© ${new Date().getFullYear()} ${config.footerContact.copyrightOwner || config.footerContact.organizerName || ''}. All Rights Reserved. | <a href="${config.meta.privacyPolicyLink || '#'}">Privacy</a>`;
         }
     }
 } catch (e) {
