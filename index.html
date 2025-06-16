@@ -348,11 +348,6 @@
 <body id="pageBody">
     <canvas id="confetti-canvas"></canvas>
 
-    <div class="theme-switcher" id="themeSwitcher">
-        <button data-theme="light" aria-label="Light Theme">☀️</button>
-        <button data-theme="dark" aria-label="Dark Theme">🌙</button>
-        <button data-theme="pastel" aria-label="Pastel Theme">🌸</button>
-    </div>
 
     <nav class="main-nav" id="mainNav">
         <div class="container">
@@ -550,7 +545,6 @@
             const heroTitleElement = document.getElementById('heroTitle');
             const sectionsToObserve = document.querySelectorAll('.section:not(#hero)');
 
-            const themeSwitcher = document.getElementById('themeSwitcher');
             const submitButton = document.getElementById('entryFormSubmitButton');
             const spinnerIcon = submitButton?.querySelector('.fa-spinner');
             const successModal = document.getElementById('successModalOverlay');
@@ -560,25 +554,17 @@
                 ? confetti.create(document.getElementById('confetti-canvas'), { resize: true, useWorker: true }) : null;
 
             // --- Theme Management ---
-            const THEME_KEY = 'giveawayPageTheme_vFinal4';
             function applyTheme(theme) {
                 if (!pageBody) return;
                 pageBody.classList.remove('theme-dark', 'theme-pastel');
                 if (theme && theme !== 'light') pageBody.classList.add(`theme-${theme}`);
-                localStorage.setItem(THEME_KEY, theme);
-                if (themeSwitcher) {
-                    themeSwitcher.querySelectorAll('button').forEach(b => {
-                        b.classList.toggle('active-theme', b.dataset.theme === theme);
-                    });
-                }
                 if (config.settings) {
                     if (theme === 'dark') config.settings.confettiColors = ['#FFA726', '#FFEE58', '#66BB6A', '#424242', '#555555'];
                     else if (theme === 'pastel') config.settings.confettiColors = ['#A2D5AB', '#F2BDBD', '#FFEAB6', '#FAF7F2', '#E8E8E8'];
                     else config.settings.confettiColors = ['#FF7A00', '#FFC107', '#4CAF50', '#FFFFFF', '#FFF8F0'];
                 }
             }
-            if (themeSwitcher) themeSwitcher.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON' && e.target.dataset.theme) applyTheme(e.target.dataset.theme); });
-            applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+            applyTheme(config.settings?.theme || 'dark');
 
             // --- Mobile Navigation ---
             if (navToggle && navLinksList && pageBody) {
@@ -724,7 +710,8 @@
                     submittedAt: new Date().toISOString(),
                     questions: [],
                     deploymentInfo: config.deploymentInfo || {},
-                    ghlWebhookUrl: config.settings?.ghlWebhookUrl || ""
+                    ghlWebhookUrl: config.settings?.ghlWebhookUrl || "",
+                    agentEmail: config.footerContact?.email || ""
                 };
 
                 for (const questionId in collectedQuestionAnswers) {

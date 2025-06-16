@@ -523,6 +523,14 @@
                             <input type="url" id="settingsGhlWebhookUrl" name="settingsGhlWebhookUrl">
                         </div>
                         <div class="form-group">
+                            <label for="settingsTheme">Theme:</label>
+                            <select id="settingsTheme" name="settingsTheme">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="pastel">Pastel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="settingsConfettiColors">Confetti Colors (hex codes, one per line):</label>
                             <textarea id="settingsConfettiColors" name="settingsConfettiColors"></textarea>
                         </div>
@@ -885,6 +893,7 @@
 
             // Settings
             setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
+            setVal('settingsTheme', c.settings?.theme);
             textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
             setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
 
@@ -1011,6 +1020,7 @@
 
                 // Settings
                 updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
+                updatedConfig.settings.theme = getVal('settingsTheme');
                 updatedConfig.settings.webhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate";
                 updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
                 updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
