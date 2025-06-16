@@ -721,10 +721,8 @@
                         if (questionObj) {
                             const optionObj = questionObj.options.find(opt => opt.value === answerValue);
                             finalPayload.questions.push({
-                                id: questionId,
                                 question: questionObj.questionText,
-                                answer_value: answerValue,
-                                answer_text: optionObj ? optionObj.text : answerValue
+                                answer: optionObj ? optionObj.text : answerValue
                             });
                         }
                     }
