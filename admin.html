@@ -274,6 +274,7 @@
                 <li><a href="#" data-target="footerContactSection">Footer Contact</a></li>
                 <li><a href="#" data-target="metaSection">Meta/Site Info</a></li>
                 <li><a href="#" data-target="settingsSection">Settings</a></li>
+                <li><a href="#" data-target="modalQuestionsPanel">Modal Questions</a></li>
                 <li><a href="#" data-target="deploymentSection">Deployment Info</a></li>
             </ul>
         </nav>
@@ -547,6 +548,20 @@
                         </div>
                     </div>
 
+                    <!-- Modal Questions Section -->
+                    <div id="modalQuestionsPanel" class="content-panel">
+                        <h2>Modal Questions</h2>
+                        <fieldset>
+                            <legend>Manage Questions for the Pre-Submission Modal</legend>
+                            <div id="modalQuestionsContainer">
+                                <!-- Modal questions will be dynamically added here by JavaScript -->
+                            </div>
+                            <div class="dynamic-item-controls" style="margin-top: 15px;">
+                                <button type="button" class="add-item" onclick="addModalQuestion()">Add New Question</button>
+                            </div>
+                        </fieldset>
+                    </div>
+
                     <!-- Deployment Info Section -->
                     <div id="deploymentSection" class="content-panel">
                         <h2>Deployment Information</h2>
@@ -736,6 +751,65 @@
         }
         function addTipItem() { addDynamicItem('rulesTipsContainer', '', createTipItemInputs, addTipItem); } // Pass empty string for new tip
 
+        // --- Modal Question UI Functions ---
+        function createModalOptionInputs(option, questionIndex, optionIndex) {
+            const optDiv = document.createElement('div');
+            optDiv.className = 'dynamic-item-group'; // Or a simpler class if preferred for options
+            optDiv.style.marginLeft = '20px';
+            optDiv.style.borderLeft = '3px solid #eee';
+            optDiv.innerHTML = `
+                <h5>Option ${optionIndex + 1}</h5>
+                <div class="form-group">
+                    <label for="modalQ${questionIndex}_optText_${optionIndex}">Option Text (this will be used as both display text and data value):</label>
+                    <input type="text" id="modalQ${questionIndex}_optText_${optionIndex}" value="${option?.text || (option?.value || '')}" placeholder="e.g., Yes, I'm committed">
+                </div>
+                <div class="dynamic-item-controls">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i> Remove Option</button>
+                </div>
+            `;
+            return optDiv;
+        }
+
+        function createModalQuestionInputs(question, questionIndex) {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'dynamic-item-group';
+            qDiv.innerHTML = `
+                <h4>Question ${questionIndex + 1}</h4>
+                <div class="form-group">
+                    <label for="modalQ_text_${questionIndex}">Question Text:</label>
+                    <textarea id="modalQ_text_${questionIndex}" placeholder="Enter the question here">${question?.questionText || ''}</textarea>
+                </div>
+                <fieldset>
+                    <legend>Options for Question ${questionIndex + 1}</legend>
+                    <div id="modalQ_optionsContainer_${questionIndex}">
+                        ${(question?.options && Array.isArray(question.options)) ? question.options.map((opt, optIdx) => createModalOptionInputs(opt, questionIndex, optIdx).outerHTML).join('') : ''}
+                    </div>
+                    <div class="dynamic-item-controls" style="margin-top:10px;">
+                         <button type="button" class="add-item" onclick="addModalOption(this, ${questionIndex})">Add Option</button>
+                    </div>
+                </fieldset>
+                <div class="dynamic-item-controls" style="margin-top:10px;">
+                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i> Remove Question</button>
+                </div>
+            `;
+            return qDiv;
+        }
+
+        function addModalQuestion() {
+            addDynamicItem('modalQuestionsContainer', { id: '', questionText: '', options: [{ value: '', text: '' }] }, createModalQuestionInputs, addModalQuestion);
+        }
+
+        function addModalOption(buttonElement, questionIndex) {
+            const optionsContainer = document.getElementById(`modalQ_optionsContainer_${questionIndex}`);
+            if (optionsContainer) {
+                const optionIndex = optionsContainer.children.length;
+                const newOptionElement = createModalOptionInputs({}, questionIndex, optionIndex);
+                optionsContainer.appendChild(newOptionElement);
+            } else {
+                console.error(`Options container for question index ${questionIndex} not found.`);
+            }
+        }
+
         // Generic Add/Remove Logic
         function addDynamicItem(containerId, defaultItem, createFn, addFn) {
             const container = document.getElementById(containerId);
@@ -840,6 +914,14 @@
             setVal('deploymentTag', c.deploymentInfo?.tag);
             setVal('deploymentNetlifyUrl', c.deploymentInfo?.netlifyUrl);
             setVal('deploymentNetlifyId', c.deploymentInfo?.netlifyId);
+
+            // Populate Modal Questions
+            if (c.modalQuestions && Array.isArray(c.modalQuestions)) {
+                renderDynamicItems('modalQuestionsContainer', c.modalQuestions, createModalQuestionInputs, addModalQuestion);
+            } else {
+                 // Optionally add one empty question if none exist, or leave empty
+                // addModalQuestion();
+            }
 
             console.log("Form population complete.");
         }
@@ -963,19 +1045,50 @@
                 updatedConfig.deploymentInfo.netlifyUrl = getVal('deploymentNetlifyUrl');
                 updatedConfig.deploymentInfo.netlifyId = getVal('deploymentNetlifyId');
 
-                // Preserve empty modalQuestions array from original structure if needed
-                updatedConfig.modalQuestions = Array.isArray(config.modalQuestions) ? [] : undefined;
+                updatedConfig.modalQuestions = []; // Initialize
+                const questionGroups = document.querySelectorAll('#modalQuestionsContainer > .dynamic-item-group');
+                questionGroups.forEach((qGroup, qIndex) => {
+                    // Construct the ID selectors carefully based on how createModalQuestionInputs generates them
+                    // Assuming IDs are like: modalQ_text_0, modalQ0_optText_0
+                    // Question ID field removed from UI. ID will be auto-generated.
+                    const textInput = qGroup.querySelector(`textarea[id="modalQ_text_${qIndex}"]`);
+                    const questionText = textInput ? textInput.value.trim() : '';
 
+                    if (questionText) { // Only add question if it has some text
+                        const currentQuestion = {
+                            id: `q_auto_${Date.now()}_${qIndex}`, // Auto-generate ID
+                            questionText: questionText,
+                            options: []
+                        };
+
+                        const optionsContainer = qGroup.querySelector(`#modalQ_optionsContainer_${qIndex}`);
+                        if (optionsContainer) {
+                            // Assuming each option's inputs are directly within a .dynamic-item-group inside optionsContainer
+                            const optionDivs = optionsContainer.querySelectorAll('.dynamic-item-group');
+                            optionDivs.forEach((optDiv, optIndex) => {
+                                const textInput = optDiv.querySelector(`input[id="modalQ${qIndex}_optText_${optIndex}"]`);
+                                const optionText = textInput ? textInput.value.trim() : '';
+
+                                if (optionText) { // Add option if it has text
+                                    currentQuestion.options.push({ value: optionText, text: optionText }); // Value is same as text
+                                }
+                            });
+                        }
+                        updatedConfig.modalQuestions.push(currentQuestion);
+                    }
+                });
 
                 console.log("Submitting updated config:", updatedConfig);
 
                 // --- Webhook Submission ---
-                const webhookUrl = config.settings?.webhookUrl; // Get webhook URL from original loaded config
-                if (!webhookUrl || webhookUrl === "YOUR_N8N_OR_FORM_HANDLER_WEBHOOK_URL") {
-                     throw new Error("Webhook URL is not configured in config.js");
+                const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveaway"; // Hardcoded webhook URL for admin submissions
+                console.log(`Admin panel submitting to hardcoded URL: ${adminWebhookUrl}`);
+
+                if (!adminWebhookUrl) { // Should not happen with hardcoded URL but good practice
+                     throw new Error("Admin webhook URL is not configured.");
                 }
 
-                const response = await fetch(webhookUrl, {
+                const response = await fetch(adminWebhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedConfig),
