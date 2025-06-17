@@ -158,9 +158,18 @@ const config = {
     "email": "hello@burgerjabs.com",
     "phone": "(555) 123-BURGER",
     "address": "123 Delicious Lane, Foodie Town, USA",
+    "brokerageName": "Burger Jabs Realty (Placeholder)",
+    "secondaryLogoUrl": "https://via.placeholder.com/100x50/eee/999?text=Secondary+Logo",
+    "secondaryLogoAlt": "Secondary Company Logo",
     "social": {
-      "facebook": "",
-      "instagram": ""
+      "facebook": "https://via.placeholder.com/200x60/FF7A00/4A3F35?text=Burger+Jabs",
+      "instagram": "https://via.placeholder.com/200x60/FF7A00/4A3F35?text=Burger+Jabs"
+    },
+    "agentContact": {
+      "name": "Jab Burger",
+      "title": "Chief Burger Officer",
+      "phone": "(555) JAB-MEAL",
+      "email": "jab@burgerjabs.com"
     },
     "copyrightOwner": "Burger Jabs Co."
   },

@@ -465,27 +465,60 @@
                     <div id="footerContactSection" class="content-panel">
                         <h2>Footer Contact Information</h2>
                         <div class="form-group">
-                            <label for="footerContactOrganizerName">Organizer Name:</label>
+                            <label for="footerContactOrganizerName">Organizer/Company Name:</label>
                             <input type="text" id="footerContactOrganizerName" name="footerContactOrganizerName">
                         </div>
                         <div class="form-group">
-                            <label for="footerContactOrganizerLogoUrl">Organizer Logo URL:</label>
+                            <label for="footerContactBrokerageName">Brokerage Name (if different, displayed below Organizer):</label>
+                            <input type="text" id="footerContactBrokerageName" name="footerContactBrokerageName">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactOrganizerLogoUrl">Main Footer Logo URL:</label>
                             <input type="url" id="footerContactOrganizerLogoUrl" name="footerContactOrganizerLogoUrl">
                         </div>
                         <div class="form-group">
-                            <label for="footerContactEmail">Contact Email:</label>
+                            <label for="footerContactSecondaryLogoUrl">Secondary Footer Logo URL:</label>
+                            <input type="url" id="footerContactSecondaryLogoUrl" name="footerContactSecondaryLogoUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactSecondaryLogoAlt">Secondary Footer Logo Alt Text:</label>
+                            <input type="text" id="footerContactSecondaryLogoAlt" name="footerContactSecondaryLogoAlt">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactEmail">Main Contact Email:</label>
                             <input type="email" id="footerContactEmail" name="footerContactEmail">
                         </div>
                         <div class="form-group">
-                            <label for="footerContactPhone">Contact Phone:</label>
+                            <label for="footerContactPhone">Main Contact Phone:</label>
                             <input type="tel" id="footerContactPhone" name="footerContactPhone">
                         </div>
                         <div class="form-group">
-                            <label for="footerContactAddress">Organizer Address:</label>
+                            <label for="footerContactAddress">Main Address:</label>
                             <input type="text" id="footerContactAddress" name="footerContactAddress">
                         </div>
+
                         <fieldset>
-                            <legend>Social Media Links</legend>
+                            <legend>Agent Contact Details (for Footer Agent Column)</legend>
+                            <div class="form-group">
+                                <label for="footerAgentName">Agent Name:</label>
+                                <input type="text" id="footerAgentName" name="footerAgentName">
+                            </div>
+                            <div class="form-group">
+                                <label for="footerAgentTitle">Agent Title:</label>
+                                <input type="text" id="footerAgentTitle" name="footerAgentTitle">
+                            </div>
+                            <div class="form-group">
+                                <label for="footerAgentPhone">Agent Phone:</label>
+                                <input type="tel" id="footerAgentPhone" name="footerAgentPhone">
+                            </div>
+                            <div class="form-group">
+                                <label for="footerAgentEmail">Agent Email:</label>
+                                <input type="email" id="footerAgentEmail" name="footerAgentEmail">
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Social Media Links (Displayed in their own column)</legend>
                             <div class="form-group">
                                 <label for="footerContactSocialFacebook">Facebook URL:</label>
                                 <input type="url" id="footerContactSocialFacebook" name="footerContactSocialFacebook">
@@ -887,13 +920,21 @@
 
             // Footer Contact
             setVal('footerContactOrganizerName', c.footerContact?.organizerName);
+            setVal('footerContactBrokerageName', c.footerContact?.brokerageName); // New
             setVal('footerContactOrganizerLogoUrl', c.footerContact?.organizerLogoUrl);
+            setVal('footerContactSecondaryLogoUrl', c.footerContact?.secondaryLogoUrl); // New
+            setVal('footerContactSecondaryLogoAlt', c.footerContact?.secondaryLogoAlt); // New
             setVal('footerContactEmail', c.footerContact?.email);
             setVal('footerContactPhone', c.footerContact?.phone);
             setVal('footerContactAddress', c.footerContact?.address);
             setVal('footerContactSocialFacebook', c.footerContact?.social?.facebook);
             setVal('footerContactSocialInstagram', c.footerContact?.social?.instagram);
             setVal('footerContactCopyrightOwner', c.footerContact?.copyrightOwner);
+            // Agent Details
+            setVal('footerAgentName', c.footerContact?.agentContact?.name); // New
+            setVal('footerAgentTitle', c.footerContact?.agentContact?.title); // New
+            setVal('footerAgentPhone', c.footerContact?.agentContact?.phone); // New
+            setVal('footerAgentEmail', c.footerContact?.agentContact?.email); // New
 
             // Meta/Site Info
             setVal('metaPageTitle', c.meta?.pageTitle);
@@ -1016,13 +1057,23 @@
 
                 // Footer Contact
                 updatedConfig.footerContact.organizerName = getVal('footerContactOrganizerName');
+                updatedConfig.footerContact.brokerageName = getVal('footerContactBrokerageName'); // New
                 updatedConfig.footerContact.organizerLogoUrl = getVal('footerContactOrganizerLogoUrl');
+                updatedConfig.footerContact.secondaryLogoUrl = getVal('footerContactSecondaryLogoUrl'); // New
+                updatedConfig.footerContact.secondaryLogoAlt = getVal('footerContactSecondaryLogoAlt'); // New
                 updatedConfig.footerContact.email = getVal('footerContactEmail');
                 updatedConfig.footerContact.phone = getVal('footerContactPhone');
                 updatedConfig.footerContact.address = getVal('footerContactAddress');
                 updatedConfig.footerContact.social.facebook = getVal('footerContactSocialFacebook');
                 updatedConfig.footerContact.social.instagram = getVal('footerContactSocialInstagram');
                 updatedConfig.footerContact.copyrightOwner = getVal('footerContactCopyrightOwner');
+                // Agent Details
+                updatedConfig.footerContact.agentContact = {
+                    name: getVal('footerAgentName'),
+                    title: getVal('footerAgentTitle'),
+                    phone: getVal('footerAgentPhone'),
+                    email: getVal('footerAgentEmail')
+                }; // New
 
                 // Meta/Site Info
                 updatedConfig.meta.pageTitle = getVal('metaPageTitle');

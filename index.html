@@ -208,6 +208,236 @@
         .tips-list li { display: flex; align-items: flex-start; gap: 0.5rem; }
         .tips-list li i { color: var(--secondary-color-theme); font-size: 0.9rem; margin-top: 0.125rem; }
 
+        /* --- New Footer Styles (Inspired by Case Study) --- */
+        #new-main-footer {
+          background: var(--text-color-dark-theme); /* Default dark background for light/pastel themes */
+          color: var(--text-color-medium-theme); /* Default light text for contrast */
+          padding: 0;
+          border-top: 1px solid var(--glass-border-color-theme);
+          margin-top: 0; /* Remove any top margin */
+        }
+        body.theme-dark #new-main-footer { /* Specific styles for dark theme */
+          background: var(--card-bg-color-theme); /* Use card background color for footer in dark mode */
+          color: var(--text-color-medium-theme);
+          border-top: 1px solid var(--glass-border-color-theme);
+        }
+
+        .footer-top-disclaimer {
+          text-align: center;
+          color: var(--text-color-light-theme);
+          font-size: 0.8rem;
+          line-height: 1.5;
+          padding: 1.5em 1em;
+          max-width: 750px;
+          margin: 0 auto;
+          border-bottom: 1px solid var(--glass-border-color-theme);
+          box-sizing: border-box;
+        }
+
+        .footer-content-grid { /* Relies on .container class for max-width */
+          display: grid;
+          /* Logos | Brokerage Info | Social Icons | Agent Details */
+          grid-template-columns: auto 1fr auto auto;
+          gap: 2em; /* Slightly reduced gap for 4 columns */
+          align-items: start;
+          margin: 0 auto;
+          padding: 2.5em 1em;
+          box-sizing: border-box;
+        }
+
+        .footer-column-logos {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.5em;
+        }
+
+        .footer-logo-main,
+        .footer-logo-secondary {
+          margin: 0;
+          max-width: 100px;
+          height: auto;
+          display: block;
+        }
+        .footer-logo-secondary-wrapper {
+            line-height: 0;
+        }
+
+        .footer-logo-main {
+          max-width: 150px;
+        }
+
+        .footer-column-info {
+          text-align: left;
+          /* display: flex; */ /* No longer needed as social icons are separate */
+          /* flex-direction: column; */
+          /* gap: 1em; */
+        }
+        
+        .footer-column-social {
+            display: flex;
+            flex-direction: column; /* if you want a title above icons later */
+            align-items: center; /* Center icons in their column */
+            justify-content: flex-start; /* Align to top */
+            padding-top: 0.2em; /* Align with text in other columns */
+        }
+
+        .footer-column-social .footer-social-icons {
+            display: flex;
+            gap: 1rem; /* Spacing between icons */
+            justify-content: center; /* Center icons horizontally if column is wider */
+        }
+        .footer-column-social .footer-social-icons a {
+            font-size: 3rem; /* Increased size */
+            color: var(--primary-color-theme); /* Use primary theme color */
+            transition: color 0.3s ease;
+        }
+        .footer-column-social .footer-social-icons a:hover {
+            color: var(--primary-color-theme);
+        }
+
+        .footer-brokerage-info {
+          font-size: 0.9em;
+          line-height: 1.5;
+        }
+        .footer-brokerage-info p {
+            margin-bottom: 0.3em; /* Consistent spacing for p tags in info */
+        }
+        .footer-brokerage-info strong {
+          /* Light color for strong text on dark footer backgrounds */
+          color: var(--body-bg-color-theme); /* e.g., #FFF8F0 on light theme (dark footer) */
+        }
+        body.theme-dark .footer-brokerage-info strong {
+          color: var(--text-color-dark-theme); /* e.g., #F5F5F5 on dark theme (dark footer) */
+        }
+        .footer-brokerage-info i { /* Ensure icons in brokerage info have some space */
+            margin-right: 0.5em;
+            color: var(--primary-color-theme); /* Use primary theme color for these icons */
+        }
+
+        .footer-column-agents {
+          text-align: left;
+          font-size: 0.85em;
+          line-height: 1.5;
+          color: var(--text-color-light-theme); /* Match example color */
+        }
+        body.theme-dark .footer-column-agents {
+            color: var(--text-color-light-theme);
+        }
+        .footer-agent-contact-item {
+          margin-bottom: 0.8em;
+        }
+        .footer-agent-name {
+          font-family: 'Poppins', sans-serif; /* Using Poppins to match page */
+          font-weight: 600;
+          color: var(--text-color-medium-theme); /* Brighter for name */
+          font-size: 0.95em;
+          margin: 0 0 0.2em 0;
+        }
+        body.theme-dark .footer-agent-name {
+            color: var(--text-color-dark-theme);
+        }
+        .footer-agent-detail {
+          font-size: 0.9em;
+          margin-bottom: 0.1em;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 0.5em;
+        }
+        .footer-agent-detail i { /* Using i for FontAwesome, not svg */
+            color: var(--primary-color-theme); /* Use primary color for icons */
+            font-size: 0.9em; /* Slightly smaller icon */
+        }
+        .footer-agent-detail a {
+            color: inherit; /* Inherit from .footer-column-agents */
+            text-decoration: none;
+        }
+        .footer-agent-detail a:hover {
+            color: var(--primary-color-theme);
+            text-decoration: underline;
+        }
+
+        .footer-bottom-bar { /* Relies on .container class for max-width */
+          background-color: rgba(0,0,0,0.05); /* Subtle distinct background */
+          color: var(--text-color-light-theme);
+          font-size: 0.75rem;
+          padding: 1em;
+          text-align: center;
+          border-top: 1px solid var(--glass-border-color-theme);
+          box-sizing: border-box;
+        }
+        body.theme-dark .footer-bottom-bar {
+            background-color: rgba(255,255,255,0.03); /* Subtle distinct background for dark theme */
+        }
+
+        .footer-bottom-bar .copyright-text {
+          margin-right: 1em;
+        }
+        .footer-bottom-bar .privacy-policy-link a {
+          color: var(--text-color-medium-theme);
+          text-decoration: none;
+        }
+        .footer-bottom-bar .privacy-policy-link a:hover {
+          color: var(--primary-color-theme);
+          text-decoration: underline;
+        }
+
+        /* Responsive Styles for New Footer */
+        @media (max-width: 900px) {
+          .footer-content-grid {
+            grid-template-columns: 1fr; /* Stack all columns */
+            text-align: center;
+            gap: 2em;
+          }
+          .footer-column-logos, .footer-column-info, .footer-column-social, .footer-column-agents {
+            align-items: center;
+            text-align: center;
+          }
+          .footer-logo-main, .footer-logo-secondary-wrapper img {
+            margin: 0 auto;
+          }
+          .footer-column-social .footer-social-icons,
+          .footer-agent-detail {
+            justify-content: center;
+          }
+          .footer-column-social {
+            margin-top: 1em; /* Space for social icons when stacked */
+          }
+          .footer-column-agents {
+            margin-top: 1em;
+          }
+          .footer-bottom-bar .copyright-text,
+          .footer-bottom-bar .privacy-policy-link {
+            display: block;
+            margin-right: 0;
+            margin-bottom: 0.5em;
+          }
+          .footer-bottom-bar .privacy-policy-link {
+            margin-bottom: 0; /* Remove bottom margin for the last item */
+          }
+        }
+
+        @media (max-width: 700px) {
+          .footer-top-disclaimer { font-size: 0.7rem; padding: 1em; margin-bottom: 1em;}
+          .footer-content-grid { gap: 1.5em; padding: 1.5em 1em; }
+          .footer-logo-main, .footer-logo-secondary { max-width: 100px; } /* Adjusted for consistency */
+          .footer-brokerage-info { font-size: 0.8em; }
+          .footer-column-agents { font-size: 0.8em; } /* Adjust agent font size for mobile */
+          .footer-bottom-bar { font-size: 0.7rem; }
+        }
+
+        /* General style for Font Awesome icons within the new footer, if needed */
+        #new-main-footer .fab, #new-main-footer .fas {
+            /* margin-right: 0.3em; /* Default spacing for icons next to text */
+            /* Specific icon spacing is handled in .footer-brokerage-info i and .footer-social-icons */
+        }
+        /* Reset margin for social icons as they are standalone */
+        #new-main-footer .footer-column-info .footer-social-icons .fab,
+        #new-main-footer .footer-column-info .footer-social-icons .fas {
+            margin-right: 0;
+        }
+
         footer { background-color: rgba(var(--body-bg-color-theme), 0.5); border-top: 1px solid var(--glass-border-color-theme); padding: 2rem 0 1.5rem; text-align: center; margin-top: 2rem; }
         footer .organizer-logo img { max-height: 40px; margin: 0 auto 1rem; }
         footer h4 { font-size: 1.1rem; color: var(--primary-color-theme); margin-bottom: 0.75rem; }
@@ -547,18 +777,48 @@
         </section>
     </main>
 
-    <footer id="footer-contact">
-        <div class="container">
-            <div class="organizer-logo" style="margin-bottom:1rem;">
-                <img src="https://via.placeholder.com/150x50/ccc/888?text=Organizer+Logo" alt="Organizer Logo" id="footerOrganizerLogo">
+    <footer id="new-main-footer">
+        <div class="footer-top-disclaimer">
+            Important legal disclaimer text will go here.
+        </div>
+        <div class="footer-content-grid container"> <!-- Added .container for max-width -->
+            <div class="footer-column-logos">
+                <img src="https://via.placeholder.com/150x50/ccc/888?text=Organizer+Logo" alt="Organizer Logo Placeholder" class="footer-logo-main" id="footerNewOrganizerLogo">
+                <div class="footer-logo-secondary-wrapper">
+                    <img src="https://via.placeholder.com/100x50/eee/999?text=Secondary+Logo" alt="Secondary Logo Placeholder" class="footer-logo-secondary" id="footerNewSecondaryLogo">
+                </div>
             </div>
-            <h4>Get In Touch</h4>
-            <p id="footerOrganizerName"></p>
-            <p><i class="fas fa-envelope"></i> <a href="" id="footerContactEmailLink"><span id="footerContactEmail"></span></a></p>
-            <p><i class="fas fa-phone"></i> <a href="" id="footerContactPhoneLink"><span id="footerContactPhone"></span></a></p>
-            <p><i class="fas fa-map-marker-alt"></i> <span id="footerOrganizerAddress"></span></p>
-            <div class="social-icons" id="footerSocialIcons"></div>
-            <p class="copyright" id="footerCopyright"></p>
+            <div class="footer-column-info">
+                <div class="footer-brokerage-info">
+                    <p><strong id="newFooterOrganizerName">Organizer Name Placeholder</strong></p>
+                    <p id="newFooterBrokerageName">Brokerage Name Placeholder</p>
+                    <p id="newFooterAddress"><i class="fas fa-map-marker-alt"></i> Organizer Address Placeholder</p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:email@example.com" id="newFooterEmailLink">email@example.com</a></p>
+                    <p><i class="fas fa-phone"></i> <a href="tel:1234567890" id="newFooterPhoneLink">(123) 456-7890</a></p>
+                </div>
+            </div>
+            <div class="footer-column-social"> <!-- New Column for Social Icons -->
+                <div class="footer-social-icons" id="newFooterSocialIcons">
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-column-agents">
+                <div class="footer-agent-contact-item">
+                    <p class="footer-agent-name" id="newFooterAgentName">Agent Name Placeholder</p>
+                    <p class="footer-agent-detail" id="newFooterAgentTitle">Agent Title Placeholder</p>
+                    <p class="footer-agent-detail"><i class="fas fa-phone"></i> <a href="tel:0987654321" id="newFooterAgentPhoneLink">(098) 765-4321</a></p>
+                    <p class="footer-agent-detail"><i class="fas fa-envelope"></i> <a href="mailto:agent@example.com" id="newFooterAgentEmailLink">agent@example.com</a></p>
+                </div>
+                <!-- Add more .footer-agent-contact-item if needed -->
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div class="container"> <!-- Added .container for max-width -->
+                <span class="copyright-text" id="newFooterCopyrightText">© 2024 Company Name Placeholder. All Rights Reserved.</span>
+                <span class="privacy-policy-link"><a href="#privacy" id="newFooterPrivacyLink">Privacy Policy</a></span>
+            </div>
         </div>
     </footer>
 
@@ -784,6 +1044,140 @@
                 } catch (e) {
                     console.error("Err Hero Data:", e);
                 }
+                populateNewFooterData(); // Call the new footer population function
+}
+
+function populateNewFooterData() {
+    console.log("Populating new footer data...");
+    if (!config || !config.footerContact) {
+        console.warn("New Footer: config.footerContact not found.");
+        return;
+    }
+
+    const fc = config.footerContact;
+    const meta = config.meta || {}; // Ensure meta object exists
+
+    // Populate Organizer Logo
+    const newLogoEl = document.getElementById('footerNewOrganizerLogo');
+    if (newLogoEl && fc.organizerLogoUrl) {
+        newLogoEl.src = fc.organizerLogoUrl;
+        newLogoEl.alt = fc.organizerName || "Organizer Logo";
+    } else if (newLogoEl) {
+        newLogoEl.alt = fc.organizerName || "Organizer Logo";
+    }
+
+    // Populate Secondary Logo
+    const secondaryLogoEl = document.getElementById('footerNewSecondaryLogo');
+    if (secondaryLogoEl && fc.secondaryLogoUrl) { // Assuming 'secondaryLogoUrl' in config
+        secondaryLogoEl.src = fc.secondaryLogoUrl;
+        secondaryLogoEl.alt = fc.secondaryLogoAlt || "Secondary Logo"; // Assuming 'secondaryLogoAlt'
+    } else if (secondaryLogoEl) {
+        // Keep placeholder or hide: secondaryLogoEl.style.display = 'none';
+        secondaryLogoEl.alt = "Secondary Logo Placeholder";
+    }
+
+    // Populate Organizer Name (used as Brokerage in example)
+    setText('newFooterOrganizerName', fc.organizerName);
+    
+    // Populate Brokerage Name (if different from Organizer Name)
+    // Assuming fc.brokerageName holds this, or it could be part of organizerName.
+    // For now, let's assume it's a separate field or can be combined.
+    // If fc.brokerageName exists, use it, otherwise, it might be part of fc.organizerName or a placeholder.
+    setText('newFooterBrokerageName', fc.brokerageName || "Your Brokerage Name");
+
+
+    // Populate Email
+    const emailLinkEl = document.getElementById('newFooterEmailLink');
+    if (emailLinkEl && fc.email) {
+        emailLinkEl.href = `mailto:${fc.email}`;
+        emailLinkEl.textContent = fc.email;
+    } else if (emailLinkEl) {
+        emailLinkEl.textContent = 'email@example.com'; // Fallback placeholder
+        emailLinkEl.href = 'mailto:email@example.com';
+    }
+
+    // Populate Phone
+    const phoneLinkEl = document.getElementById('newFooterPhoneLink');
+    if (phoneLinkEl && fc.phone) {
+        phoneLinkEl.href = `tel:${fc.phone.replace(/\D/g, '')}`;
+        phoneLinkEl.textContent = fc.phone;
+    } else if (phoneLinkEl) {
+        phoneLinkEl.textContent = '(123) 456-7890'; // Fallback placeholder
+        phoneLinkEl.href = 'tel:1234567890';
+    }
+
+    // Populate Address
+    const addressEl = document.getElementById('newFooterAddress');
+    if (addressEl && fc.address) {
+        // Assuming addressEl is a <p> and we want to set its text content including the icon
+        addressEl.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${fc.address}`;
+    } else if (addressEl) {
+        addressEl.innerHTML = `<i class="fas fa-map-marker-alt"></i> Organizer Address Placeholder`; // Fallback
+    }
+    
+    // Populate Social Icons
+    if (fc.social) {
+        populateSocialIcons('newFooterSocialIcons', fc.social);
+    } else {
+        const socialContainer = document.getElementById('newFooterSocialIcons');
+        if (socialContainer) socialContainer.innerHTML = '<!-- Social links not configured -->';
+    }
+
+    // --- Populate Agent Details ---
+    const agent = fc.agentContact; // Assuming agent details are in config.footerContact.agentContact
+    if (agent) {
+        setText('newFooterAgentName', agent.name || "Agent Name Placeholder");
+        setText('newFooterAgentTitle', agent.title || "Agent Title Placeholder");
+
+        const agentPhoneLinkEl = document.getElementById('newFooterAgentPhoneLink');
+        if (agentPhoneLinkEl && agent.phone) {
+            agentPhoneLinkEl.href = `tel:${agent.phone.replace(/\D/g, '')}`;
+            agentPhoneLinkEl.textContent = agent.phone;
+        } else if (agentPhoneLinkEl) {
+            agentPhoneLinkEl.textContent = '(098) 765-4321';
+            agentPhoneLinkEl.href = 'tel:0987654321';
+        }
+
+        const agentEmailLinkEl = document.getElementById('newFooterAgentEmailLink');
+        if (agentEmailLinkEl && agent.email) {
+            agentEmailLinkEl.href = `mailto:${agent.email}`;
+            agentEmailLinkEl.textContent = agent.email;
+        } else if (agentEmailLinkEl) {
+            agentEmailLinkEl.textContent = 'agent@example.com';
+            agentEmailLinkEl.href = 'mailto:agent@example.com';
+        }
+    } else {
+        // Fallback if agentContact is not in config
+        setText('newFooterAgentName', "Agent Name Placeholder");
+        setText('newFooterAgentTitle', "Agent Title Placeholder");
+        const agentPhoneLinkEl = document.getElementById('newFooterAgentPhoneLink');
+        if(agentPhoneLinkEl) {
+            agentPhoneLinkEl.textContent = '(098) 765-4321';
+            agentPhoneLinkEl.href = 'tel:0987654321';
+        }
+        const agentEmailLinkEl = document.getElementById('newFooterAgentEmailLink');
+        if(agentEmailLinkEl) {
+            agentEmailLinkEl.textContent = 'agent@example.com';
+            agentEmailLinkEl.href = 'mailto:agent@example.com';
+        }
+    }
+
+    // Populate Copyright Text
+    const copyrightEl = document.getElementById('newFooterCopyrightText');
+    if (copyrightEl) {
+        const year = new Date().getFullYear();
+        const owner = fc.copyrightOwner || fc.organizerName || "Company Name Placeholder";
+        copyrightEl.textContent = `© ${year} ${owner}. All Rights Reserved.`;
+    }
+
+    // Populate Privacy Policy Link
+    const privacyLinkEl = document.getElementById('newFooterPrivacyLink');
+    if (privacyLinkEl && meta.privacyPolicyLink && meta.privacyPolicyLink.trim() !== '') {
+        privacyLinkEl.href = meta.privacyPolicyLink;
+    } else if (privacyLinkEl) {
+        privacyLinkEl.href = "#privacy-placeholder"; // Fallback placeholder link
+    }
+    console.log("New footer data population attempt complete.");
 }
 // --- Giveaway Question Modal Logic ---
             const questionModalOverlay = document.getElementById('questionModalOverlay');
