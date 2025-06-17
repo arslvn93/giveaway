@@ -618,13 +618,54 @@
 
             // --- Theme Management ---
             function applyTheme(theme) {
-                if (!pageBody) return;
+                console.log('[THEME DEBUG] applyTheme called with theme:', theme); // New Log 1
+
+                if (!pageBody) {
+                    console.error('[THEME DEBUG] pageBody element not found!'); // New Log (Error)
+                    return;
+                }
+
+                // Remove existing theme classes
                 pageBody.classList.remove('theme-dark', 'theme-pastel');
-                if (theme && theme !== 'light') pageBody.classList.add(`theme-${theme}`);
-                if (config.settings) {
-                    if (theme === 'dark') config.settings.confettiColors = ['#FFA726', '#FFEE58', '#66BB6A', '#424242', '#555555'];
-                    else if (theme === 'pastel') config.settings.confettiColors = ['#A2D5AB', '#F2BDBD', '#FFEAB6', '#FAF7F2', '#E8E8E8'];
-                    else config.settings.confettiColors = ['#FF7A00', '#FFC107', '#4CAF50', '#FFFFFF', '#FFF8F0'];
+                // Add the new theme class if it's not the default 'light' theme
+                if (theme && theme !== 'light') {
+                    pageBody.classList.add(`theme-${theme}`);
+                }
+
+                // Update confetti colors (existing logic)
+                if (config && config.settings) { // Added check for config
+                    if (theme === 'dark') {
+                        config.settings.confettiColors = ['#FFA726', '#FFEE58', '#66BB6A', '#424242', '#555555'];
+                    } else if (theme === 'pastel') {
+                        config.settings.confettiColors = ['#A2D5AB', '#F2BDBD', '#FFEAB6', '#FAF7F2', '#E8E8E8'];
+                    } else {
+                        config.settings.confettiColors = ['#FF7A00', '#FFC107', '#4CAF50', '#FFFFFF', '#FFF8F0'];
+                    }
+                } else {
+                    console.warn('[THEME DEBUG] config or config.settings not available for confetti.'); // New Log
+                }
+
+                // --- NEW LOGIC for Primary Color Override ---
+                console.log('[THEME DEBUG] Checking for primaryColorOverride. Current config.settings:', JSON.stringify(config?.settings)); // New Log 2
+
+                const customPrimaryColor = config?.settings?.primaryColorOverride;
+                console.log('[THEME DEBUG] customPrimaryColor from config:', customPrimaryColor); // New Log 3
+
+                // Basic hex color validation (e.g., #FFF, #FF0000)
+                const isValidHex = customPrimaryColor && typeof customPrimaryColor === 'string' ? /^#([0-9A-Fa-f]{3}){1,2}$/.test(customPrimaryColor.trim()) : false;
+                console.log('[THEME DEBUG] isValidHex:', isValidHex); // New Log 4
+
+                if (customPrimaryColor && customPrimaryColor.trim() !== '' && isValidHex) {
+                    pageBody.style.setProperty('--primary-color-theme', customPrimaryColor.trim());
+                    console.log(`[THEME DEBUG] Applied custom primary color: ${customPrimaryColor.trim()} to pageBody`); // Modified Log
+                } else {
+                    pageBody.style.removeProperty('--primary-color-theme');
+                    console.log('[THEME DEBUG] Removed custom primary color override from pageBody, using theme default.'); // Modified Log
+                    if (customPrimaryColor && customPrimaryColor.trim() !== '' && !isValidHex) {
+                        console.warn(`[THEME DEBUG] Invalid custom primary color format: ${customPrimaryColor}. Using theme default.`); // Modified Log
+                    } else if (!customPrimaryColor || customPrimaryColor.trim() === '') {
+                        console.log('[THEME DEBUG] customPrimaryColor is blank or undefined.'); // New Log 5
+                    }
                 }
             }
             applyTheme(config.settings?.theme || 'dark');

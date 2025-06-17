@@ -172,6 +172,7 @@ const config = {
   "settings": {
     "ghlWebhookUrl": "",
     "theme": "dark",
+    "primaryColorOverride": "#A2D5AB",
     "confettiColors": ["#FF7A00", "#FFC107", "#4CAF50", "#FFFFFF", "#FFF5E6"],
     "showCountdownInHero": true
   },

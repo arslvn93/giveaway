@@ -535,6 +535,10 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="settingsPrimaryColorOverride">Primary Color Override (hex code, e.g., #FF0000):</label>
+                            <input type="text" id="settingsPrimaryColorOverride" name="settingsPrimaryColorOverride" placeholder="Leave blank to use theme default">
+                        </div>
+                        <div class="form-group">
                             <label for="settingsConfettiColors">Confetti Colors (hex codes, one per line):</label>
                             <textarea id="settingsConfettiColors" name="settingsConfettiColors"></textarea>
                         </div>
@@ -899,9 +903,10 @@
             // Settings
             setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
             setVal('settingsTheme', c.settings?.theme);
+            setVal('settingsPrimaryColorOverride', c.settings?.primaryColorOverride);
             textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
             setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
-
+ 
             // Deployment Info
             setVal('deploymentRepoName', c.deploymentInfo?.repoName);
             setVal('deploymentRepoUrl', c.deploymentInfo?.repoUrl);
@@ -1027,10 +1032,11 @@
                 // Settings
                 updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
                 updatedConfig.settings.theme = getVal('settingsTheme');
+                updatedConfig.settings.primaryColorOverride = getVal('settingsPrimaryColorOverride');
                 updatedConfig.settings.webhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate";
                 updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
                 updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
-
+ 
                 // Deployment Info
                 updatedConfig.deploymentInfo.repoName = getVal('deploymentRepoName');
                 updatedConfig.deploymentInfo.repoUrl = getVal('deploymentRepoUrl');
