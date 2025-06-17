@@ -171,7 +171,8 @@ const config = {
       "phone": "(555) JAB-MEAL",
       "email": "jab@burgerjabs.com"
     },
-    "copyrightOwner": "Burger Jabs Co."
+    "copyrightOwner": "Burger Jabs Co.",
+    "footerDisclaimer": "This is a placeholder for the important legal disclaimer text that will appear at the top of the footer."
   },
   "meta": {
     "pageTitle": "Burger Jabs $100 Feast Giveaway!",

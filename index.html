@@ -790,7 +790,7 @@ body.theme-pastel #rules::before {
     </main>
 
     <footer id="new-main-footer">
-        <div class="footer-top-disclaimer">
+        <div class="footer-top-disclaimer" id="footerTopDisclaimer">
             Important legal disclaimer text will go here.
         </div>
         <div class="footer-content-grid container"> <!-- Added .container for max-width -->
@@ -1190,6 +1190,9 @@ function populateNewFooterData() {
         privacyLinkEl.href = "#privacy-placeholder"; // Fallback placeholder link
     }
     console.log("New footer data population attempt complete.");
+
+    // Populate Footer Disclaimer
+    setText('footerTopDisclaimer', fc.footerDisclaimer || "Important legal disclaimer text will go here.");
 }
 // --- Giveaway Question Modal Logic ---
             const questionModalOverlay = document.getElementById('questionModalOverlay');

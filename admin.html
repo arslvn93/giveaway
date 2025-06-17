@@ -496,6 +496,10 @@
                             <label for="footerContactAddress">Main Address:</label>
                             <input type="text" id="footerContactAddress" name="footerContactAddress">
                         </div>
+                        <div class="form-group">
+                            <label for="footerDisclaimer">Footer Top Disclaimer Text:</label>
+                            <textarea id="footerDisclaimer" name="footerDisclaimer"></textarea>
+                        </div>
 
                         <fieldset>
                             <legend>Agent Contact Details (for Footer Agent Column)</legend>
@@ -927,6 +931,7 @@
             setVal('footerContactEmail', c.footerContact?.email);
             setVal('footerContactPhone', c.footerContact?.phone);
             setVal('footerContactAddress', c.footerContact?.address);
+            setVal('footerDisclaimer', c.footerContact?.footerDisclaimer); // New
             setVal('footerContactSocialFacebook', c.footerContact?.social?.facebook);
             setVal('footerContactSocialInstagram', c.footerContact?.social?.instagram);
             setVal('footerContactCopyrightOwner', c.footerContact?.copyrightOwner);
@@ -1064,6 +1069,7 @@
                 updatedConfig.footerContact.email = getVal('footerContactEmail');
                 updatedConfig.footerContact.phone = getVal('footerContactPhone');
                 updatedConfig.footerContact.address = getVal('footerContactAddress');
+                updatedConfig.footerContact.footerDisclaimer = getVal('footerDisclaimer'); // New
                 updatedConfig.footerContact.social.facebook = getVal('footerContactSocialFacebook');
                 updatedConfig.footerContact.social.instagram = getVal('footerContactSocialInstagram');
                 updatedConfig.footerContact.copyrightOwner = getVal('footerContactCopyrightOwner');
