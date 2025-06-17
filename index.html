@@ -113,9 +113,9 @@
             padding: 5rem 15px 2rem; /* Adjust top padding if nav height changes */
             text-align: center; position: relative; overflow: hidden;
         }
-        .hero-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1; opacity: 0; transition: opacity 1s ease-in-out 0.5s; }
-        body.theme-dark .hero-bg-overlay { background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)); }
-        body.theme-pastel .hero-bg-overlay { background: linear-gradient(rgba(var(--primary-color-theme),0.03), rgba(var(--secondary-color-theme),0.08)); }
+        .hero-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1; opacity: 0; transition: opacity 1s ease-in-out 0.5s; }
+        body.theme-dark .hero-bg-overlay { background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)); } /* Dark theme keeps its darker overlay */
+        body.theme-pastel .hero-bg-overlay { background-color: rgba(255, 255, 255, 0.7); } /* Pastel theme now uses light overlay */
         #hero.content-loaded .hero-bg-overlay { opacity: 1; }
 
         .hero-content-wrapper { position: relative; z-index: 2; max-width: 90%; width: 650px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
@@ -210,8 +210,8 @@
 
         /* --- New Footer Styles (Inspired by Case Study) --- */
         #new-main-footer {
-          background: var(--text-color-dark-theme); /* Default dark background for light/pastel themes */
-          color: var(--text-color-medium-theme); /* Default light text for contrast */
+          background: var(--body-bg-color-theme); /* Use body background color (like header solid) */
+          color: var(--text-color-dark-theme); /* Use darker text for contrast on light backgrounds */
           padding: 0;
           border-top: 1px solid var(--glass-border-color-theme);
           margin-top: 0; /* Remove any top margin */
@@ -224,7 +224,7 @@
 
         .footer-top-disclaimer {
           text-align: center;
-          color: var(--text-color-light-theme);
+          color: var(--text-color-medium-theme); /* Adjusted for better readability on lighter footer */
           font-size: 0.8rem;
           line-height: 1.5;
           padding: 1.5em 1em;
@@ -304,8 +304,8 @@
             margin-bottom: 0.3em; /* Consistent spacing for p tags in info */
         }
         .footer-brokerage-info strong {
-          /* Light color for strong text on dark footer backgrounds */
-          color: var(--body-bg-color-theme); /* e.g., #FFF8F0 on light theme (dark footer) */
+          /* Use primary color for strong text on light/pastel footer backgrounds */
+          color: var(--primary-color-theme);
         }
         body.theme-dark .footer-brokerage-info strong {
           color: var(--text-color-dark-theme); /* e.g., #F5F5F5 on dark theme (dark footer) */
@@ -319,7 +319,7 @@
           text-align: left;
           font-size: 0.85em;
           line-height: 1.5;
-          color: var(--text-color-light-theme); /* Match example color */
+          color: var(--text-color-medium-theme); /* Adjusted for better readability on lighter footer */
         }
         body.theme-dark .footer-column-agents {
             color: var(--text-color-light-theme);
@@ -359,8 +359,8 @@
         }
 
         .footer-bottom-bar { /* Relies on .container class for max-width */
-          background-color: rgba(0,0,0,0.05); /* Subtle distinct background */
-          color: var(--text-color-light-theme);
+          background-color: rgba(0,0,0,0.05); /* Subtle distinct background - kept for light/pastel */
+          color: var(--text-color-medium-theme); /* Adjusted for better readability */
           font-size: 0.75rem;
           padding: 1em;
           text-align: center;
@@ -559,7 +559,7 @@
             right: 0;
             bottom: 0;
             z-index: -1; /* Behind the section's content */
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--how-to-enter-bg-image, url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80'));
+            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), var(--how-to-enter-bg-image, url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80')); /* Light overlay for default/light theme */
             background-size: cover;
             background-position: center center;
             background-attachment: fixed; /* Parallax effect */
@@ -570,6 +570,12 @@
             /* Slightly scale to avoid blurred edges appearing empty, adjust as needed */
             /* transform: scale(1.05); */ /* Removed to ensure parallax works correctly */
         }
+body.theme-dark #how-to-enter::before {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--how-to-enter-bg-image, url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80')) center center / cover fixed;
+}
+body.theme-pastel #how-to-enter::before {
+    background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), var(--how-to-enter-bg-image, url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80')) center center / cover fixed;
+}
 /* --- Rules Section Parallax Background --- */
         #rules {
             position: relative;
@@ -577,6 +583,12 @@
             /* overflow: hidden; */ /* Temporarily commented for parallax test */
         }
 
+body.theme-dark #rules::before {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--rules-bg-image, url('https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')) center center / cover fixed;
+}
+body.theme-pastel #rules::before {
+    background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), var(--rules-bg-image, url('https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')) center center / cover fixed;
+}
         #rules::before {
             content: '';
             position: absolute;
@@ -585,7 +597,7 @@
             right: 0;
             bottom: 0;
             z-index: -1; /* Behind the section's content */
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--rules-bg-image, url('https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'));
+            background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), var(--rules-bg-image, url('https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')); /* Light overlay for default/light theme */
             background-size: cover;
             background-position: center center;
             background-attachment: fixed; /* Parallax effect */
