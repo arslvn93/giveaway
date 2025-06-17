@@ -88,12 +88,12 @@
         .section {
             padding: 2.5rem 0;
             opacity: 0; /* ALL sections start hidden (except hero itself) */
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out 0.1s, transform 0.8s ease-out 0.1s;
+            /* transform: translateY(30px); */ /* Temporarily commented for parallax test */
+            transition: opacity 0.8s ease-out 0.1s; /* Removed transform from transition for parallax test */
         }
         .section.visible {
             opacity: 1;
-            transform: translateY(0);
+            /* transform: translateY(0); */ /* Temporarily commented for parallax test */
         }
         #hero.section { /* Hero container is visible by default, its content animates */
             opacity: 1;
@@ -104,7 +104,7 @@
         .section-subtitle { font-size: 1rem; color: var(--text-color-medium-theme); text-align: center; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 
         /* --- CARD STYLING --- */
-        .content-card { background-color: rgba(var(--card-bg-color-theme), 0.7); border: 1px solid var(--glass-border-color-theme); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border-radius: var(--border-radius-m); padding: 1.5rem; box-shadow: 0 4px 15px var(--shadow-color-theme); margin-bottom: 1.5rem; }
+        .content-card { background-color: rgba(var(--card-bg-color-theme), 0.7); border: 1px solid var(--glass-border-color-theme); backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px); border-radius: var(--border-radius-m); padding: 1.5rem; box-shadow: 0 4px 15px var(--shadow-color-theme); margin-bottom: 1.5rem; }
 
         /* --- ENHANCED HERO SECTION --- */
         #hero {
@@ -314,6 +314,65 @@
         body.theme-pastel #question-modal-steps-container .modal-option-btn.selected {
             color: var(--text-color-dark-theme); /* Ensure contrast for pastel */
         }
+/* --- How to Enter Section Parallax Background --- */
+        #how-to-enter {
+            position: relative;
+            /* overflow: hidden; /* To clip blurred edges if any - Removed to test parallax */
+            z-index: 0; /* Ensure it creates a stacking context if needed */
+        }
+
+        #how-to-enter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1; /* Behind the section's content */
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--how-to-enter-bg-image, url('https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80'));
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed; /* Parallax effect */
+            /* filter: blur(5px); */ /* Blurriness - Temporarily commented out to test parallax */
+#how-to-enter .content-card {
+            background-color: rgba(var(--card-bg-color-theme), 0.9); /* Increased opacity for readability */
+        }
+            /* Slightly scale to avoid blurred edges appearing empty, adjust as needed */
+            /* transform: scale(1.05); */ /* Removed to ensure parallax works correctly */
+        }
+/* --- Rules Section Parallax Background --- */
+        #rules {
+            position: relative;
+            z-index: 0; /* Ensure it creates a stacking context */
+            /* overflow: hidden; */ /* Temporarily commented for parallax test */
+        }
+
+        #rules::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1; /* Behind the section's content */
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--rules-bg-image, url('https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'));
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed; /* Parallax effect */
+            /* filter: blur(5px); */ /* Blurriness - Temporarily commented out to test parallax */
+            /* transform: scale(1.05); */ /* Temporarily commented out for parallax test */
+        }
+
+        #rules .content-card {
+            background-color: rgba(var(--card-bg-color-theme), 0.9); /* Increased opacity for readability */
+        }
+/* --- Entry Form Card Style --- */
+        #entryFormCard {
+            border: 3px solid var(--primary-color-theme);
+            /* animation: pulsate-glow 2.5s infinite ease-in-out; */ /* Glow animation removed */
+            /* Ensure the card's own shadow doesn't interfere too much, or adjust pulsate-glow to be stronger */
+            /* The existing box-shadow on .content-card will combine with the animation's box-shadow. */
+        }
         @media (min-width: 768px) {
             :root { --font-size-h1: clamp(2.5rem, 6vw + 1rem, 4.5rem); --font-size-h2: clamp(2rem, 4vw + 0.8rem, 3rem); /* ... */ }
             .container { width: 85%; max-width: 1100px; } .section { padding: 3.5rem 0; }
@@ -412,8 +471,10 @@
 
         <section id="how-to-enter" class="section">
             <div class="container">
-                <h2 class="section-title">How to Enter</h2>
-                <p class="section-subtitle">It's super easy to enter! Just follow these simple steps.</p>
+                <div class="content-card" style="margin-bottom: 1.5rem;"> <!-- Added wrapper card for title/subtitle -->
+                    <h2 class="section-title">How to Enter</h2>
+                    <p class="section-subtitle" style="margin-bottom: 0;">It's super easy to enter! Just follow these simple steps.</p>
+                </div>
                 <div class="content-card">
                     <div class="steps-grid" id="howToEnterSteps"></div>
                 </div>
@@ -468,8 +529,10 @@
 
         <section id="rules" class="section">
             <div class="container">
-                 <h2 class="section-title">Rules & Eligibility</h2>
-                <p class="section-subtitle">Please read the fine print before entering.</p>
+                <div class="content-card" style="margin-bottom: 1.5rem;"> <!-- Added wrapper card for title/subtitle -->
+                    <h2 class="section-title">Rules & Eligibility</h2>
+                    <p class="section-subtitle" style="margin-bottom: 0;">Please read the fine print before entering.</p>
+                </div>
                 <div class="content-card">
                     <div class="rules-text-block" id="rulesFairSelection"></div>
                     <div class="rules-text-block" id="rulesImportantNotice"></div>
@@ -565,6 +628,25 @@
                 }
             }
             applyTheme(config.settings?.theme || 'dark');
+// Set parallax background images from config
+            if (config.prize?.images?.length > 0) {
+                const howToEnterImageUrl = config.prize.images[0]?.src;
+                if (howToEnterImageUrl) {
+                    document.documentElement.style.setProperty('--how-to-enter-bg-image', `url('${howToEnterImageUrl}')`);
+                } else {
+                    console.warn("First image for 'How to Enter' section background not found in config.");
+                }
+
+                // Using the second image for the rules section (index 1)
+                const rulesImageUrl = config.prize.images[1]?.src;
+                if (rulesImageUrl) {
+                    document.documentElement.style.setProperty('--rules-bg-image', `url('${rulesImageUrl}')`);
+                } else {
+                    console.warn("Image for 'Rules' section background not found in config.");
+                }
+            } else {
+                console.warn("No prize images found in config for parallax backgrounds.");
+            }
 
             // --- Mobile Navigation ---
             if (navToggle && navLinksList && pageBody) {

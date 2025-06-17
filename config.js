@@ -60,7 +60,7 @@ const config = {
         "alt": "Delicious Burger Combo"
       },
       {
-        "src": "https://images.unsplash.com/photo-1606131731446-5568087118aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+        "src": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80",
         "alt": "Another view of burgers"
       },
       {
