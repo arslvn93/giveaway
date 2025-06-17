@@ -943,7 +943,7 @@ body.theme-pastel #rules::before {
             applyTheme(config.settings?.theme || 'dark');
 // Set parallax background images from config
             if (config.prize?.images?.length > 0) {
-                const howToEnterImageUrl = config.prize.images[0]?.src;
+                const howToEnterImageUrl = config.prize.images[3]?.src;
                 if (howToEnterImageUrl) {
                     document.documentElement.style.setProperty('--how-to-enter-bg-image', `url('${howToEnterImageUrl}')`);
                 } else {
@@ -951,7 +951,7 @@ body.theme-pastel #rules::before {
                 }
 
                 // Using the second image for the rules section (index 1)
-                const rulesImageUrl = config.prize.images[1]?.src;
+                const rulesImageUrl = config.prize.images[2]?.src;
                 if (rulesImageUrl) {
                     document.documentElement.style.setProperty('--rules-bg-image', `url('${rulesImageUrl}')`);
                 } else {
