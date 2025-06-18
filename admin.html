@@ -259,23 +259,27 @@
             padding: 0 10px;
             color: #2c3e50;
         }
+        .panel-description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
 
     </style>
 </head>
 <body>
     <div class="admin-layout hidden" id="adminLayout">
         <nav id="sideNav">
-            <ul> <!-- Updated Nav -->
-                <li><a href="#" data-target="giveawaySection" class="active">Giveaway Details</a></li>
-                <li><a href="#" data-target="prizeSection">Prize Details</a></li>
-                <li><a href="#" data-target="howToEnterSection">How To Enter</a></li>
-                <li><a href="#" data-target="entryFormSection">Entry Form</a></li>
-                <li><a href="#" data-target="rulesSection">Rules & FAQ</a></li>
-                <li><a href="#" data-target="footerContactSection">Footer Contact</a></li>
-                <li><a href="#" data-target="metaSection">Meta/Site Info</a></li>
-                <li><a href="#" data-target="settingsSection">Settings</a></li>
-                <li><a href="#" data-target="modalQuestionsPanel">Modal Questions</a></li>
-                <li><a href="#" data-target="deploymentSection">Deployment Info</a></li>
+            <ul>
+                <li><a href="#" data-target="headerHeroPanel" class="active">Header & Hero</a></li>
+                <li><a href="#" data-target="prizeDetailsPanel">Prize Details</a></li>
+                <li><a href="#" data-target="howToEnterPanel">How to Enter</a></li>
+                <li><a href="#" data-target="entryFormPanel">Entry Contact Form</a></li>
+                <li><a href="#" data-target="footerContactPanel">Footer & Agent Info</a></li>
+                <li><a href="#" data-target="stylingAppearancePanel">Global Styling & Appearance</a></li>
+                <li><a href="#" data-target="deploymentPanel">Deployment</a></li>
+                <li><a href="#" data-target="automationsPanel">Automations</a></li>
             </ul>
         </nav>
         <main id="contentPanels">
@@ -283,12 +287,17 @@
             <form id="configForm">
                 <div class="content-panel-container"> <!-- Wrapper for scrollable panels -->
 
-                    <!-- Giveaway Details -->
-                    <div id="giveawaySection" class="content-panel active">
-                        <h2>Giveaway Details</h2>
+                    <!-- 1. Header & Hero Panel -->
+                    <div id="headerHeroPanel" class="content-panel active">
+                        <h2>Header & Hero</h2>
+                        <p class="panel-description">Manage the content that users see first: the browser tab title, navigation bar branding, and the main hero section.</p>
                         <div class="form-group">
-                            <label for="giveawayName">Giveaway Name (for internal reference, modal):</label>
-                            <input type="text" id="giveawayName" name="giveawayName">
+                            <label for="metaPageTitle">Page Title:</label>
+                            <input type="text" id="metaPageTitle" name="metaPageTitle">
+                        </div>
+                        <div class="form-group">
+                            <label for="metaNavBrandLogoText">Navigation Brand Text:</label>
+                            <input type="text" id="metaNavBrandLogoText" name="metaNavBrandLogoText">
                         </div>
                         <div class="form-group">
                             <label for="giveawayHeroHeadline">Hero Headline (HTML allowed):</label>
@@ -299,6 +308,10 @@
                             <textarea id="giveawayHeroSubheadline" name="giveawayHeroSubheadline"></textarea>
                         </div>
                         <div class="form-group">
+                            <label for="giveawayHeroBackgroundImageUrl">Hero Background Image URL:</label>
+                            <input type="url" id="giveawayHeroBackgroundImageUrl" name="giveawayHeroBackgroundImageUrl">
+                        </div>
+                        <div class="form-group">
                             <label for="giveawayPromotionDates">Promotion Dates Text:</label>
                             <input type="text" id="giveawayPromotionDates" name="giveawayPromotionDates">
                         </div>
@@ -307,34 +320,19 @@
                             <input type="datetime-local" id="giveawayEndDate" name="giveawayEndDate">
                         </div>
                         <div class="form-group">
-                            <label for="giveawayHeroBackgroundImageUrl">Hero Background Image URL:</label>
-                            <input type="url" id="giveawayHeroBackgroundImageUrl" name="giveawayHeroBackgroundImageUrl">
+                             <input type="checkbox" id="settingsShowCountdownInHero" name="settingsShowCountdownInHero">
+                             <label for="settingsShowCountdownInHero" class="checkbox-label">Show Countdown Timer in Hero?</label>
                         </div>
                         <div class="form-group">
                             <label for="giveawayHeroCtaText">Hero CTA Button Text:</label>
                             <input type="text" id="giveawayHeroCtaText" name="giveawayHeroCtaText">
                         </div>
-                         <div class="form-group">
-                            <label for="giveawayEntryFormCtaText">Entry Form Submit Button Text:</label>
-                            <input type="text" id="giveawayEntryFormCtaText" name="giveawayEntryFormCtaText">
-                        </div>
-                        <div class="form-group">
-                            <label for="giveawaySuccessModalHeaderText">Success Modal Header Text:</label>
-                            <input type="text" id="giveawaySuccessModalHeaderText" name="giveawaySuccessModalHeaderText">
-                        </div>
-                        <div class="form-group">
-                            <label for="giveawaySuccessModalMainMessage">Success Modal Main Message (HTML allowed):</label>
-                            <textarea id="giveawaySuccessModalMainMessage" name="giveawaySuccessModalMainMessage"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="giveawaySuccessModalEmailPrompt">Success Modal Email Prompt:</label>
-                            <textarea id="giveawaySuccessModalEmailPrompt" name="giveawaySuccessModalEmailPrompt"></textarea>
-                        </div>
                     </div>
 
-                    <!-- Prize Details -->
-                    <div id="prizeSection" class="content-panel">
+                    <!-- 2. Prize Details Panel -->
+                    <div id="prizeDetailsPanel" class="content-panel">
                         <h2>Prize Details</h2>
+                        <p class="panel-description">Define what the user is trying to win. Describe the prize, its value, and showcase it with images.</p>
                         <div class="form-group">
                             <label for="prizeName">Prize Name:</label>
                             <input type="text" id="prizeName" name="prizeName">
@@ -351,20 +349,11 @@
                             <label for="prizeLimitedTimeOfferText">Limited Time Offer Text (optional):</label>
                             <input type="text" id="prizeLimitedTimeOfferText" name="prizeLimitedTimeOfferText">
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <label for="prizeCtaButtonText">Prize Section CTA Button Text:</label>
                             <input type="text" id="prizeCtaButtonText" name="prizeCtaButtonText">
                         </div>
                         <fieldset>
-                             <legend>Prize Images (First image is main, others are thumbnails)</legend>
-                             <div id="prizeImagesContainer">
-                                 <!-- JS will populate this -->
-                             </div>
-                             <div class="dynamic-item-controls">
-                                 <button type="button" class="add-item" onclick="addPrizeImage()">Add Image</button>
-                             </div>
-                        </fieldset>
-                         <fieldset>
                              <legend>Prize "What's Included" Items</legend>
                              <div id="prizeIncludedItemsContainer">
                                  <!-- JS will populate this -->
@@ -373,11 +362,22 @@
                                  <button type="button" class="add-item" onclick="addIncludedItem()">Add Item</button>
                              </div>
                         </fieldset>
+                        <fieldset>
+                             <legend>Prize Images (First image is main, others are thumbnails)</legend>
+                             <p class="panel-description" style="font-size: 13px; margin-top: -10px; margin-bottom:10px;">Note: The 3rd and 4th images in the gallery are used for parallax backgrounds on the main page.</p>
+                             <div id="prizeImagesContainer">
+                                 <!-- JS will populate this -->
+                             </div>
+                             <div class="dynamic-item-controls">
+                                 <button type="button" class="add-item" onclick="addPrizeImage()">Add Image</button>
+                             </div>
+                        </fieldset>
                     </div>
 
-                    <!-- How To Enter -->
-                    <div id="howToEnterSection" class="content-panel">
-                        <h2>How To Enter Section</h2>
+                    <!-- 3. How to Enter Panel -->
+                    <div id="howToEnterPanel" class="content-panel">
+                        <h2>How to Enter</h2>
+                        <p class="panel-description">Explain the rules and steps for participation. This section covers the 'how-to' steps, highlights, official rules, and FAQs.</p>
                          <fieldset>
                              <legend>Steps to Enter</legend>
                              <div id="howToEnterStepsContainer">
@@ -396,29 +396,6 @@
                                  <button type="button" class="add-item" onclick="addHowToEnterHighlight()">Add Highlight</button>
                              </div>
                         </fieldset>
-                    </div>
-
-                    <!-- Entry Form Section -->
-                    <div id="entryFormSection" class="content-panel">
-                        <h2>Entry Form Section</h2>
-                        <div class="form-group">
-                            <label for="entryFormSubtitle">Form Subtitle:</label>
-                            <textarea id="entryFormSubtitle" name="entryFormSubtitle"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="entryFormEntryCountText">Entry Count Text (e.g., "Over 500+ entries"):</label>
-                            <input type="text" id="entryFormEntryCountText" name="entryFormEntryCountText">
-                        </div>
-                        <div class="form-group">
-                            <label for="entryFormSocialSharePrompt">Social Share Prompt Text:</label>
-                            <textarea id="entryFormSocialSharePrompt" name="entryFormSocialSharePrompt"></textarea>
-                        </div>
-                         <!-- Note: Share platform URLs are generated dynamically in the main page script -->
-                    </div>
-
-                     <!-- Rules & FAQ Section -->
-                    <div id="rulesSection" class="content-panel">
-                        <h2>Rules & FAQ Section</h2>
                         <fieldset>
                             <legend>Fair Selection Info</legend>
                             <div class="form-group">
@@ -461,16 +438,61 @@
                         </fieldset>
                     </div>
 
-                    <!-- Footer Contact Section -->
-                    <div id="footerContactSection" class="content-panel">
-                        <h2>Footer Contact Information</h2>
+                    <!-- 4. Entry Contact Form Panel -->
+                    <div id="entryFormPanel" class="content-panel">
+                        <h2>Entry Contact Form</h2>
+                        <p class="panel-description">Configure the entire user submission process, from the form fields and questions to the confirmation message they see after entering.</p>
                         <div class="form-group">
-                            <label for="footerContactOrganizerName">Organizer/Company Name:</label>
-                            <input type="text" id="footerContactOrganizerName" name="footerContactOrganizerName">
+                            <label for="entryFormSubtitle">Form Subtitle:</label>
+                            <textarea id="entryFormSubtitle" name="entryFormSubtitle"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="footerContactBrokerageName">Brokerage Name (if different, displayed below Organizer):</label>
-                            <input type="text" id="footerContactBrokerageName" name="footerContactBrokerageName">
+                            <label for="entryFormEntryCountText">Entry Count Text (e.g., "Over 500+ entries"):</label>
+                            <input type="text" id="entryFormEntryCountText" name="entryFormEntryCountText">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawayEntryFormCtaText">Entry Form Submit Button Text:</label>
+                            <input type="text" id="giveawayEntryFormCtaText" name="giveawayEntryFormCtaText">
+                        </div>
+                        <fieldset>
+                            <legend>Manage Questions for the Pre-Submission Modal</legend>
+                            <div id="modalQuestionsContainer">
+                                <!-- Modal questions will be dynamically added here by JavaScript -->
+                            </div>
+                            <div class="dynamic-item-controls" style="margin-top: 15px;">
+                                <button type="button" class="add-item" onclick="addModalQuestion()">Add New Question</button>
+                            </div>
+                        </fieldset>
+                        <div class="form-group">
+                            <label for="entryFormSocialSharePrompt">Social Share Prompt Text:</label>
+                            <textarea id="entryFormSocialSharePrompt" name="entryFormSocialSharePrompt"></textarea>
+                        </div>
+                         <!-- Note: Share platform URLs are generated dynamically in the main page script -->
+                        <div class="form-group">
+                            <label for="giveawayName">Giveaway Name (for internal reference, modal):</label>
+                            <input type="text" id="giveawayName" name="giveawayName">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawaySuccessModalHeaderText">Success Modal Header Text:</label>
+                            <input type="text" id="giveawaySuccessModalHeaderText" name="giveawaySuccessModalHeaderText">
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawaySuccessModalMainMessage">Success Modal Main Message (HTML allowed):</label>
+                            <textarea id="giveawaySuccessModalMainMessage" name="giveawaySuccessModalMainMessage"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="giveawaySuccessModalEmailPrompt">Success Modal Email Prompt:</label>
+                            <textarea id="giveawaySuccessModalEmailPrompt" name="giveawaySuccessModalEmailPrompt"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 5. Footer & Contact Info Panel -->
+                    <div id="footerContactPanel" class="content-panel">
+                        <h2>Footer & Agent Info</h2>
+                        <p class="panel-description">Set up your brand's identity at the bottom of the page. Includes logos, contact details, social links, and legal information.</p>
+                        <div class="form-group">
+                            <label for="footerDisclaimer">Footer Top Disclaimer Text:</label>
+                            <textarea id="footerDisclaimer" name="footerDisclaimer"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="footerContactOrganizerLogoUrl">Main Footer Logo URL:</label>
@@ -480,9 +502,21 @@
                             <label for="footerContactSecondaryLogoUrl">Secondary Footer Logo URL:</label>
                             <input type="url" id="footerContactSecondaryLogoUrl" name="footerContactSecondaryLogoUrl">
                         </div>
-                        <div class="form-group">
+                         <div class="form-group">
                             <label for="footerContactSecondaryLogoAlt">Secondary Footer Logo Alt Text:</label>
                             <input type="text" id="footerContactSecondaryLogoAlt" name="footerContactSecondaryLogoAlt">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactOrganizerName">Organizer/Company Name:</label>
+                            <input type="text" id="footerContactOrganizerName" name="footerContactOrganizerName">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactBrokerageName">Brokerage Name (if different, displayed below Organizer):</label>
+                            <input type="text" id="footerContactBrokerageName" name="footerContactBrokerageName">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerContactAddress">Main Address:</label>
+                            <input type="text" id="footerContactAddress" name="footerContactAddress">
                         </div>
                         <div class="form-group">
                             <label for="footerContactEmail">Main Contact Email:</label>
@@ -492,15 +526,18 @@
                             <label for="footerContactPhone">Main Contact Phone:</label>
                             <input type="tel" id="footerContactPhone" name="footerContactPhone">
                         </div>
-                        <div class="form-group">
-                            <label for="footerContactAddress">Main Address:</label>
-                            <input type="text" id="footerContactAddress" name="footerContactAddress">
-                        </div>
-                        <div class="form-group">
-                            <label for="footerDisclaimer">Footer Top Disclaimer Text:</label>
-                            <textarea id="footerDisclaimer" name="footerDisclaimer"></textarea>
-                        </div>
-
+                        <fieldset>
+                            <legend>Social Media Links (Displayed in their own column)</legend>
+                            <div class="form-group">
+                                <label for="footerContactSocialFacebook">Facebook URL:</label>
+                                <input type="url" id="footerContactSocialFacebook" name="footerContactSocialFacebook">
+                            </div>
+                            <div class="form-group">
+                                <label for="footerContactSocialInstagram">Instagram URL:</label>
+                                <input type="url" id="footerContactSocialInstagram" name="footerContactSocialInstagram">
+                            </div>
+                             <!-- Add other platforms if needed -->
+                        </fieldset>
                         <fieldset>
                             <legend>Agent Contact Details (for Footer Agent Column)</legend>
                             <div class="form-group">
@@ -520,35 +557,9 @@
                                 <input type="email" id="footerAgentEmail" name="footerAgentEmail">
                             </div>
                         </fieldset>
-
-                        <fieldset>
-                            <legend>Social Media Links (Displayed in their own column)</legend>
-                            <div class="form-group">
-                                <label for="footerContactSocialFacebook">Facebook URL:</label>
-                                <input type="url" id="footerContactSocialFacebook" name="footerContactSocialFacebook">
-                            </div>
-                            <div class="form-group">
-                                <label for="footerContactSocialInstagram">Instagram URL:</label>
-                                <input type="url" id="footerContactSocialInstagram" name="footerContactSocialInstagram">
-                            </div>
-                             <!-- Add other platforms if needed -->
-                        </fieldset>
                         <div class="form-group">
                             <label for="footerContactCopyrightOwner">Copyright Owner Name:</label>
                             <input type="text" id="footerContactCopyrightOwner" name="footerContactCopyrightOwner">
-                        </div>
-                    </div>
-
-                    <!-- Meta/Site Info Section -->
-                    <div id="metaSection" class="content-panel">
-                        <h2>Meta / Site Information</h2>
-                        <div class="form-group">
-                            <label for="metaPageTitle">Page Title:</label>
-                            <input type="text" id="metaPageTitle" name="metaPageTitle">
-                        </div>
-                        <div class="form-group">
-                            <label for="metaNavBrandLogoText">Navigation Brand Text:</label>
-                            <input type="text" id="metaNavBrandLogoText" name="metaNavBrandLogoText">
                         </div>
                         <div class="form-group">
                             <label for="metaPrivacyPolicyLink">Privacy Policy Link:</label>
@@ -556,13 +567,10 @@
                         </div>
                     </div>
 
-                    <!-- Settings Section -->
-                    <div id="settingsSection" class="content-panel">
-                        <h2>Settings</h2>
-                        <div class="form-group">
-                            <label for="settingsGhlWebhookUrl">GHL Webhook URL:</label>
-                            <input type="url" id="settingsGhlWebhookUrl" name="settingsGhlWebhookUrl">
-                        </div>
+                    <!-- 6. Global Styling & Appearance Panel -->
+                    <div id="stylingAppearancePanel" class="content-panel">
+                        <h2>Global Styling & Appearance</h2>
+                        <p class="panel-description">Control the overall look and feel of the site with theme selectors and color options.</p>
                         <div class="form-group">
                             <label for="settingsTheme">Theme:</label>
                             <select id="settingsTheme" name="settingsTheme">
@@ -579,29 +587,12 @@
                             <label for="settingsConfettiColors">Confetti Colors (hex codes, one per line):</label>
                             <textarea id="settingsConfettiColors" name="settingsConfettiColors"></textarea>
                         </div>
-                         <div class="form-group">
-                             <input type="checkbox" id="settingsShowCountdownInHero" name="settingsShowCountdownInHero">
-                             <label for="settingsShowCountdownInHero" class="checkbox-label">Show Countdown Timer in Hero?</label>
-                        </div>
                     </div>
 
-                    <!-- Modal Questions Section -->
-                    <div id="modalQuestionsPanel" class="content-panel">
-                        <h2>Modal Questions</h2>
-                        <fieldset>
-                            <legend>Manage Questions for the Pre-Submission Modal</legend>
-                            <div id="modalQuestionsContainer">
-                                <!-- Modal questions will be dynamically added here by JavaScript -->
-                            </div>
-                            <div class="dynamic-item-controls" style="margin-top: 15px;">
-                                <button type="button" class="add-item" onclick="addModalQuestion()">Add New Question</button>
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <!-- Deployment Info Section -->
-                    <div id="deploymentSection" class="content-panel">
-                        <h2>Deployment Information</h2>
+                    <!-- 7. Deployment Panel -->
+                    <div id="deploymentPanel" class="content-panel">
+                        <h2>Deployment</h2>
+                        <p class="panel-description">Technical information about the project's repository and hosting environment. (For developer use).</p>
                         <div class="form-group">
                             <label for="deploymentRepoName">Repository Name:</label>
                             <input type="text" id="deploymentRepoName" name="deploymentRepoName">
@@ -611,16 +602,26 @@
                             <input type="url" id="deploymentRepoUrl" name="deploymentRepoUrl">
                         </div>
                         <div class="form-group">
-                            <label for="deploymentTag">Deployment Tag/Name:</label>
-                            <input type="text" id="deploymentTag" name="deploymentTag">
-                        </div>
-                        <div class="form-group">
                             <label for="deploymentNetlifyUrl">Netlify URL:</label>
                             <input type="url" id="deploymentNetlifyUrl" name="deploymentNetlifyUrl">
                         </div>
                         <div class="form-group">
                             <label for="deploymentNetlifyId">Netlify Site ID:</label>
                             <input type="text" id="deploymentNetlifyId" name="deploymentNetlifyId">
+                        </div>
+                    </div>
+
+                    <!-- 8. Automations Panel -->
+                    <div id="automationsPanel" class="content-panel">
+                        <h2>Automations</h2>
+                        <p class="panel-description">Critical settings that connect this giveaway to external systems. Changes here can affect data processing and other automated workflows.</p>
+                        <div class="form-group">
+                            <label for="settingsGhlWebhookUrl">GHL WEBHOOK URL:</label>
+                            <input type="url" id="settingsGhlWebhookUrl" name="settingsGhlWebhookUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="deploymentTag">CRM TAG:</label>
+                            <input type="text" id="deploymentTag" name="deploymentTag">
                         </div>
                     </div>
 
@@ -865,21 +866,21 @@
         }
 
 
-        // --- Populate Form Function (Needs Full Implementation) ---
+        // --- Populate Form Function (Updated for new structure) ---
         function populateForm() {
             if (typeof config === 'undefined') { console.error("Config not loaded!"); return; }
             const c = config;
 
-            // Giveaway Details
-            setVal('giveawayName', c.giveaway?.name);
+            // 1. Header & Hero Panel
+            setVal('metaPageTitle', c.meta?.pageTitle);
+            setVal('metaNavBrandLogoText', c.meta?.navBrandLogoText);
             setVal('giveawayHeroHeadline', c.giveaway?.heroHeadline);
             setVal('giveawayHeroSubheadline', c.giveaway?.heroSubheadline);
+            setVal('giveawayHeroBackgroundImageUrl', c.giveaway?.heroBackgroundImageUrl);
             setVal('giveawayPromotionDates', c.giveaway?.promotionDates);
-            // Convert ISO string to datetime-local format if needed
             if (c.giveaway?.endDate) {
                  try {
                      const date = new Date(c.giveaway.endDate);
-                     // Format YYYY-MM-DDTHH:mm
                      const localDateTime = date.getFullYear() + '-' +
                                           ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
                                           ('0' + date.getDate()).slice(-2) + 'T' +
@@ -888,32 +889,21 @@
                      setVal('giveawayEndDate', localDateTime);
                  } catch (e) { console.error("Error parsing end date:", e); setVal('giveawayEndDate', ''); }
             } else { setVal('giveawayEndDate', ''); }
-            setVal('giveawayHeroBackgroundImageUrl', c.giveaway?.heroBackgroundImageUrl);
+            setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
             setVal('giveawayHeroCtaText', c.giveaway?.heroCtaText);
-            setVal('giveawayEntryFormCtaText', c.giveaway?.entryFormCtaText);
-            setVal('giveawaySuccessModalHeaderText', c.giveaway?.successModalHeaderText);
-            setVal('giveawaySuccessModalMainMessage', c.giveaway?.successModalMainMessage);
-            setVal('giveawaySuccessModalEmailPrompt', c.giveaway?.successModalEmailPrompt);
 
-            // Prize Details
+            // 2. Prize Details Panel
             setVal('prizeName', c.prize?.name);
             setVal('prizeValue', c.prize?.value);
             setVal('prizeDescription', c.prize?.description);
             setVal('prizeLimitedTimeOfferText', c.prize?.limitedTimeOfferText);
             setVal('prizeCtaButtonText', c.prize?.ctaButtonText);
-            renderDynamicItems('prizeImagesContainer', c.prize?.images, createPrizeImageInputs, addPrizeImage);
             renderDynamicItems('prizeIncludedItemsContainer', c.prize?.includedItems, createIncludedItemInputs, addIncludedItem);
+            renderDynamicItems('prizeImagesContainer', c.prize?.images, createPrizeImageInputs, addPrizeImage);
 
-            // How To Enter
+            // 3. How to Enter Panel
             renderDynamicItems('howToEnterStepsContainer', c.howToEnter?.steps, createHowToEnterStepInputs, addHowToEnterStep);
             renderDynamicItems('howToEnterHighlightsContainer', c.howToEnter?.highlights, createHowToEnterHighlightInputs, addHowToEnterHighlight);
-
-            // Entry Form
-            setVal('entryFormSubtitle', c.entryForm?.subtitle);
-            setVal('entryFormEntryCountText', c.entryForm?.entryCountText);
-            setVal('entryFormSocialSharePrompt', c.entryForm?.socialSharePrompt);
-
-            // Rules & FAQ
             setVal('rulesFairSelectionTitle', c.rules?.fairSelectionInfo?.title);
             setVal('rulesFairSelectionText', c.rules?.fairSelectionInfo?.text);
             setVal('rulesImportantNoticeTitle', c.rules?.importantNotice?.title);
@@ -921,58 +911,57 @@
             renderDynamicItems('rulesFaqContainer', c.rules?.faq, createFaqItemInputs, addFaqItem);
             renderDynamicItems('rulesTipsContainer', c.rules?.tips, createTipItemInputs, addTipItem);
 
+            // 4. Entry Contact Form Panel
+            setVal('entryFormSubtitle', c.entryForm?.subtitle);
+            setVal('entryFormEntryCountText', c.entryForm?.entryCountText);
+            setVal('giveawayEntryFormCtaText', c.giveaway?.entryFormCtaText);
+            if (c.modalQuestions && Array.isArray(c.modalQuestions)) {
+                renderDynamicItems('modalQuestionsContainer', c.modalQuestions, createModalQuestionInputs, addModalQuestion);
+            }
+            setVal('entryFormSocialSharePrompt', c.entryForm?.socialSharePrompt);
+            setVal('giveawayName', c.giveaway?.name);
+            setVal('giveawaySuccessModalHeaderText', c.giveaway?.successModalHeaderText);
+            setVal('giveawaySuccessModalMainMessage', c.giveaway?.successModalMainMessage);
+            setVal('giveawaySuccessModalEmailPrompt', c.giveaway?.successModalEmailPrompt);
 
-            // Footer Contact
-            setVal('footerContactOrganizerName', c.footerContact?.organizerName);
-            setVal('footerContactBrokerageName', c.footerContact?.brokerageName); // New
+            // 5. Footer & Contact Info Panel
+            setVal('footerDisclaimer', c.footerContact?.footerDisclaimer);
             setVal('footerContactOrganizerLogoUrl', c.footerContact?.organizerLogoUrl);
-            setVal('footerContactSecondaryLogoUrl', c.footerContact?.secondaryLogoUrl); // New
-            setVal('footerContactSecondaryLogoAlt', c.footerContact?.secondaryLogoAlt); // New
+            setVal('footerContactSecondaryLogoUrl', c.footerContact?.secondaryLogoUrl);
+            setVal('footerContactSecondaryLogoAlt', c.footerContact?.secondaryLogoAlt);
+            setVal('footerContactOrganizerName', c.footerContact?.organizerName);
+            setVal('footerContactBrokerageName', c.footerContact?.brokerageName);
+            setVal('footerContactAddress', c.footerContact?.address);
             setVal('footerContactEmail', c.footerContact?.email);
             setVal('footerContactPhone', c.footerContact?.phone);
-            setVal('footerContactAddress', c.footerContact?.address);
-            setVal('footerDisclaimer', c.footerContact?.footerDisclaimer); // New
             setVal('footerContactSocialFacebook', c.footerContact?.social?.facebook);
             setVal('footerContactSocialInstagram', c.footerContact?.social?.instagram);
+            setVal('footerAgentName', c.footerContact?.agentContact?.name);
+            setVal('footerAgentTitle', c.footerContact?.agentContact?.title);
+            setVal('footerAgentPhone', c.footerContact?.agentContact?.phone);
+            setVal('footerAgentEmail', c.footerContact?.agentContact?.email);
             setVal('footerContactCopyrightOwner', c.footerContact?.copyrightOwner);
-            // Agent Details
-            setVal('footerAgentName', c.footerContact?.agentContact?.name); // New
-            setVal('footerAgentTitle', c.footerContact?.agentContact?.title); // New
-            setVal('footerAgentPhone', c.footerContact?.agentContact?.phone); // New
-            setVal('footerAgentEmail', c.footerContact?.agentContact?.email); // New
-
-            // Meta/Site Info
-            setVal('metaPageTitle', c.meta?.pageTitle);
-            setVal('metaNavBrandLogoText', c.meta?.navBrandLogoText);
             setVal('metaPrivacyPolicyLink', c.meta?.privacyPolicyLink);
 
-            // Settings
-            setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
+            // 6. Global Styling & Appearance Panel
             setVal('settingsTheme', c.settings?.theme);
             setVal('settingsPrimaryColorOverride', c.settings?.primaryColorOverride);
             textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
-            setVal('settingsShowCountdownInHero', c.settings?.showCountdownInHero);
- 
-            // Deployment Info
+
+            // 7. Deployment Panel
             setVal('deploymentRepoName', c.deploymentInfo?.repoName);
             setVal('deploymentRepoUrl', c.deploymentInfo?.repoUrl);
-            setVal('deploymentTag', c.deploymentInfo?.tag);
             setVal('deploymentNetlifyUrl', c.deploymentInfo?.netlifyUrl);
             setVal('deploymentNetlifyId', c.deploymentInfo?.netlifyId);
 
-            // Populate Modal Questions
-            if (c.modalQuestions && Array.isArray(c.modalQuestions)) {
-                renderDynamicItems('modalQuestionsContainer', c.modalQuestions, createModalQuestionInputs, addModalQuestion);
-            } else {
-                 // Optionally add one empty question if none exist, or leave empty
-                // addModalQuestion();
-            }
+            // 8. Automations Panel
+            setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
+            setVal('deploymentTag', c.deploymentInfo?.tag);
 
-            console.log("Form population complete.");
+            console.log("Form population complete (v2).");
         }
 
-
-        // --- Handle Form Submit Function (Needs Full Implementation) ---
+        // --- Handle Form Submit Function (Updated for new structure) ---
         async function handleFormSubmit(event) {
             event.preventDefault();
             messageDiv.textContent = 'Saving...';
@@ -980,161 +969,154 @@
 
             // Create a new config object matching the structure of config.js
             const updatedConfig = {
-                giveaway: {}, prize: { images: [], includedItems: [] }, howToEnter: { steps: [], highlights: [] },
-                entryForm: { sharePlatforms: {} }, rules: { faq: [], tips: [] }, footerContact: { social: {} },
-                meta: {}, settings: { confettiColors: [] }, deploymentInfo: {}, modalQuestions: [] // Keep structure consistent, added deploymentInfo
+                meta: {},
+                giveaway: {},
+                settings: { confettiColors: [] }, // Initialize confettiColors as array
+                prize: { images: [], includedItems: [] },
+                howToEnter: { steps: [], highlights: [] },
+                rules: { faq: [], tips: [] },
+                entryForm: { sharePlatforms: {} },
+                modalQuestions: [],
+                footerContact: { social: {}, agentContact: {} }, // Initialize nested objects
+                deploymentInfo: {}
             };
 
             try {
-                // Giveaway Details
-                updatedConfig.giveaway.name = getVal('giveawayName');
+                // 1. Header & Hero Panel
+                updatedConfig.meta.pageTitle = getVal('metaPageTitle');
+                updatedConfig.meta.navBrandLogoText = getVal('metaNavBrandLogoText');
                 updatedConfig.giveaway.heroHeadline = getVal('giveawayHeroHeadline');
                 updatedConfig.giveaway.heroSubheadline = getVal('giveawayHeroSubheadline');
+                updatedConfig.giveaway.heroBackgroundImageUrl = getVal('giveawayHeroBackgroundImageUrl');
                 updatedConfig.giveaway.promotionDates = getVal('giveawayPromotionDates');
-                // Convert datetime-local back to ISO string or keep as is depending on backend needs
                 const endDateVal = getVal('giveawayEndDate');
                 if (endDateVal) {
                     try { updatedConfig.giveaway.endDate = new Date(endDateVal).toISOString(); }
                     catch(e) { console.warn("Could not parse end date, leaving empty", e); updatedConfig.giveaway.endDate = ""; }
                 } else { updatedConfig.giveaway.endDate = ""; }
-                updatedConfig.giveaway.heroBackgroundImageUrl = getVal('giveawayHeroBackgroundImageUrl');
+                updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
                 updatedConfig.giveaway.heroCtaText = getVal('giveawayHeroCtaText');
-                updatedConfig.giveaway.entryFormCtaText = getVal('giveawayEntryFormCtaText');
-                updatedConfig.giveaway.successModalHeaderText = getVal('giveawaySuccessModalHeaderText');
-                updatedConfig.giveaway.successModalMainMessage = getVal('giveawaySuccessModalMainMessage');
-                updatedConfig.giveaway.successModalEmailPrompt = getVal('giveawaySuccessModalEmailPrompt');
 
-                // Prize Details
+                // 2. Prize Details Panel
                 updatedConfig.prize.name = getVal('prizeName');
                 updatedConfig.prize.value = getVal('prizeValue');
                 updatedConfig.prize.description = getVal('prizeDescription');
                 updatedConfig.prize.limitedTimeOfferText = getVal('prizeLimitedTimeOfferText');
                 updatedConfig.prize.ctaButtonText = getVal('prizeCtaButtonText');
-                // Collect dynamic prize images
-                document.querySelectorAll('#prizeImagesContainer .dynamic-item-group').forEach((group, index) => {
-                    const src = group.querySelector(`#prizeImageSrc${index}`)?.value;
-                    const alt = group.querySelector(`#prizeImageAlt${index}`)?.value;
-                    if (src || alt) { updatedConfig.prize.images.push({ src: src || '', alt: alt || '' }); }
-                });
-                 // Collect dynamic included items
                 document.querySelectorAll('#prizeIncludedItemsContainer .dynamic-item-group').forEach((group, index) => {
                     const icon = group.querySelector(`#includedIcon${index}`)?.value;
                     const text = group.querySelector(`#includedText${index}`)?.value;
                      if (icon || text) { updatedConfig.prize.includedItems.push({ icon: icon || '', text: text || '' }); }
                 });
+                document.querySelectorAll('#prizeImagesContainer .dynamic-item-group').forEach((group, index) => {
+                    const src = group.querySelector(`#prizeImageSrc${index}`)?.value;
+                    const alt = group.querySelector(`#prizeImageAlt${index}`)?.value;
+                    if (src || alt) { updatedConfig.prize.images.push({ src: src || '', alt: alt || '' }); }
+                });
 
-
-                // How To Enter
-                 document.querySelectorAll('#howToEnterStepsContainer .dynamic-item-group').forEach((group, index) => {
+                // 3. How to Enter Panel
+                document.querySelectorAll('#howToEnterStepsContainer .dynamic-item-group').forEach((group, index) => {
                     const icon = group.querySelector(`#stepIcon${index}`)?.value;
                     const title = group.querySelector(`#stepTitle${index}`)?.value;
                     const description = group.querySelector(`#stepDescription${index}`)?.value;
                      if (icon || title || description) { updatedConfig.howToEnter.steps.push({ icon: icon || '', title: title || '', description: description || '' }); }
                 });
-                 document.querySelectorAll('#howToEnterHighlightsContainer .dynamic-item-group').forEach((group, index) => {
+                document.querySelectorAll('#howToEnterHighlightsContainer .dynamic-item-group').forEach((group, index) => {
                     const icon = group.querySelector(`#highlightIcon${index}`)?.value;
                     const text = group.querySelector(`#highlightText${index}`)?.value;
                      if (icon || text) { updatedConfig.howToEnter.highlights.push({ icon: icon || '', text: text || '' }); }
                 });
-
-                // Entry Form
-                updatedConfig.entryForm.subtitle = getVal('entryFormSubtitle');
-                updatedConfig.entryForm.entryCountText = getVal('entryFormEntryCountText');
-                updatedConfig.entryForm.socialSharePrompt = getVal('entryFormSocialSharePrompt');
-                // Share platforms are generated dynamically, so we don't collect them here.
-                // We copy the existing ones from the loaded config to preserve structure.
-                updatedConfig.entryForm.sharePlatforms = config.entryForm?.sharePlatforms || {};
-
-
-                // Rules & FAQ
                 updatedConfig.rules.fairSelectionInfo = { title: getVal('rulesFairSelectionTitle'), text: getVal('rulesFairSelectionText') };
                 updatedConfig.rules.importantNotice = { title: getVal('rulesImportantNoticeTitle'), text: getVal('rulesImportantNoticeText') };
-                 document.querySelectorAll('#rulesFaqContainer .dynamic-item-group').forEach((group, index) => {
+                document.querySelectorAll('#rulesFaqContainer .dynamic-item-group').forEach((group, index) => {
                     const q = group.querySelector(`#faqQ${index}`)?.value;
                     const a = group.querySelector(`#faqA${index}`)?.value;
                      if (q || a) { updatedConfig.rules.faq.push({ q: q || '', a: a || '' }); }
                 });
-                 document.querySelectorAll('#rulesTipsContainer .dynamic-item-group').forEach((group, index) => {
+                document.querySelectorAll('#rulesTipsContainer .dynamic-item-group').forEach((group, index) => {
                     const text = group.querySelector(`#tipText${index}`)?.value;
                      if (text) { updatedConfig.rules.tips.push(text); }
                 });
 
-
-                // Footer Contact
-                updatedConfig.footerContact.organizerName = getVal('footerContactOrganizerName');
-                updatedConfig.footerContact.brokerageName = getVal('footerContactBrokerageName'); // New
-                updatedConfig.footerContact.organizerLogoUrl = getVal('footerContactOrganizerLogoUrl');
-                updatedConfig.footerContact.secondaryLogoUrl = getVal('footerContactSecondaryLogoUrl'); // New
-                updatedConfig.footerContact.secondaryLogoAlt = getVal('footerContactSecondaryLogoAlt'); // New
-                updatedConfig.footerContact.email = getVal('footerContactEmail');
-                updatedConfig.footerContact.phone = getVal('footerContactPhone');
-                updatedConfig.footerContact.address = getVal('footerContactAddress');
-                updatedConfig.footerContact.footerDisclaimer = getVal('footerDisclaimer'); // New
-                updatedConfig.footerContact.social.facebook = getVal('footerContactSocialFacebook');
-                updatedConfig.footerContact.social.instagram = getVal('footerContactSocialInstagram');
-                updatedConfig.footerContact.copyrightOwner = getVal('footerContactCopyrightOwner');
-                // Agent Details
-                updatedConfig.footerContact.agentContact = {
-                    name: getVal('footerAgentName'),
-                    title: getVal('footerAgentTitle'),
-                    phone: getVal('footerAgentPhone'),
-                    email: getVal('footerAgentEmail')
-                }; // New
-
-                // Meta/Site Info
-                updatedConfig.meta.pageTitle = getVal('metaPageTitle');
-                updatedConfig.meta.navBrandLogoText = getVal('metaNavBrandLogoText');
-                updatedConfig.meta.privacyPolicyLink = getVal('metaPrivacyPolicyLink');
-
-                // Settings
-                updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
-                updatedConfig.settings.theme = getVal('settingsTheme');
-                updatedConfig.settings.primaryColorOverride = getVal('settingsPrimaryColorOverride');
-                updatedConfig.settings.webhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate";
-                updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
-                updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
- 
-                // Deployment Info
-                updatedConfig.deploymentInfo.repoName = getVal('deploymentRepoName');
-                updatedConfig.deploymentInfo.repoUrl = getVal('deploymentRepoUrl');
-                updatedConfig.deploymentInfo.tag = getVal('deploymentTag');
-                updatedConfig.deploymentInfo.netlifyUrl = getVal('deploymentNetlifyUrl');
-                updatedConfig.deploymentInfo.netlifyId = getVal('deploymentNetlifyId');
-
-                updatedConfig.modalQuestions = []; // Initialize
+                // 4. Entry Contact Form Panel
+                updatedConfig.entryForm.subtitle = getVal('entryFormSubtitle');
+                updatedConfig.entryForm.entryCountText = getVal('entryFormEntryCountText');
+                updatedConfig.giveaway.entryFormCtaText = getVal('giveawayEntryFormCtaText');
+                // Modal Questions
+                updatedConfig.modalQuestions = [];
                 const questionGroups = document.querySelectorAll('#modalQuestionsContainer > .dynamic-item-group');
                 questionGroups.forEach((qGroup, qIndex) => {
-                    // Construct the ID selectors carefully based on how createModalQuestionInputs generates them
-                    // Assuming IDs are like: modalQ_text_0, modalQ0_optText_0
-                    // Question ID field removed from UI. ID will be auto-generated.
                     const textInput = qGroup.querySelector(`textarea[id="modalQ_text_${qIndex}"]`);
                     const questionText = textInput ? textInput.value.trim() : '';
-
-                    if (questionText) { // Only add question if it has some text
+                    if (questionText) {
                         const currentQuestion = {
-                            id: `q_auto_${Date.now()}_${qIndex}`, // Auto-generate ID
+                            id: `q_auto_${Date.now()}_${qIndex}`,
                             questionText: questionText,
                             options: []
                         };
-
                         const optionsContainer = qGroup.querySelector(`#modalQ_optionsContainer_${qIndex}`);
                         if (optionsContainer) {
-                            // Assuming each option's inputs are directly within a .dynamic-item-group inside optionsContainer
                             const optionDivs = optionsContainer.querySelectorAll('.dynamic-item-group');
                             optionDivs.forEach((optDiv, optIndex) => {
                                 const textInput = optDiv.querySelector(`input[id="modalQ${qIndex}_optText_${optIndex}"]`);
                                 const optionText = textInput ? textInput.value.trim() : '';
-
-                                if (optionText) { // Add option if it has text
-                                    currentQuestion.options.push({ value: optionText, text: optionText }); // Value is same as text
+                                if (optionText) {
+                                    currentQuestion.options.push({ value: optionText, text: optionText });
                                 }
                             });
                         }
                         updatedConfig.modalQuestions.push(currentQuestion);
                     }
                 });
+                updatedConfig.entryForm.socialSharePrompt = getVal('entryFormSocialSharePrompt');
+                updatedConfig.giveaway.name = getVal('giveawayName');
+                updatedConfig.giveaway.successModalHeaderText = getVal('giveawaySuccessModalHeaderText');
+                updatedConfig.giveaway.successModalMainMessage = getVal('giveawaySuccessModalMainMessage');
+                updatedConfig.giveaway.successModalEmailPrompt = getVal('giveawaySuccessModalEmailPrompt');
+                // Preserve existing sharePlatforms
+                updatedConfig.entryForm.sharePlatforms = config.entryForm?.sharePlatforms || {};
 
-                console.log("Submitting updated config:", updatedConfig);
+
+                // 5. Footer & Contact Info Panel
+                updatedConfig.footerContact.footerDisclaimer = getVal('footerDisclaimer');
+                updatedConfig.footerContact.organizerLogoUrl = getVal('footerContactOrganizerLogoUrl');
+                updatedConfig.footerContact.secondaryLogoUrl = getVal('footerContactSecondaryLogoUrl');
+                updatedConfig.footerContact.secondaryLogoAlt = getVal('footerContactSecondaryLogoAlt');
+                updatedConfig.footerContact.organizerName = getVal('footerContactOrganizerName');
+                updatedConfig.footerContact.brokerageName = getVal('footerContactBrokerageName');
+                updatedConfig.footerContact.address = getVal('footerContactAddress');
+                updatedConfig.footerContact.email = getVal('footerContactEmail');
+                updatedConfig.footerContact.phone = getVal('footerContactPhone');
+                updatedConfig.footerContact.social.facebook = getVal('footerContactSocialFacebook');
+                updatedConfig.footerContact.social.instagram = getVal('footerContactSocialInstagram');
+                updatedConfig.footerContact.agentContact.name = getVal('footerAgentName');
+                updatedConfig.footerContact.agentContact.title = getVal('footerAgentTitle');
+                updatedConfig.footerContact.agentContact.phone = getVal('footerAgentPhone');
+                updatedConfig.footerContact.agentContact.email = getVal('footerAgentEmail');
+                updatedConfig.footerContact.copyrightOwner = getVal('footerContactCopyrightOwner');
+                updatedConfig.meta.privacyPolicyLink = getVal('metaPrivacyPolicyLink');
+
+
+                // 6. Global Styling & Appearance Panel
+                updatedConfig.settings.theme = getVal('settingsTheme');
+                updatedConfig.settings.primaryColorOverride = getVal('settingsPrimaryColorOverride');
+                updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
+
+                // 7. Deployment Panel
+                updatedConfig.deploymentInfo.repoName = getVal('deploymentRepoName');
+                updatedConfig.deploymentInfo.repoUrl = getVal('deploymentRepoUrl');
+                updatedConfig.deploymentInfo.netlifyUrl = getVal('deploymentNetlifyUrl');
+                updatedConfig.deploymentInfo.netlifyId = getVal('deploymentNetlifyId');
+
+                // 8. Automations Panel
+                updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
+                updatedConfig.deploymentInfo.tag = getVal('deploymentTag');
+
+                // Preserve hardcoded webhook URL from original settings if it existed, otherwise set default
+                updatedConfig.settings.webhookUrl = config.settings?.webhookUrl || "https://n8n.salesgenius.co/webhook/giveawayupdate";
+
+
+                console.log("Submitting updated config (v2):", updatedConfig);
 
                 // --- Webhook Submission ---
                 const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate"; // Hardcoded webhook URL for admin submissions
