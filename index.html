@@ -218,6 +218,337 @@
         .tips-list li { display: flex; align-items: flex-start; gap: 0.5rem; }
         .tips-list li i { color: var(--secondary-color-theme); font-size: 0.9rem; margin-top: 0.125rem; }
 
+#prize-details > .container > .content-card { /* Specific override for prize section card */
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    /* margin-bottom: 1.5rem; /* Retain or adjust original margin-bottom from .content-card */
+}
+/* --- PRIZE DETAILS SECTION V2 (Image as Background Right Panel) --- */
+
+.prize-layout-wrapper {
+    display: flex;
+    flex-direction: column; /* Mobile first: image banner on top, then text */
+    background-color: var(--card-bg-color-theme); /* Card background applied here */
+    border-radius: var(--border-radius-m); /* Rounded corners for the whole block */
+    box-shadow: 0 4px 15px var(--shadow-color-theme); /* Shadow for the whole block */
+}
+
+.prize-image-content {
+    width: 100%;
+    min-height: 250px; /* Minimum height for mobile banner */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: relative; /* For potential overlays or positioning thumbnails */
+    /* Placeholder background */
+    background-image: url('https://via.placeholder.com/800x600/eee/ccc?text=Prize+Visual');
+    border-top-left-radius: var(--border-radius-m); /* Match card rounding */
+    border-top-right-radius: var(--border-radius-m);
+}
+
+#prize-details .prize-gallery-thumbnails {
+    display: none !important; /* Hide thumbnails */
+}
+#prize-details .thumbnail-image {
+    width: 45px; height: 45px; object-fit: cover; border-radius: 4px; cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.5);
+    transition: border-color 0.2s ease;
+}
+#prize-details .thumbnail-image.active,
+#prize-details .thumbnail-image:hover {
+    border-color: var(--primary-color-theme);
+}
+
+
+.prize-text-content {
+    padding: 1.5rem; /* Padding for text content area */
+    text-align: center; /* Mobile first text alignment */
+}
+
+#prize-details .section-title {
+    margin-bottom: 0.5rem; /* Tighter spacing for title */
+}
+#prize-details .section-subtitle {
+    margin-bottom: 1.5rem;
+}
+
+#prize-details #prizeName {
+    font-size: clamp(1.6rem, 4.5vw, 2rem);
+    margin-bottom: 0.6rem;
+    color: var(--primary-color-theme);
+}
+
+@keyframes subtle-shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    10% { transform: translateX(-1px) rotate(-0.5deg); }
+    20% { transform: translateX(1px) rotate(0.5deg); }
+    30% { transform: translateX(-2px) rotate(-1deg); }
+    40% { transform: translateX(2px) rotate(1deg); }
+    50% { transform: translateX(-1px) rotate(-0.5deg); }
+    60% { transform: translateX(1px) rotate(0.5deg); }
+    70% { transform: translateX(-2px) rotate(-1deg); }
+    80% { transform: translateX(2px) rotate(1deg); }
+    90% { transform: translateX(-1px) rotate(-0.5deg); }
+}
+
+#prize-details #prizeValue {
+    display: inline-block; /* Crucial for not taking full width */
+    position: relative;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--body-bg-color-theme);
+    background-color: var(--secondary-color-theme);
+    padding: 0.5em 0.9em; /* Symmetrical horizontal padding */
+    border-radius: var(--border-radius-s); /* Rounded all corners */
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    line-height: 1.3;
+    margin-right: auto; /* Ensures it doesn't stretch if parent is flex and aligning left */
+}
+
+/* Removed ::before pseudo-element for the "hole punch" effect */
+
+/* Ensure on desktop, if prize-text-content is left-aligned, #prizeValue still behaves as inline-block */
+@media (min-width: 768px) {
+    #prize-details .prize-text-content #prizeValue {
+        margin-left: 0; /* Explicitly align to the start of its container if needed */
+    }
+}
+
+/* The ::before pseudo-element for the "hole punch" effect has been removed. */
+
+#prize-details #prizeDescription {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+#prize-details #prizeIncludedList h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+}
+#prize-details #prizeIncludedList ul { padding-left: 0; }
+#prize-details #prizeIncludedList li {
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+    /* Other styles from previous attempt are fine */
+}
+
+#prize-details #prizeCta {
+    display: inline-flex;
+    margin-top: 2.5rem;
+    padding: 1.1rem 3rem; /* Even more padding */
+    font-size: 1.35rem; /* Even larger font */
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 6px 20px rgba(var(--primary-color-theme), 0.4);
+    border: 2px solid var(--primary-color-theme); /* Make border visible */
+    background-color: var(--primary-color-theme); /* Ensure bg color */
+    color: var(--body-bg-color-theme); /* Ensure text color */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s ease-out;
+    animation: subtle-shake 2.5s infinite ease-in-out; /* Slightly faster shake */
+    animation-delay: 0.3s;
+}
+
+#prize-details #prizeCta:hover {
+    transform: translateY(-4px) scale(1.05); /* More pronounced hover */
+    box-shadow: 0 8px 22px rgba(var(--primary-color-theme), 0.45);
+    filter: brightness(115%);
+}
+
+
+/* Desktop layout for prize details V2 */
+@media (min-width: 992px) { /* Using a slightly larger breakpoint for this dramatic layout */
+    .prize-layout-wrapper {
+        flex-direction: row; /* Side-by-side layout */
+        min-height: 500px; /* Ensure it has some height */
+    }
+
+    .prize-text-content {
+        flex-basis: 55%; /* Text takes about 55% */
+        order: 1; /* Text on the left */
+        padding: 2.5rem; /* More padding on desktop */
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Vertically center text content if desired */
+    }
+    /* Ensure child .text-center elements also align left */
+    .prize-text-content .text-center { /* This div wraps the CTA */
+        text-align: center !important; /* Ensure CTA is centered */
+    }
+    /* Other direct children of prize-text-content should be left-aligned on desktop */
+    #prize-details .prize-text-content > *:not(.text-center) {
+        text-align: left;
+    }
+    /* Specifically ensure prizeName and prizeValue are left-aligned if not in .text-center */
+    #prize-details .prize-text-content #prizeName,
+    #prize-details .prize-text-content #prizeValue {
+        text-align: left;
+        margin-left: 0; /* Remove auto margins if any */
+        margin-right: auto; /* Allow it to sit left */
+    }
+     /* If #prizeValue is directly under .prize-text-content, this ensures it's left-aligned */
+    #prize-details .prize-text-content > #prizeValue {
+        margin-left: 0;
+        margin-right: auto; /* This might be redundant if text-align:left is on parent, but safe */
+    }
+
+
+    .prize-image-content {
+        flex-basis: 45%; /* Image panel takes about 45% */
+        order: 2; /* Image on the right */
+        min-height: auto; /* Reset min-height, will stretch with flex parent */
+        align-self: stretch; /* Make it stretch to the height of the wrapper */
+        border-top-left-radius: 0; /* Reset mobile rounding */
+        border-top-right-radius: var(--border-radius-m); /* Keep right side rounding */
+        border-bottom-right-radius: var(--border-radius-m); /* Add bottom right rounding */
+        border-bottom-left-radius: 0;
+    }
+
+    #prize-details .prize-gallery-thumbnails {
+        /* Example: Position thumbnails differently on desktop if needed */
+        /* Or keep as is if the absolute positioning at bottom of image panel is desired */
+        padding: 1rem;
+        background-color: rgba(0,0,0,0.3);
+    }
+    #prize-details .thumbnail-image { width: 50px; height: 50px; }
+}
+
+/* Adjustments for slightly smaller desktops if 992px is too large a jump */
+@media (min-width: 768px) and (max-width: 991px) {
+    .prize-layout-wrapper {
+        flex-direction: row;
+        min-height: 450px;
+    }
+     .prize-text-content {
+        flex-basis: 60%;
+        padding: 2rem;
+        text-align: left;
+    }
+    .prize-text-content .text-center {
+        text-align: center !important; /* Ensure CTA is centered */
+    }
+    #prize-details .prize-text-content > *:not(.text-center) {
+        text-align: left;
+    }
+    #prize-details .prize-text-content #prizeName,
+    #prize-details .prize-text-content #prizeValue {
+        text-align: left;
+        margin-left: 0;
+        margin-right: auto;
+    }
+    #prize-details .prize-text-content > #prizeValue {
+        margin-left: 0;
+        margin-right: auto;
+    }
+    .prize-image-content {
+        flex-basis: 40%;
+        align-self: stretch;
+        border-top-left-radius: 0;
+        border-top-right-radius: var(--border-radius-m);
+        border-bottom-right-radius: var(--border-radius-m);
+        border-bottom-left-radius: 0;
+    }
+}
+/* --- ENTRY FORM SECTION V2 (Image as Background Left Panel) --- */
+
+/* Make the original card transparent, the new wrapper will be the visual card */
+#entry-form > .container > #entryFormCard { /* Specific selector for the entry form's card */
+    padding: 0;
+    background-color: transparent;
+    border: 1px solid transparent !important; /* Neutralize original prominent border, ensure override */
+    box-shadow: none !important; /* Ensure override */
+    /* backdrop-filter: none; */ /* Optional: remove if layout wrapper handles it */
+    /* -webkit-backdrop-filter: none; */
+}
+
+.entry-form-layout-wrapper {
+    display: flex;
+    flex-direction: column; /* Mobile first: image banner on top, then form */
+    background-color: var(--card-bg-color-theme);
+    border-radius: var(--border-radius-m);
+    box-shadow: 0 4px 15px var(--shadow-color-theme);
+    overflow: hidden; /* Important for rounded corners on children */
+    border: 1px solid var(--glass-border-color-theme);
+}
+
+.entry-image-panel {
+    display: none; /* Hidden on mobile by default */
+    width: 100%;
+    min-height: 250px; /* Minimum height for mobile banner - only applies when visible */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    /* Placeholder, JS will set this */
+    background-image: url('https://via.placeholder.com/800x600/ccc/eee?text=Entry+Form+Visual');
+    border-top-left-radius: var(--border-radius-m); /* Match card rounding for mobile */
+    border-top-right-radius: var(--border-radius-m);
+}
+
+.entry-form-content {
+    padding: 1.5rem; /* Padding for form content area */
+}
+
+/* Desktop layout for entry form V2 */
+@media (min-width: 992px) {
+    .entry-form-layout-wrapper {
+        flex-direction: row; /* Side-by-side layout */
+        min-height: 500px; /* Ensure it has some height, match prize section if desired */
+    }
+
+    .entry-image-panel {
+        display: block; /* Make visible on desktop */
+        flex-basis: 45%; /* Image panel takes about 45% */
+        order: 1; /* Image on the LEFT */
+        min-height: auto;
+        align-self: stretch;
+        border-top-left-radius: var(--border-radius-m);
+        border-bottom-left-radius: var(--border-radius-m);
+        border-top-right-radius: 0; /* Reset mobile rounding */
+        border-bottom-right-radius: 0;
+    }
+
+    .entry-form-content {
+        flex-basis: 55%; /* Form content takes about 55% */
+        order: 2; /* Form content on the RIGHT */
+        padding: 2.5rem; /* More padding on desktop */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Vertically center form content */
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 991px) {
+    .entry-form-layout-wrapper {
+        flex-direction: row;
+        min-height: 450px;
+    }
+    .entry-image-panel {
+        display: block; /* Make visible on tablet */
+        flex-basis: 40%;
+        order: 1; /* Image on the LEFT */
+        align-self: stretch;
+        border-top-left-radius: var(--border-radius-m);
+        border-bottom-left-radius: var(--border-radius-m);
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .entry-form-content {
+        flex-basis: 60%;
+        order: 2; /* Form content on the RIGHT */
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
         /* --- New Footer Styles (Inspired by Case Study) --- */
         #new-main-footer {
           background: var(--body-bg-color-theme); /* Use body background color (like header solid) */
@@ -703,19 +1034,29 @@ body.theme-pastel #rules::before {
                 <div class="content-card">
                     <h2 class="section-title">Prize Details</h2>
                     <p class="section-subtitle" id="prizeLimitedOffer"></p>
-                    <img src="https://via.placeholder.com/600x400/eee/ccc?text=Prize+Image" alt="Prize Image" id="prizeMainImage" class="prize-main-image">
-                    <div class="prize-gallery-thumbnails" id="prizeGalleryThumbnails"></div>
-                    <div class="text-center">
-                        <h3 id="prizeName">Awesome Prize Name</h3>
-                        <p id="prizeValue">$XXX Value</p>
-                    </div>
-                    <p id="prizeDescription">A detailed and exciting description of the amazing prize you can win by entering this fantastic giveaway. Make it sound irresistible!</p>
-                    <div id="prizeIncludedList">
-                        <h3 style="margin-top:1rem;">What's Included:</h3>
-                        <ul></ul>
-                    </div>
-                    <div class="text-center" style="margin-top:1.5rem;">
-                         <a href="#entry-form" class="button-primary" id="prizeCta">WIN THIS PRIZE <i class="fas fa-gift"></i></a>
+                    <div class="prize-layout-wrapper">
+                        <div class="prize-image-content">
+                            <!-- The main prize image is now a background of this div. -->
+                            <!-- The 'prizeMainImage' ID is removed from any img tag here. -->
+                            <div class="prize-gallery-thumbnails" id="prizeGalleryThumbnails">
+                                <!-- JS will populate this. Static placeholders can be added for testing if needed. -->
+                                <!-- e.g., <img src="https://via.placeholder.com/60x60" alt="T1" class="thumbnail-image active"> -->
+                            </div>
+                        </div>
+                        <div class="prize-text-content">
+                            <!-- The h3 for prizeName and p for prizeValue are already inside .text-center -->
+                            <!-- The structure below assumes section-title and section-subtitle are OUTSIDE prize-layout-wrapper -->
+                            <h3 id="prizeName">Awesome Prize Name</h3>
+                            <p id="prizeValue">$XXX Value</p>
+                            <p id="prizeDescription">A detailed and exciting description of the amazing prize you can win by entering this fantastic giveaway. Make it sound irresistible!</p>
+                            <div id="prizeIncludedList">
+                                <h3 style="margin-top:1rem;">What's Included:</h3>
+                                <ul></ul>
+                            </div>
+                            <div class="text-center" style="margin-top:1.5rem;">
+                                 <a href="#entry-form" class="button-primary" id="prizeCta">WIN THIS PRIZE <i class="fas fa-gift"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -739,42 +1080,49 @@ body.theme-pastel #rules::before {
         <section id="entry-form" class="section">
             <div class="container">
                 <div class="content-card" id="entryFormCard">
-                    <h2 class="section-title">Enter Now!</h2>
-                    <p class="section-subtitle" id="entryFormSubtitle">Don't miss your chance to win.</p>
-                    <p class="text-center" id="entryFormCount"></p>
-                    <form id="giveawayEntryForm" style="margin-top:1rem;">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="fullName">Your Name:</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-user"></i>
-                                    <input type="text" id="fullName" name="fullName" placeholder="e.g., Alex Winner" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email Address:</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-envelope"></i>
-                                    <input type="email" id="email" name="email" placeholder="e.g., alex@example.com" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="phoneNumber">Phone Number:</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-phone"></i>
-                                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., (555) 123-4567" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="button-primary" id="entryFormSubmitButton">
-                                    <span class="button-text">Next</span>
-                                    <i class="fas fa-spinner fa-spin" style="display:none; margin-left:0.5rem;"></i>
-                                </button>
-                            </div>
+                    <div class="entry-form-layout-wrapper">
+                        <div class="entry-image-panel">
+                            <!-- Background image will be set by JavaScript -->
                         </div>
-                    </form>
-                    <p class="social-share-prompt" id="entryFormSocialPrompt"></p>
-                    <div class="form-social-icons" id="entryFormSocialIcons"></div>
+                        <div class="entry-form-content">
+                            <h2 class="section-title">Enter Now!</h2>
+                            <p class="section-subtitle" id="entryFormSubtitle">Don't miss your chance to win.</p>
+                            <p class="text-center" id="entryFormCount"></p>
+                            <form id="giveawayEntryForm" style="margin-top:1rem;">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="fullName">Your Name:</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" id="fullName" name="fullName" placeholder="e.g., Alex Winner" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email Address:</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-envelope"></i>
+                                            <input type="email" id="email" name="email" placeholder="e.g., alex@example.com" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phoneNumber">Phone Number:</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-phone"></i>
+                                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., (555) 123-4567" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="button-primary" id="entryFormSubmitButton">
+                                            <span class="button-text">Next</span>
+                                            <i class="fas fa-spinner fa-spin" style="display:none; margin-left:0.5rem;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <p class="social-share-prompt" id="entryFormSocialPrompt"></p>
+                            <div class="form-social-icons" id="entryFormSocialIcons"></div>
+                        </div> <!-- close .entry-form-content -->
+                    </div> <!-- close .entry-form-layout-wrapper -->
                 </div>
             </div>
         </section>
@@ -1438,32 +1786,23 @@ function populateNewFooterData() {
             if (el) el.style.display = 'none';
         }
 
-        const pImg = document.getElementById('prizeMainImage');
+        const prizeImagePanel = document.querySelector('#prize-details .prize-image-content');
         const pThumbs = document.getElementById('prizeGalleryThumbnails');
 
-        if (pImg && config.prize.images?.length) {
-            setSrc('prizeMainImage', config.prize.images[0].src, config.prize.images[0].alt);
+        if (prizeImagePanel && config.prize?.images?.length) {
+            // Set initial background image for the panel
+            prizeImagePanel.style.backgroundImage = `url('${config.prize.images[0].src}')`;
 
-            if (pThumbs && config.prize.images.length > 1) {
-                pThumbs.innerHTML = '';
-                config.prize.images.forEach((img, idx) => {
-                    const t = document.createElement('img');
-                    t.src = img.src;
-                    t.alt = img.alt;
-                    t.className = 'thumbnail-image';
-                    if (idx === 0) t.classList.add('active');
-                    t.onclick = () => {
-                        setSrc('prizeMainImage', img.src, img.alt);
-                        pThumbs.querySelectorAll('.thumbnail-image').forEach(th => th.classList.remove('active'));
-                        t.classList.add('active');
-                    };
-                    pThumbs.appendChild(t);
-                });
-            } else if (pThumbs) {
-                pThumbs.style.display = 'none';
+            // Thumbnail logic is removed as per request.
+            // The prizeGalleryThumbnails div will be hidden by CSS.
+            if (pThumbs) {
+                pThumbs.innerHTML = ''; // Clear any potential leftover thumbnails
+                pThumbs.style.display = 'none'; // Explicitly hide via JS as well
             }
-        } else if (pImg) {
-            pImg.style.display = 'none';
+        } else if (prizeImagePanel) {
+            // Fallback if no images in config, or panel not found (though it should be)
+            prizeImagePanel.style.backgroundImage = "url('https://via.placeholder.com/800x600/eee/ccc?text=Prize+Image+Not+Found')";
+            if (pThumbs) pThumbs.style.display = 'none';
         }
 
         setText('prizeName', config.prize.name);
@@ -1487,6 +1826,19 @@ function populateNewFooterData() {
     }
 } catch (e) {
     console.error("Err Prize:", e);
+}
+
+// Populate Entry Form Image Panel
+try {
+    const entryImagePanel = document.querySelector('#entry-form .entry-image-panel');
+    if (entryImagePanel && config.prize?.images?.length > 1 && config.prize.images[1]?.src) {
+        entryImagePanel.style.backgroundImage = `url('${config.prize.images[1].src}')`;
+    } else if (entryImagePanel) {
+        console.warn("Second prize image for entry form not found in config, or panel missing.");
+        entryImagePanel.style.backgroundImage = "url('https://via.placeholder.com/800x600/eee/ccc?text=Entry+Visual+Missing')";
+    }
+} catch (e) {
+    console.error("Err Entry Form Image:", e);
 }
 
 try {
