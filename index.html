@@ -19,6 +19,33 @@
     <meta name="twitter:title" content="GIVEAWAY - ENTER NOW">
     <meta name="twitter:description" content="Enter our exciting giveaway for a chance to win! Don't miss out.">
     <meta name="twitter:image" content="https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/tmp29y4k7bt.jpg">
+    <script src="config.js"></script> <!-- Load config first -->
+<!-- Meta Pixel Code Base -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+// Initialize with dynamic Pixel ID from config
+if (typeof config !== 'undefined' && config.settings && config.settings.facebookPixelId) {
+    fbq('init', config.settings.facebookPixelId);
+} else {
+    // console.warn("Facebook Pixel ID not found in config.js. Pixel not initialized.");
+}
+fbq('track', 'PageView');
+</script>
+
+<!-- No-script fallback for Meta Pixel -->
+<noscript>
+  <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=968004578798783&ev=PageView&noscript=1" />
+</noscript>
+<!-- End Meta Pixel Code -->
 
     <style>
         /* --- CSS RESET (Basic) --- */
@@ -1094,21 +1121,29 @@ body.theme-pastel #rules::before {
                                         <label for="fullName">Your Name:</label>
                                         <div class="input-wrapper">
                                             <i class="fas fa-user"></i>
-                                            <input type="text" id="fullName" name="fullName" placeholder="e.g., Alex Winner" required>
+                                            <input type="text" id="fullName" name="fullName" placeholder="e.g., Alex Winner" required autocomplete="name">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="email">Email Address:</label>
                                         <div class="input-wrapper">
                                             <i class="fas fa-envelope"></i>
-                                            <input type="email" id="email" name="email" placeholder="e.g., alex@example.com" required>
+                                            <input type="email" id="email" name="email" placeholder="e.g., alex@example.com" required autocomplete="email">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="phoneNumber">Phone Number:</label>
                                         <div class="input-wrapper">
                                             <i class="fas fa-phone"></i>
-                                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., (555) 123-4567" required>
+                                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., (555) 123-4567" required autocomplete="tel" inputmode="tel">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem;">
+                                            <input type="checkbox" id="contactConsent" name="contactConsent" required style="margin-top: 0.25em; width: auto; min-height: auto; -webkit-appearance: checkbox; appearance: checkbox; flex-shrink: 0;">
+                                            <label for="contactConsent" style="font-size: 0.75rem; color: var(--text-color-light-theme); margin-bottom: 0; line-height: 1.4; text-align: left;">
+                                                I agree to be contacted by Property.Ca via call, email, and text. To opt-out, you can reply ‘stop’ at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="https://www.mls.theskygroup.ca/privacy-policy" target="_blank" style="color: var(--primary-color-theme); text-decoration: underline;">Privacy Policy</a>.
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -1215,14 +1250,13 @@ body.theme-pastel #rules::before {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="config.js"></script> <!-- Load config first -->
     <script>
          // ========================================================================
          // ★★★ GIVEAWAY CONFIGURATION IS NOW IN config.js ★★★
          // ========================================================================
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("Full Script Loaded. Config available:", !!config);
+            // console.log("Full Script Loaded. Config available:", !!config);
             if (!config) { alert("ERROR: Config missing!"); return; }
 
             let countdownIntervalRef = null;
@@ -1248,7 +1282,7 @@ body.theme-pastel #rules::before {
 
             // --- Theme Management ---
             function applyTheme(theme) {
-                console.log('[THEME DEBUG] applyTheme called with theme:', theme); // New Log 1
+                // console.log('[THEME DEBUG] applyTheme called with theme:', theme); // New Log 1
 
                 if (!pageBody) {
                     console.error('[THEME DEBUG] pageBody element not found!'); // New Log (Error)
@@ -1272,29 +1306,29 @@ body.theme-pastel #rules::before {
                         config.settings.confettiColors = ['#FF7A00', '#FFC107', '#4CAF50', '#FFFFFF', '#FFF8F0'];
                     }
                 } else {
-                    console.warn('[THEME DEBUG] config or config.settings not available for confetti.'); // New Log
+                    // console.warn('[THEME DEBUG] config or config.settings not available for confetti.'); // New Log
                 }
 
                 // --- NEW LOGIC for Primary Color Override ---
-                console.log('[THEME DEBUG] Checking for primaryColorOverride. Current config.settings:', JSON.stringify(config?.settings)); // New Log 2
+                // console.log('[THEME DEBUG] Checking for primaryColorOverride. Current config.settings:', JSON.stringify(config?.settings)); // New Log 2
 
                 const customPrimaryColor = config?.settings?.primaryColorOverride;
-                console.log('[THEME DEBUG] customPrimaryColor from config:', customPrimaryColor); // New Log 3
+                // console.log('[THEME DEBUG] customPrimaryColor from config:', customPrimaryColor); // New Log 3
 
                 // Basic hex color validation (e.g., #FFF, #FF0000)
                 const isValidHex = customPrimaryColor && typeof customPrimaryColor === 'string' ? /^#([0-9A-Fa-f]{3}){1,2}$/.test(customPrimaryColor.trim()) : false;
-                console.log('[THEME DEBUG] isValidHex:', isValidHex); // New Log 4
+                // console.log('[THEME DEBUG] isValidHex:', isValidHex); // New Log 4
 
                 if (customPrimaryColor && customPrimaryColor.trim() !== '' && isValidHex) {
                     pageBody.style.setProperty('--primary-color-theme', customPrimaryColor.trim());
-                    console.log(`[THEME DEBUG] Applied custom primary color: ${customPrimaryColor.trim()} to pageBody`); // Modified Log
+                    // console.log(`[THEME DEBUG] Applied custom primary color: ${customPrimaryColor.trim()} to pageBody`); // Modified Log
                 } else {
                     pageBody.style.removeProperty('--primary-color-theme');
-                    console.log('[THEME DEBUG] Removed custom primary color override from pageBody, using theme default.'); // Modified Log
+                    // console.log('[THEME DEBUG] Removed custom primary color override from pageBody, using theme default.'); // Modified Log
                     if (customPrimaryColor && customPrimaryColor.trim() !== '' && !isValidHex) {
-                        console.warn(`[THEME DEBUG] Invalid custom primary color format: ${customPrimaryColor}. Using theme default.`); // Modified Log
+                        // console.warn(`[THEME DEBUG] Invalid custom primary color format: ${customPrimaryColor}. Using theme default.`); // Modified Log
                     } else if (!customPrimaryColor || customPrimaryColor.trim() === '') {
-                        console.log('[THEME DEBUG] customPrimaryColor is blank or undefined.'); // New Log 5
+                        // console.log('[THEME DEBUG] customPrimaryColor is blank or undefined.'); // New Log 5
                     }
                 }
             }
@@ -1305,7 +1339,7 @@ body.theme-pastel #rules::before {
                 if (howToEnterImageUrl) {
                     document.documentElement.style.setProperty('--how-to-enter-bg-image', `url('${howToEnterImageUrl}')`);
                 } else {
-                    console.warn("First image for 'How to Enter' section background not found in config.");
+                    // console.warn("First image for 'How to Enter' section background not found in config.");
                 }
 
                 // Using the second image for the rules section (index 1)
@@ -1313,10 +1347,10 @@ body.theme-pastel #rules::before {
                 if (rulesImageUrl) {
                     document.documentElement.style.setProperty('--rules-bg-image', `url('${rulesImageUrl}')`);
                 } else {
-                    console.warn("Image for 'Rules' section background not found in config.");
+                    // console.warn("Image for 'Rules' section background not found in config.");
                 }
             } else {
-                console.warn("No prize images found in config for parallax backgrounds.");
+                // console.warn("No prize images found in config for parallax backgrounds.");
             }
 
             // --- Mobile Navigation ---
@@ -1342,7 +1376,7 @@ body.theme-pastel #rules::before {
             const sectionObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        console.log("Section intersecting, making visible:", entry.target.id);
+                        // console.log("Section intersecting, making visible:", entry.target.id);
                         entry.target.classList.add('visible');
                         const childrenToAnimate = entry.target.querySelectorAll('.step-item, .form-group');
                         childrenToAnimate.forEach((child, index) => {
@@ -1356,35 +1390,35 @@ body.theme-pastel #rules::before {
 
             if (sectionsToObserve.length > 0) {
                 sectionsToObserve.forEach(section => {
-                    console.log("Observing section:", section.id);
+                    // console.log("Observing section:", section.id);
                     sectionObserver.observe(section);
                 });
             } else {
-                console.warn("No sections (excluding hero) found for Intersection Observer.");
+                // console.warn("No sections (excluding hero) found for Intersection Observer.");
             }
 
             // --- Helper functions ---
-            function setText(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.textContent = value; else if(!el && value !== undefined) console.warn(`setText: ID '${id}' not found.`);}
-            function setHTML(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.innerHTML = value; else if(!el && value !== undefined) console.warn(`setHTML: ID '${id}' not found.`);}
-            function setSrc(id, value, alt = '') { const el = document.getElementById(id); if (el && value !== undefined) { el.src = value; el.alt = alt; } else if(!el && value !== undefined) console.warn(`setSrc: ID '${id}' not found.`);}
-            function setHref(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.href = value; else if(!el && value !== undefined) console.warn(`setHref: ID '${id}' not found.`);}
+            function setText(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.textContent = value; else if(!el && value !== undefined) { /* console.warn(`setText: ID '${id}' not found.`); */ }}
+            function setHTML(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.innerHTML = value; else if(!el && value !== undefined) { /* console.warn(`setHTML: ID '${id}' not found.`); */ }}
+            function setSrc(id, value, alt = '') { const el = document.getElementById(id); if (el && value !== undefined) { el.src = value; el.alt = alt; } else if(!el && value !== undefined) { /* console.warn(`setSrc: ID '${id}' not found.`); */ }}
+            function setHref(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.href = value; else if(!el && value !== undefined) { /* console.warn(`setHref: ID '${id}' not found.`); */ }}
             function populateSocialIcons(containerId, socialLinks) {
-                 const container = document.getElementById(containerId); if (!container) { console.warn(`Social container '${containerId}' not found.`); return; } container.innerHTML = ''; const platformIcons = { facebook: 'fab fa-facebook-f', instagram: 'fab fa-instagram', twitter: 'fab fa-twitter', pinterest: 'fab fa-pinterest-p'}; let shareUrl = window.location.href; let shareText = encodeURIComponent((config.giveaway?.name ? `Check out the ${config.giveaway.name} giveaway!` : "Check out this awesome giveaway!")); if(socialLinks && typeof socialLinks === 'object'){ for (const platform in socialLinks) { let url = socialLinks[platform]; if (platform === 'facebook' && url === "#") url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`; if (platform === 'twitter' && url === "#") url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`; if (url && url !== "") { const iconClass = platformIcons[platform]; if (iconClass) { const link = document.createElement('a'); link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.setAttribute('aria-label', platform); link.innerHTML = `<i class="${iconClass}"></i>`; container.appendChild(link); }}}}
+                 const container = document.getElementById(containerId); if (!container) { /* console.warn(`Social container '${containerId}' not found.`); */ return; } container.innerHTML = ''; const platformIcons = { facebook: 'fab fa-facebook-f', instagram: 'fab fa-instagram', twitter: 'fab fa-twitter', pinterest: 'fab fa-pinterest-p'}; let shareUrl = window.location.href; let shareText = encodeURIComponent((config.giveaway?.name ? `Check out the ${config.giveaway.name} giveaway!` : "Check out this awesome giveaway!")); if(socialLinks && typeof socialLinks === 'object'){ for (const platform in socialLinks) { let url = socialLinks[platform]; if (platform === 'facebook' && url === "#") url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`; if (platform === 'twitter' && url === "#") url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`; if (url && url !== "") { const iconClass = platformIcons[platform]; if (iconClass) { const link = document.createElement('a'); link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.setAttribute('aria-label', platform); link.innerHTML = `<i class="${iconClass}"></i>`; container.appendChild(link); }}}}
             }
 
             // --- Typewriter Effect for Hero ---
             function typeWriter() {
-                const textToType = config.giveaway?.heroHeadline || "Welcome!"; let i = 0; const speed = 50;
+                const textToType = config.giveaway?.heroHeadline || "Welcome!"; let i = 0; const speed = 40;
                 if (!heroTitleElement) { if (heroSection) heroSection.classList.add('content-loaded'); console.error("Hero title element not found."); return; }
                 heroTitleElement.innerHTML = ''; heroTitleElement.classList.add('typing'); heroTitleElement.style.opacity = '1';
                 function type() {
-                    if (i < textToType.length) { if (textToType.charAt(i) === '<') { const tagEnd = textToType.indexOf('>', i); if (tagEnd !== -1) { heroTitleElement.innerHTML += textToType.substring(i, tagEnd + 1); i = tagEnd; } else { heroTitleElement.innerHTML += textToType.charAt(i); }} else { heroTitleElement.innerHTML += textToType.charAt(i); } i++; setTimeout(type, speed + Math.random() * 20 - 10); } else { heroTitleElement.classList.remove('typing'); if (heroSection) heroSection.classList.add('content-loaded'); console.log("Typewriter finished."); }
+                    if (i < textToType.length) { if (textToType.charAt(i) === '<') { const tagEnd = textToType.indexOf('>', i); if (tagEnd !== -1) { heroTitleElement.innerHTML += textToType.substring(i, tagEnd + 1); i = tagEnd; } else { heroTitleElement.innerHTML += textToType.charAt(i); }} else { heroTitleElement.innerHTML += textToType.charAt(i); } i++; setTimeout(type, speed + Math.random() * 20 - 10); } else { heroTitleElement.classList.remove('typing'); if (heroSection) heroSection.classList.add('content-loaded'); /* console.log("Typewriter finished."); */ }
                 } type();
             }
 
             // --- Populate Data ---
             function populateSimpleData() {
-                console.log("Populating data..."); if (!config) { return; }
+                // console.log("Populating data..."); if (!config) { return; }
                 try { document.title = config.meta?.pageTitle || "Giveaway"; setText('navBrandLogo', config.meta?.navBrandLogoText); } catch (e) { console.error("Err Meta:", e); }
                 try {
                     if (config.giveaway) {
@@ -1418,9 +1452,9 @@ body.theme-pastel #rules::before {
 }
 
 function populateNewFooterData() {
-    console.log("Populating new footer data...");
+    // console.log("Populating new footer data...");
     if (!config || !config.footerContact) {
-        console.warn("New Footer: config.footerContact not found.");
+        // console.warn("New Footer: config.footerContact not found.");
         return;
     }
 
@@ -1547,7 +1581,7 @@ function populateNewFooterData() {
     } else if (privacyLinkEl) {
         privacyLinkEl.href = "#privacy-placeholder"; // Fallback placeholder link
     }
-    console.log("New footer data population attempt complete.");
+    // console.log("New footer data population attempt complete.");
 
     // Populate Footer Disclaimer
     setText('footerTopDisclaimer', fc.footerDisclaimer || "Important legal disclaimer text will go here.");
@@ -1567,7 +1601,7 @@ function populateNewFooterData() {
 
             function showGiveawayQuestionModal() {
                 if (!questionModalOverlay || !config || !config.modalQuestions || !config.modalQuestions.length) {
-                    console.warn("Question modal cannot be shown. Overlay or modalQuestions config missing/empty.");
+                    // console.warn("Question modal cannot be shown. Overlay or modalQuestions config missing/empty.");
                     const entryFormSection = document.getElementById('entry-form');
                     if (entryFormSection) entryFormSection.scrollIntoView({ behavior: 'smooth' });
                     return;
@@ -1590,7 +1624,7 @@ function populateNewFooterData() {
 
             async function submitFullEntry() {
                 // This function now handles the final submission logic
-                console.log("Attempting full entry submission...");
+                // console.log("Attempting full entry submission...");
 
                 const finalPayload = {
                     fullName: storedFullName,
@@ -1601,6 +1635,8 @@ function populateNewFooterData() {
                     questions: [],
                     deploymentInfo: config.deploymentInfo || {},
                     ghlWebhookUrl: config.settings?.ghlWebhookUrl || "",
+                    salesGeniusAppApi: config.settings?.salesGeniusAppApi || "",
+                    followUpBossEmail: config.settings?.followUpBossEmail || "",
                     agentEmail: config.footerContact?.email || ""
                 };
 
@@ -1618,7 +1654,7 @@ function populateNewFooterData() {
                     }
                 }
 
-                console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
+                // console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
                 const webhookUrl = "https://n8n.salesgenius.co/webhook/giveaway";
 
                 if (webhookUrl && webhookUrl.startsWith("http")) { // Check if it's a valid-looking URL
@@ -1635,37 +1671,16 @@ function populateNewFooterData() {
                             console.error("Final webhook submission failed:", response.status, responseText);
                             alert('There was an issue submitting your entry. Please try again.');
                         } else {
-                            console.log("Final webhook submission successful:", await response.json());
-                            if (successModal && document.getElementById('modal-step-final')) {
-                                document.getElementById('modal-step-final').style.display = 'block';
-                                successModal.classList.add('visible');
-                                if (myConfettiInstance && config.settings?.confettiColors) {
-                                    myConfettiInstance({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: config.settings.confettiColors });
-                                }
-                            }
-                            if(giveawayForm) giveawayForm.reset();
-                            storedFullName = '';
-                            storedEmail = '';
-                            storedPhoneNumber = '';
-                            collectedQuestionAnswers = {};
+                            // console.log("Final webhook submission successful. Redirecting to thank you page.");
+                            window.location.href = 'thankyou.html';
                         }
                     } catch (error) {
                         console.error("Final webhook submission error:", error);
                         alert('An error occurred while submitting your entry. Please check your connection and try again.');
                     }
                 } else {
-                    console.log("Demo submit (webhook URL not configured or is placeholder):", finalPayload);
-                    if (successModal && document.getElementById('modal-step-final')) {
-                         document.getElementById('modal-step-final').style.display = 'block';
-                         successModal.classList.add('visible');
-                         if (myConfettiInstance && config.settings?.confettiColors) { myConfettiInstance({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: config.settings.confettiColors });}
-                    }
-                    if(giveawayForm) giveawayForm.reset();
-                    storedFullName = '';
-                    storedEmail = '';
-                    storedPhoneNumber = '';
-                    collectedQuestionAnswers = {};
-                    await new Promise(r => setTimeout(r, 700));
+                    // console.log("Demo submit (webhook URL not configured or is placeholder). Redirecting to thank you page.");
+                    window.location.href = 'thankyou.html';
                 }
             }
 
@@ -1701,7 +1716,7 @@ function populateNewFooterData() {
                     questionModalStepsContainer.appendChild(stepDiv);
                     setTimeout(() => { stepDiv.classList.add('active'); }, 10);
                 } else {
-                    console.log("All giveaway modal questions answered. Triggering full submission.");
+                    // console.log("All giveaway modal questions answered. Triggering full submission.");
                     // No longer show questionModalFinalStep. Instead, submit directly.
                     
                     // Hide the modal content quickly before submission starts to avoid user seeing a blank modal
@@ -1725,7 +1740,7 @@ function populateNewFooterData() {
                     }
 
                     collectedQuestionAnswers[questionId] = answerValue;
-                    console.log('Collected Giveaway Answers:', collectedQuestionAnswers);
+                    // console.log('Collected Giveaway Answers:', collectedQuestionAnswers);
 
                     const currentStepOptions = button.closest('.modal-options');
                     if (currentStepOptions) {
@@ -1834,7 +1849,7 @@ try {
     if (entryImagePanel && config.prize?.images?.length > 1 && config.prize.images[1]?.src) {
         entryImagePanel.style.backgroundImage = `url('${config.prize.images[1].src}')`;
     } else if (entryImagePanel) {
-        console.warn("Second prize image for entry form not found in config, or panel missing.");
+        // console.warn("Second prize image for entry form not found in config, or panel missing.");
         entryImagePanel.style.backgroundImage = "url('https://via.placeholder.com/800x600/eee/ccc?text=Entry+Visual+Missing')";
     }
 } catch (e) {
@@ -1980,7 +1995,7 @@ try {
     console.error("Err Modal:", e);
 }
 
-console.log("Data population completed.");
+// console.log("Data population completed.");
 
 
 
@@ -1996,10 +2011,10 @@ console.log("Data population completed.");
 
                 if (!config.giveaway?.endDate || !timerContainer) {
                     if (timerContainer) timerContainer.style.display = 'none';
-                    console.warn("Countdown: No end date in config or timer container element not found.");
+                    // console.warn("Countdown: No end date in config or timer container element not found.");
                     return;
                 }
-                console.log("Starting countdown for date:", config.giveaway.endDate);
+                // console.log("Starting countdown for date:", config.giveaway.endDate);
 
                 function update() {
                     const endDate = new Date(config.giveaway.endDate).getTime();
@@ -2025,7 +2040,7 @@ console.log("Data population completed.");
                         const prizeCta = document.getElementById('prizeCta');
                         if (prizeCta) { prizeCta.innerHTML = "Giveaway Ended"; prizeCta.style.pointerEvents = 'none'; prizeCta.style.opacity = "0.7"; }
                         if (submitButton) submitButton.disabled = true;
-                        console.log("Countdown finished.");
+                        // console.log("Countdown finished.");
                         return;
                     }
 
@@ -2069,7 +2084,7 @@ console.log("Data population completed.");
                     storedEmail = emailValue;
                     storedPhoneNumber = phoneNumberValue;
 
-                    console.log("Name, Email, and Phone collected:", storedFullName, storedEmail, storedPhoneNumber);
+                    // console.log("Name, Email, and Phone collected:", storedFullName, storedEmail, storedPhoneNumber);
 
                     // Show spinner briefly before modal (optional, can be removed if modal transition is fast)
                     if(submitButton) submitButton.disabled = true;
@@ -2100,7 +2115,7 @@ console.log("Data population completed.");
                 }, 300); 
             }
 
-            console.log("Full script initialization complete.");
+            // console.log("Full script initialization complete.");
         });
     </script>
 </html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title> <!-- Will be updated by JS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="config.js"></script> <!-- Load config first -->
+<!-- Meta Pixel Code Base -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+// Initialize with dynamic Pixel ID from config
+if (typeof config !== 'undefined' && config.settings && config.settings.facebookPixelId) {
+    fbq('init', config.settings.facebookPixelId);
+} else {
+    // console.warn("Facebook Pixel ID not found in config.js. Pixel not initialized.");
+}
+fbq('track', 'PageView');
+
+// Complete Registration Event
+fbq('track', 'CompleteRegistration');
+</script>
+
+<!-- No-script fallback for Meta Pixel -->
+<noscript>
+  <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=968004578798783&ev=PageView&noscript=1" />
+</noscript>
+<!-- End Meta Pixel Code -->
+    <style>
+        /* --- CSS RESET (Basic) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--body-bg-color-theme);
+            color: var(--text-color-dark-theme);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative; /* For overlay positioning */
+        }
+        body::before { /* Overlay for background image */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3); /* Adjust opacity as needed */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: -1; /* Behind body content, but above body background image */
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        button, input { font-family: inherit; font-size: inherit; border: none; background: none; }
+        button { cursor: pointer; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- THEME VARIABLES (Mirrors index.html for consistency) --- */
+        :root {
+            --border-radius-s: 8px; --border-radius-m: 15px;
+            --primary-color-theme: #FF7A00; --secondary-color-theme: #4CAF50; --accent-color-theme: #FFC107;
+            --body-bg-color-theme: #FFF8F0; --card-bg-color-theme: #FFFFFF;
+            --text-color-dark-theme: #333333; --text-color-medium-theme: #555555; --text-color-light-theme: #777777;
+            --shadow-color-theme: rgba(0, 0, 0, 0.08);
+        }
+        body.theme-dark {
+            --primary-color-theme: #FFA726; --secondary-color-theme: #66BB6A; --accent-color-theme: #FFEE58;
+            --body-bg-color-theme: #1C1C1E; --card-bg-color-theme: #2C2C2E;
+            --text-color-dark-theme: #F5F5F5; --text-color-medium-theme: #B0B0B0; --text-color-light-theme: #808080;
+            --shadow-color-theme: rgba(0, 0, 0, 0.2);
+        }
+        body.theme-pastel {
+            --primary-color-theme: #A2D5AB; --secondary-color-theme: #F2BDBD; --accent-color-theme: #FFEAB6;
+            --body-bg-color-theme: #FAF7F2; --card-bg-color-theme: #FFFFFF;
+            --text-color-dark-theme: #5C5470; --text-color-medium-theme: #8A8195; --text-color-light-theme: #B3ADB9;
+            --shadow-color-theme: rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- THANK YOU PAGE STYLES --- */
+        .container {
+            background-color: var(--card-bg-color-theme);
+            padding: 2rem 1.5rem;
+            border-radius: var(--border-radius-m);
+            box-shadow: 0 4px 15px var(--shadow-color-theme);
+            max-width: 600px;
+            width: 90%;
+        }
+        #thankYouHeader {
+            font-family: 'Playfair Display', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: var(--primary-color-theme);
+            margin-bottom: 1rem;
+        }
+        #thankYouMainMessage {
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            color: var(--text-color-medium-theme);
+            margin-bottom: 1.5rem;
+        }
+        #thankYouSocialPrompt {
+            font-size: clamp(1.1rem, 2.8vw, 1.3rem); /* Increased font size */
+            color: var(--text-color-dark-theme);
+            font-weight: 600; /* Increased font weight */
+            margin-bottom: 2rem; /* Increased margin */
+            padding: 0.5rem 1rem;
+            background-color: rgba(var(--primary-color-theme-rgb, 255, 122, 0), 0.1); /* Subtle background */
+            border-left: 4px solid var(--primary-color-theme);
+            border-radius: var(--border-radius-s);
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem; /* Adjusted gap for boxes */
+            margin-top: 1.5rem;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .social-icon-box a {
+            font-size: 4rem; /* Made icons a lot bigger */
+            color: var(--text-color-medium-theme);
+            transition: color 0.3s ease;
+            line-height: 1; /* Helps with vertical alignment if needed */
+        }
+        .social-icon-box a:hover {
+            color: var(--primary-color-theme);
+            transform: none; /* Hover effect is on the box now */
+        }
+.social-icon-box {
+            background-color: rgba(var(--primary-color-theme-rgb, 255, 122, 0), 0.05);
+            border: 1px solid rgba(var(--primary-color-theme-rgb, 255, 122, 0), 0.2);
+            border-radius: var(--border-radius-m);
+            padding: 1.5rem; /* Increased padding */
+            min-width: 100px; /* Increased size */
+            min-height: 100px; /* Increased size */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            animation: subtle-shake 3s infinite ease-in-out; /* Added shake animation */
+        }
+        .social-icon-box:hover {
+            background-color: rgba(var(--primary-color-theme-rgb, 255, 122, 0), 0.15);
+            transform: translateY(-3px);
+        }
+
+        /* --- CONFETTI CANVAS FIX --- */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through */
+            z-index: 9999;      /* On top of all other content */
+        }
+
+        @keyframes subtle-shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            10% { transform: translateX(-1px) rotate(-0.5deg); }
+            20% { transform: translateX(1px) rotate(0.5deg); }
+            30% { transform: translateX(-2px) rotate(-1deg); }
+            40% { transform: translateX(2px) rotate(1deg); }
+            50% { transform: translateX(-1px) rotate(-0.5deg); }
+            60% { transform: translateX(1px) rotate(0.5deg); }
+            70% { transform: translateX(-2px) rotate(-1deg); }
+            80% { transform: translateX(2px) rotate(1deg); }
+            90% { transform: translateX(-1px) rotate(-0.5deg); }
+        }
+            
+    </style>
+</head>
+<canvas id="confetti-canvas"></canvas>
+<body id="thankYouPageBody">
+    <div class="container">
+        <h1 id="thankYouHeader"></h1>
+        <p id="thankYouMainMessage"></p>
+        <p id="thankYouSocialPrompt"></p>
+        <div id="thankYouSocialIcons" class="social-icons">
+            <!-- Social icons will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config || !config.thankYouPage) {
+                console.error("Thank You Page: Config or config.thankYouPage not found!");
+                // Fallback content if config is missing
+                document.getElementById('thankYouHeader').textContent = "Thank You!";
+                document.getElementById('thankYouMainMessage').textContent = "Your submission was successful.";
+                return;
+            }
+
+const confettiCanvas = document.getElementById('confetti-canvas');
+            let myConfettiInstance = null;
+
+            if (confettiCanvas && typeof confetti === 'function') {
+                myConfettiInstance = confetti.create(confettiCanvas, {
+                    resize: true,
+                    useWorker: true
+                });
+            } else {
+                // console.warn("Thank You Page: Confetti canvas not found or confetti library not loaded.");
+            }
+
+            function triggerConfetti() {
+                if (myConfettiInstance && config && config.settings) {
+                    const confettiColors = config.settings.confettiColors && config.settings.confettiColors.length > 0
+                        ? config.settings.confettiColors
+                        : ['#FF7A00', '#FFC107', '#4CAF50', '#A2D5AB', '#F2BDBD']; // Fallback colors
+                    myConfettiInstance({
+                        particleCount: 500, /* Increased for "a lot more" */
+                        spread: 360, /* Increased for full screen coverage */
+                        origin: { y: 0 }, /* Start from the top of the screen */
+                        colors: confettiColors
+                    });
+                }
+            }
+            const pageBody = document.getElementById('thankYouPageBody');
+
+            function applyThankYouTheme() {
+                if (!pageBody || !config.settings) {
+                    console.error("Thank You Page: pageBody or config.settings not found for theming.");
+                    return;
+                }
+                const theme = config.settings.theme || 'light'; // Default to light if not set
+                pageBody.classList.remove('theme-dark', 'theme-pastel'); // Remove any existing
+                if (theme && theme !== 'light') {
+                    pageBody.classList.add(`theme-${theme}`);
+                }
+
+                const customPrimaryColor = config.settings.primaryColorOverride;
+                const isValidHex = customPrimaryColor && typeof customPrimaryColor === 'string' ? /^#([0-9A-Fa-f]{3}){1,2}$/.test(customPrimaryColor.trim()) : false;
+
+                if (customPrimaryColor && customPrimaryColor.trim() !== '' && isValidHex) {
+                    pageBody.style.setProperty('--primary-color-theme', customPrimaryColor.trim());
+                } else {
+                    pageBody.style.removeProperty('--primary-color-theme');
+                }
+
+                // Set hero background image
+                if (config.giveaway && config.giveaway.heroBackgroundImageUrl && config.giveaway.heroBackgroundImageUrl.trim() !== '') {
+                    pageBody.style.backgroundImage = `url('${config.giveaway.heroBackgroundImageUrl}')`;
+                    pageBody.style.backgroundSize = 'cover';
+                    pageBody.style.backgroundPosition = 'center';
+                    pageBody.style.backgroundRepeat = 'no-repeat';
+                } else {
+                    pageBody.style.backgroundImage = ''; // Clear if no image specified
+                }
+            }
+
+            function populateThankYouContent() {
+                const tyConfig = config.thankYouPage;
+                document.title = tyConfig.pageTitle || "Thank You";
+                document.getElementById('thankYouHeader').innerHTML = tyConfig.headerText || "Thank You!";
+                document.getElementById('thankYouMainMessage').innerHTML = tyConfig.mainMessage || "Your entry has been submitted.";
+                document.getElementById('thankYouSocialPrompt').innerHTML = tyConfig.socialPromptText || "Follow us on social media!";
+            }
+
+            function populateThankYouSocialIcons() {
+                const socialIconsContainer = document.getElementById('thankYouSocialIcons');
+                if (!socialIconsContainer || !config.footerContact || !config.footerContact.social) {
+                    console.error("Thank You Page: Social icons container or footerContact.social config missing.");
+                    return;
+                }
+                socialIconsContainer.innerHTML = ''; // Clear any existing
+
+                const platformDetails = {
+                    facebook: { icon: 'fab fa-facebook-f', label: 'Facebook' },
+                    instagram: { icon: 'fab fa-instagram', label: 'Instagram' },
+                    twitter: { icon: 'fab fa-twitter', label: 'Twitter' },
+                    tiktok: { icon: 'fab fa-tiktok', label: 'TikTok' }
+                    // Add more platforms here if needed in the future
+                };
+
+                for (const platform in config.footerContact.social) {
+                    const url = config.footerContact.social[platform];
+                    if (url && platformDetails[platform]) {
+                        const iconBox = document.createElement('div');
+                        iconBox.className = 'social-icon-box';
+
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+                        link.setAttribute('aria-label', platformDetails[platform].label);
+                        link.innerHTML = `<i class="${platformDetails[platform].icon}"></i>`;
+                        
+                        iconBox.appendChild(link);
+                        socialIconsContainer.appendChild(iconBox);
+                    }
+                }
+            }
+
+            applyThankYouTheme();
+            populateThankYouContent();
+            populateThankYouSocialIcons();
+            triggerConfetti(); // Trigger confetti after content is populated
+        });
+    </script>
+</body>
+</html>
+

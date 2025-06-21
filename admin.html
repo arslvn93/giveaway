@@ -277,6 +277,7 @@
                 <li><a href="#" data-target="howToEnterPanel">How to Enter</a></li>
                 <li><a href="#" data-target="entryFormPanel">Entry Contact Form</a></li>
                 <li><a href="#" data-target="footerContactPanel">Footer & Agent Info</a></li>
+                <li><a href="#" data-target="thankYouPagePanel">Thank You Page</a></li>
                 <li><a href="#" data-target="stylingAppearancePanel">Global Styling & Appearance</a></li>
                 <li><a href="#" data-target="deploymentPanel">Deployment</a></li>
                 <li><a href="#" data-target="automationsPanel">Automations</a></li>
@@ -567,6 +568,29 @@
                         </div>
                     </div>
 
+<!-- 9. Thank You Page Panel -->
+                    <div id="thankYouPagePanel" class="content-panel">
+                        <h2>Thank You Page Settings</h2>
+                        <p class="panel-description">Configure the content and social media links for the page shown after successful entry.</p>
+                        <div class="form-group">
+                            <label for="thankYouPageTitle">Page Title (Browser Tab):</label>
+                            <input type="text" id="thankYouPageTitle" name="thankYouPageTitle">
+                        </div>
+                        <div class="form-group">
+                            <label for="thankYouPageHeaderText">Header Text (HTML allowed):</label>
+                            <textarea id="thankYouPageHeaderText" name="thankYouPageHeaderText"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="thankYouPageMainMessage">Main Message (HTML allowed):</label>
+                            <textarea id="thankYouPageMainMessage" name="thankYouPageMainMessage"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="thankYouPageSocialPromptText">Social Media Prompt Text:</label>
+                            <textarea id="thankYouPageSocialPromptText" name="thankYouPageSocialPromptText"></textarea>
+                        </div>
+                        
+                    </div>
+
                     <!-- 6. Global Styling & Appearance Panel -->
                     <div id="stylingAppearancePanel" class="content-panel">
                         <h2>Global Styling & Appearance</h2>
@@ -609,6 +633,10 @@
                             <label for="deploymentNetlifyId">Netlify Site ID:</label>
                             <input type="text" id="deploymentNetlifyId" name="deploymentNetlifyId">
                         </div>
+                        <div class="form-group">
+                            <label for="settingsFacebookPixelId">Facebook Pixel ID:</label>
+                            <input type="text" id="settingsFacebookPixelId" name="settingsFacebookPixelId" placeholder="Enter your Facebook Pixel ID">
+                        </div>
                     </div>
 
                     <!-- 8. Automations Panel -->
@@ -622,6 +650,14 @@
                         <div class="form-group">
                             <label for="deploymentTag">CRM TAG:</label>
                             <input type="text" id="deploymentTag" name="deploymentTag">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsSalesGeniusAppApi">SalesGenius App API:</label>
+                            <input type="url" id="settingsSalesGeniusAppApi" name="settingsSalesGeniusAppApi" placeholder="Enter SalesGenius App API URL">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsFollowUpBossEmail">Follow Up Boss Email:</label>
+                            <input type="email" id="settingsFollowUpBossEmail" name="settingsFollowUpBossEmail" placeholder="Enter Follow Up Boss Email">
                         </div>
                     </div>
 
@@ -916,6 +952,17 @@
             setVal('entryFormEntryCountText', c.entryForm?.entryCountText);
             setVal('giveawayEntryFormCtaText', c.giveaway?.entryFormCtaText);
             if (c.modalQuestions && Array.isArray(c.modalQuestions)) {
+// 9. Thank You Page Panel
+            const tyPage = c.thankYouPage || {};
+            const tySocial = tyPage.socialLinks || {};
+            setVal('thankYouPageTitle', tyPage.pageTitle);
+            setVal('thankYouPageHeaderText', tyPage.headerText);
+            setVal('thankYouPageMainMessage', tyPage.mainMessage);
+            setVal('thankYouPageSocialPromptText', tyPage.socialPromptText);
+            setVal('thankYouPageSocialFacebook', tySocial.facebook);
+            setVal('thankYouPageSocialInstagram', tySocial.instagram);
+            setVal('thankYouPageSocialTwitter', tySocial.twitter);
+            setVal('thankYouPageSocialTikTok', tySocial.tiktok);
                 renderDynamicItems('modalQuestionsContainer', c.modalQuestions, createModalQuestionInputs, addModalQuestion);
             }
             setVal('entryFormSocialSharePrompt', c.entryForm?.socialSharePrompt);
@@ -926,6 +973,7 @@
 
             // 5. Footer & Contact Info Panel
             setVal('footerDisclaimer', c.footerContact?.footerDisclaimer);
+
             setVal('footerContactOrganizerLogoUrl', c.footerContact?.organizerLogoUrl);
             setVal('footerContactSecondaryLogoUrl', c.footerContact?.secondaryLogoUrl);
             setVal('footerContactSecondaryLogoAlt', c.footerContact?.secondaryLogoAlt);
@@ -953,12 +1001,15 @@
             setVal('deploymentRepoUrl', c.deploymentInfo?.repoUrl);
             setVal('deploymentNetlifyUrl', c.deploymentInfo?.netlifyUrl);
             setVal('deploymentNetlifyId', c.deploymentInfo?.netlifyId);
+            setVal('settingsFacebookPixelId', c.settings?.facebookPixelId);
 
             // 8. Automations Panel
             setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
             setVal('deploymentTag', c.deploymentInfo?.tag);
+            setVal('settingsSalesGeniusAppApi', c.settings?.salesGeniusAppApi);
+            setVal('settingsFollowUpBossEmail', c.settings?.followUpBossEmail);
 
-            console.log("Form population complete (v2).");
+            // console.log("Form population complete (v2).");
         }
 
         // --- Handle Form Submit Function (Updated for new structure) ---
@@ -977,6 +1028,7 @@
                 rules: { faq: [], tips: [] },
                 entryForm: { sharePlatforms: {} },
                 modalQuestions: [],
+thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                 footerContact: { social: {}, agentContact: {} }, // Initialize nested objects
                 deploymentInfo: {}
             };
@@ -992,7 +1044,7 @@
                 const endDateVal = getVal('giveawayEndDate');
                 if (endDateVal) {
                     try { updatedConfig.giveaway.endDate = new Date(endDateVal).toISOString(); }
-                    catch(e) { console.warn("Could not parse end date, leaving empty", e); updatedConfig.giveaway.endDate = ""; }
+                    catch(e) { /* console.warn("Could not parse end date, leaving empty", e); */ updatedConfig.giveaway.endDate = ""; }
                 } else { updatedConfig.giveaway.endDate = ""; }
                 updatedConfig.settings.showCountdownInHero = getVal('settingsShowCountdownInHero');
                 updatedConfig.giveaway.heroCtaText = getVal('giveawayHeroCtaText');
@@ -1110,17 +1162,29 @@
 
                 // 8. Automations Panel
                 updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
+                updatedConfig.settings.facebookPixelId = getVal('settingsFacebookPixelId');
+                updatedConfig.settings.salesGeniusAppApi = getVal('settingsSalesGeniusAppApi');
+                updatedConfig.settings.followUpBossEmail = getVal('settingsFollowUpBossEmail');
+// 9. Thank You Page Panel
+                updatedConfig.thankYouPage.pageTitle = getVal('thankYouPageTitle');
+                updatedConfig.thankYouPage.headerText = getVal('thankYouPageHeaderText');
+                updatedConfig.thankYouPage.mainMessage = getVal('thankYouPageMainMessage');
+                updatedConfig.thankYouPage.socialPromptText = getVal('thankYouPageSocialPromptText');
+                updatedConfig.thankYouPage.socialLinks.facebook = getVal('thankYouPageSocialFacebook');
+                updatedConfig.thankYouPage.socialLinks.instagram = getVal('thankYouPageSocialInstagram');
+                updatedConfig.thankYouPage.socialLinks.twitter = getVal('thankYouPageSocialTwitter');
+                updatedConfig.thankYouPage.socialLinks.tiktok = getVal('thankYouPageSocialTikTok');
                 updatedConfig.deploymentInfo.tag = getVal('deploymentTag');
 
                 // Preserve hardcoded webhook URL from original settings if it existed, otherwise set default
                 updatedConfig.settings.webhookUrl = config.settings?.webhookUrl || "https://n8n.salesgenius.co/webhook/giveawayupdate";
 
 
-                console.log("Submitting updated config (v2):", updatedConfig);
+                // console.log("Submitting updated config (v2):", updatedConfig);
 
                 // --- Webhook Submission ---
                 const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate"; // Hardcoded webhook URL for admin submissions
-                console.log(`Admin panel submitting to hardcoded URL: ${adminWebhookUrl}`);
+                // console.log(`Admin panel submitting to hardcoded URL: ${adminWebhookUrl}`);
 
                 if (!adminWebhookUrl) { // Should not happen with hardcoded URL but good practice
                      throw new Error("Admin webhook URL is not configured.");
