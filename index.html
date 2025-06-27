@@ -1141,8 +1141,8 @@ body.theme-pastel #rules::before {
                                     <div class="form-group">
                                         <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem;">
                                             <input type="checkbox" id="contactConsent" name="contactConsent" required style="margin-top: 0.25em; width: auto; min-height: auto; -webkit-appearance: checkbox; appearance: checkbox; flex-shrink: 0;">
-                                            <label for="contactConsent" style="font-size: 0.75rem; color: var(--text-color-light-theme); margin-bottom: 0; line-height: 1.4; text-align: left;">
-                                                I agree to be contacted by Property.Ca via call, email, and text. To opt-out, you can reply ‘stop’ at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="https://www.mls.theskygroup.ca/privacy-policy" target="_blank" style="color: var(--primary-color-theme); text-decoration: underline;">Privacy Policy</a>.
+                                            <label for="contactConsent" id="contactConsentLabel" style="font-size: 0.75rem; color: var(--text-color-light-theme); margin-bottom: 0; line-height: 1.4; text-align: left;">
+                                                <!-- This content will be populated by JavaScript -->
                                             </label>
                                         </div>
                                     </div>
@@ -1198,8 +1198,6 @@ body.theme-pastel #rules::before {
                     <p><strong id="newFooterOrganizerName">Organizer Name Placeholder</strong></p>
                     <p id="newFooterBrokerageName">Brokerage Name Placeholder</p>
                     <p id="newFooterAddress"><i class="fas fa-map-marker-alt"></i> Organizer Address Placeholder</p>
-                    <p><i class="fas fa-envelope"></i> <a href="mailto:email@example.com" id="newFooterEmailLink">email@example.com</a></p>
-                    <p><i class="fas fa-phone"></i> <a href="tel:1234567890" id="newFooterPhoneLink">(123) 456-7890</a></p>
                 </div>
             </div>
             <div class="footer-column-social"> <!-- New Column for Social Icons -->
@@ -1449,6 +1447,16 @@ body.theme-pastel #rules::before {
                     console.error("Err Hero Data:", e);
                 }
                 populateNewFooterData(); // Call the new footer population function
+                populateConsentText(); // Populate the consent text
+}
+
+function populateConsentText() {
+    const consentLabel = document.getElementById('contactConsentLabel');
+    if (consentLabel && config) {
+        const brokerageName = config.footerContact?.brokerageName || "the brokerage";
+        const privacyPolicyLink = config.meta?.privacyPolicyLink || "#";
+        consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply ‘stop’ at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary-color-theme); text-decoration: underline;">Privacy Policy</a>.`;
+    }
 }
 
 function populateNewFooterData() {
@@ -1490,25 +1498,6 @@ function populateNewFooterData() {
     setText('newFooterBrokerageName', fc.brokerageName || "Your Brokerage Name");
 
 
-    // Populate Email
-    const emailLinkEl = document.getElementById('newFooterEmailLink');
-    if (emailLinkEl && fc.email) {
-        emailLinkEl.href = `mailto:${fc.email}`;
-        emailLinkEl.textContent = fc.email;
-    } else if (emailLinkEl) {
-        emailLinkEl.textContent = 'email@example.com'; // Fallback placeholder
-        emailLinkEl.href = 'mailto:email@example.com';
-    }
-
-    // Populate Phone
-    const phoneLinkEl = document.getElementById('newFooterPhoneLink');
-    if (phoneLinkEl && fc.phone) {
-        phoneLinkEl.href = `tel:${fc.phone.replace(/\D/g, '')}`;
-        phoneLinkEl.textContent = fc.phone;
-    } else if (phoneLinkEl) {
-        phoneLinkEl.textContent = '(123) 456-7890'; // Fallback placeholder
-        phoneLinkEl.href = 'tel:1234567890';
-    }
 
     // Populate Address
     const addressEl = document.getElementById('newFooterAddress');
