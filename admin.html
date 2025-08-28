@@ -274,6 +274,7 @@
             <ul>
                 <li><a href="#" data-target="headerHeroPanel" class="active">Header & Hero</a></li>
                 <li><a href="#" data-target="prizeDetailsPanel">Prize Details</a></li>
+                <li><a href="#" data-target="prizeImagesPanel">Site Images</a></li>
                 <li><a href="#" data-target="howToEnterPanel">How to Enter</a></li>
                 <li><a href="#" data-target="entryFormPanel">Entry Contact Form</a></li>
                 <li><a href="#" data-target="footerContactPanel">Footer & Agent Info</a></li>
@@ -308,10 +309,7 @@
                             <label for="giveawayHeroSubheadline">Hero Subheadline:</label>
                             <textarea id="giveawayHeroSubheadline" name="giveawayHeroSubheadline"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="giveawayHeroBackgroundImageUrl">Hero Background Image URL:</label>
-                            <input type="url" id="giveawayHeroBackgroundImageUrl" name="giveawayHeroBackgroundImageUrl">
-                        </div>
+
                         <div class="form-group">
                             <label for="giveawayPromotionDates">Promotion Dates Text:</label>
                             <input type="text" id="giveawayPromotionDates" name="giveawayPromotionDates">
@@ -363,16 +361,21 @@
                                  <button type="button" class="add-item" onclick="addIncludedItem()">Add Item</button>
                              </div>
                         </fieldset>
-                        <fieldset>
-                             <legend>Prize Images (First image is main, others are thumbnails)</legend>
-                             <p class="panel-description" style="font-size: 13px; margin-top: -10px; margin-bottom:10px;">Note: The 3rd and 4th images in the gallery are used for parallax backgrounds on the main page.</p>
-                             <div id="prizeImagesContainer">
-                                 <!-- JS will populate this -->
-                             </div>
-                             <div class="dynamic-item-controls">
-                                 <button type="button" class="add-item" onclick="addPrizeImage()">Add Image</button>
-                             </div>
-                        </fieldset>
+                    </div>
+
+                    <!-- 2a. Prize Images Panel -->
+                    <div id="prizeImagesPanel" class="content-panel">
+                        <h2>Site Images</h2>
+                        <div class="dynamic-item-group">
+                            <h4>Hero Background Image</h4>
+                            <div class="form-group">
+                                <label for="giveawayHeroBackgroundImageUrl">Image URL:</label>
+                                <input type="url" id="giveawayHeroBackgroundImageUrl" name="giveawayHeroBackgroundImageUrl">
+                            </div>
+                        </div>
+                        <div id="prizeImagesContainer">
+                            <!-- JS will populate this with exactly 4 images -->
+                        </div>
                     </div>
 
                     <!-- 3. How to Enter Panel -->
@@ -396,6 +399,13 @@
                              <div class="dynamic-item-controls">
                                  <button type="button" class="add-item" onclick="addHowToEnterHighlight()">Add Highlight</button>
                              </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Fine Print Text</legend>
+                            <div class="form-group">
+                                <label for="rulesFinePrintText">Fine Print Text:</label>
+                                <input type="text" id="rulesFinePrintText" name="rulesFinePrintText">
+                            </div>
                         </fieldset>
                         <fieldset>
                             <legend>Fair Selection Info</legend>
@@ -428,14 +438,18 @@
                                  <button type="button" class="add-item" onclick="addFaqItem()">Add FAQ</button>
                              </div>
                         </fieldset>
-                         <fieldset>
-                             <legend>Tips for Entering</legend>
-                             <div id="rulesTipsContainer">
-                                 <!-- JS will populate this -->
-                             </div>
-                             <div class="dynamic-item-controls">
-                                 <button type="button" class="add-item" onclick="addTipItem()">Add Tip</button>
-                             </div>
+                                                 <fieldset>
+                            <legend>Tips for Entering</legend>
+                            <div class="form-group">
+                                <input type="checkbox" id="rulesShowTipsSection" name="rulesShowTipsSection">
+                                <label for="rulesShowTipsSection" class="checkbox-label">Show Tips for Entering Section?</label>
+                            </div>
+                            <div id="rulesTipsContainer">
+                                <!-- JS will populate this -->
+                            </div>
+                            <div class="dynamic-item-controls">
+                                <button type="button" class="add-item" onclick="addTipItem()">Add Tip</button>
+                            </div>
                         </fieldset>
                     </div>
 
@@ -608,6 +622,10 @@
                             <input type="text" id="settingsPrimaryColorOverride" name="settingsPrimaryColorOverride" placeholder="Leave blank to use theme default">
                         </div>
                         <div class="form-group">
+                            <label for="settingsSecondaryColorOverride">Secondary Color Override (hex code, e.g., #00FF00):</label>
+                            <input type="text" id="settingsSecondaryColorOverride" name="settingsSecondaryColorOverride" placeholder="Leave blank to use theme default">
+                        </div>
+                        <div class="form-group">
                             <label for="settingsConfettiColors">Confetti Colors (hex codes, one per line):</label>
                             <textarea id="settingsConfettiColors" name="settingsConfettiColors"></textarea>
                         </div>
@@ -696,14 +714,21 @@
                     container.appendChild(renderItemFn(item, index));
                 });
             }
-            // Add button is now static in HTML, associated via onclick
+            // Add button is now static in HTML, associated via onclick (except for prize images)
         }
 
         function createPrizeImageInputs(item, index) {
+            const imageNames = [
+                'Prize Details Image',
+                'Entry Form Image', 
+                'Background Image Middle',
+                'Background Image Bottom'
+            ];
+            
             const div = document.createElement('div');
             div.className = 'dynamic-item-group';
             div.innerHTML = `
-                <h4>Image ${index + 1}</h4>
+                <h4>${imageNames[index]}</h4>
                 <div class="form-group">
                     <label for="prizeImageSrc${index}">Image URL:</label>
                     <input type="url" id="prizeImageSrc${index}" value="${item.src || ''}">
@@ -712,13 +737,10 @@
                     <label for="prizeImageAlt${index}">Alt Text:</label>
                     <input type="text" id="prizeImageAlt${index}" value="${item.alt || ''}">
                 </div>
-                <div class="dynamic-item-controls">
-                    <button type="button" onclick="removeDynamicItem(this)"><i class="fas fa-trash-alt"></i></button>
-                </div>
             `;
             return div;
         }
-         function addPrizeImage() { addDynamicItem('prizeImagesContainer', { src: '', alt: '' }, createPrizeImageInputs, addPrizeImage); }
+
 
         function createIncludedItemInputs(item, index) {
              const div = document.createElement('div');
@@ -935,11 +957,28 @@
             setVal('prizeLimitedTimeOfferText', c.prize?.limitedTimeOfferText);
             setVal('prizeCtaButtonText', c.prize?.ctaButtonText);
             renderDynamicItems('prizeIncludedItemsContainer', c.prize?.includedItems, createIncludedItemInputs, addIncludedItem);
-            renderDynamicItems('prizeImagesContainer', c.prize?.images, createPrizeImageInputs, addPrizeImage);
+            // Ensure exactly 4 prize images are always present
+            const prizeImages = c.prize?.images || [];
+            const defaultPrizeImages = [
+                { src: '', alt: '' },
+                { src: '', alt: '' },
+                { src: '', alt: '' },
+                { src: '', alt: '' }
+            ];
+            
+            // Merge existing images with defaults, ensuring exactly 4
+            const finalPrizeImages = [];
+            for (let i = 0; i < 4; i++) {
+                finalPrizeImages[i] = prizeImages[i] || defaultPrizeImages[i];
+            }
+            
+            renderDynamicItems('prizeImagesContainer', finalPrizeImages, createPrizeImageInputs, null);
 
             // 3. How to Enter Panel
             renderDynamicItems('howToEnterStepsContainer', c.howToEnter?.steps, createHowToEnterStepInputs, addHowToEnterStep);
             renderDynamicItems('howToEnterHighlightsContainer', c.howToEnter?.highlights, createHowToEnterHighlightInputs, addHowToEnterHighlight);
+            setVal('rulesFinePrintText', c.rules?.finePrintText);
+            setVal('rulesShowTipsSection', c.rules?.showTipsSection);
             setVal('rulesFairSelectionTitle', c.rules?.fairSelectionInfo?.title);
             setVal('rulesFairSelectionText', c.rules?.fairSelectionInfo?.text);
             setVal('rulesImportantNoticeTitle', c.rules?.importantNotice?.title);
@@ -994,6 +1033,7 @@
             // 6. Global Styling & Appearance Panel
             setVal('settingsTheme', c.settings?.theme);
             setVal('settingsPrimaryColorOverride', c.settings?.primaryColorOverride);
+            setVal('settingsSecondaryColorOverride', c.settings?.secondaryColorOverride);
             textareaFromArray('settingsConfettiColors', c.settings?.confettiColors);
 
             // 7. Deployment Panel
@@ -1060,10 +1100,12 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                     const text = group.querySelector(`#includedText${index}`)?.value;
                      if (icon || text) { updatedConfig.prize.includedItems.push({ icon: icon || '', text: text || '' }); }
                 });
+                // Always save exactly 4 prize images
+                updatedConfig.prize.images = [];
                 document.querySelectorAll('#prizeImagesContainer .dynamic-item-group').forEach((group, index) => {
-                    const src = group.querySelector(`#prizeImageSrc${index}`)?.value;
-                    const alt = group.querySelector(`#prizeImageAlt${index}`)?.value;
-                    if (src || alt) { updatedConfig.prize.images.push({ src: src || '', alt: alt || '' }); }
+                    const src = group.querySelector(`#prizeImageSrc${index}`)?.value || '';
+                    const alt = group.querySelector(`#prizeImageAlt${index}`)?.value || '';
+                    updatedConfig.prize.images.push({ src, alt });
                 });
 
                 // 3. How to Enter Panel
@@ -1078,6 +1120,8 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                     const text = group.querySelector(`#highlightText${index}`)?.value;
                      if (icon || text) { updatedConfig.howToEnter.highlights.push({ icon: icon || '', text: text || '' }); }
                 });
+                updatedConfig.rules.finePrintText = getVal('rulesFinePrintText');
+                updatedConfig.rules.showTipsSection = getVal('rulesShowTipsSection');
                 updatedConfig.rules.fairSelectionInfo = { title: getVal('rulesFairSelectionTitle'), text: getVal('rulesFairSelectionText') };
                 updatedConfig.rules.importantNotice = { title: getVal('rulesImportantNoticeTitle'), text: getVal('rulesImportantNoticeText') };
                 document.querySelectorAll('#rulesFaqContainer .dynamic-item-group').forEach((group, index) => {
@@ -1152,6 +1196,7 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                 // 6. Global Styling & Appearance Panel
                 updatedConfig.settings.theme = getVal('settingsTheme');
                 updatedConfig.settings.primaryColorOverride = getVal('settingsPrimaryColorOverride');
+                updatedConfig.settings.secondaryColorOverride = getVal('settingsSecondaryColorOverride');
                 updatedConfig.settings.confettiColors = arrayFromTextarea('settingsConfettiColors');
 
                 // 7. Deployment Panel

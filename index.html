@@ -1166,7 +1166,7 @@ body.theme-pastel #rules::before {
             <div class="container">
                 <div class="content-card" style="margin-bottom: 1.5rem;"> <!-- Added wrapper card for title/subtitle -->
                     <h2 class="section-title">Rules & Eligibility</h2>
-                    <p class="section-subtitle" style="margin-bottom: 0;">Please read the fine print before entering.</p>
+                    <p class="section-subtitle" style="margin-bottom: 0;" id="rulesFinePrintText">Please read the fine print before entering.</p>
                 </div>
                 <div class="content-card">
                     <div class="rules-text-block" id="rulesFairSelection"></div>
@@ -1174,7 +1174,7 @@ body.theme-pastel #rules::before {
                     <ul class="faq-list" id="rulesFaqList"></ul>
                     <a href="#" target="_blank" class="button-primary download-rules-link" id="rulesPdfLink" style="display:none;">Download Full Rules <i class="fas fa-file-pdf"></i></a>
                 </div>
-                <div class="content-card" style="margin-top:1rem;">
+                <div class="content-card" style="margin-top:1rem;" id="rulesTipsSection">
                     <h3 style="text-align:center; font-size: 1.25rem; color:var(--primary-color-theme); margin-bottom:1rem;">Tips for Entering:</h3>
                     <ul class="tips-list" id="rulesTipsList"></ul>
                 </div>
@@ -1330,7 +1330,26 @@ body.theme-pastel #rules::before {
                     }
                 }
             }
+
+            function applyColorOverrides() {
+                const customPrimaryColor = config?.settings?.primaryColorOverride;
+                const customSecondaryColor = config?.settings?.secondaryColorOverride;
+
+                if (customPrimaryColor && customPrimaryColor.trim() !== '' && /^#([0-9A-Fa-f]{3}){1,2}$/.test(customPrimaryColor.trim())) {
+                    pageBody.style.setProperty('--primary-color-theme', customPrimaryColor.trim());
+                } else {
+                    pageBody.style.removeProperty('--primary-color-theme');
+                }
+
+                if (customSecondaryColor && customSecondaryColor.trim() !== '' && /^#([0-9A-Fa-f]{3}){1,2}$/.test(customSecondaryColor.trim())) {
+                    pageBody.style.setProperty('--secondary-color-theme', customSecondaryColor.trim());
+                } else {
+                    pageBody.style.removeProperty('--secondary-color-theme');
+                }
+            }
+
             applyTheme(config.settings?.theme || 'dark');
+            applyColorOverrides();
 // Set parallax background images from config
             if (config.prize?.images?.length > 0) {
                 const howToEnterImageUrl = config.prize.images[3]?.src;
@@ -1887,6 +1906,12 @@ try {
 
 try {
     if (config.rules) {
+        // Populate fine print text
+        const finePrintEl = document.getElementById('rulesFinePrintText');
+        if (finePrintEl && config.rules.finePrintText) {
+            setText('rulesFinePrintText', config.rules.finePrintText);
+        }
+
         const fairEl = document.getElementById('rulesFairSelection');
         if (fairEl && config.rules.fairSelectionInfo) {
             setHTML('rulesFairSelection', `<h3>${config.rules.fairSelectionInfo.title || ''}</h3><p>${config.rules.fairSelectionInfo.text || ''}</p>`);
@@ -1919,6 +1944,16 @@ try {
                 pdfL.style.display = 'block';
             } else {
                 pdfL.style.display = 'none';
+            }
+        }
+
+        // Control Tips section visibility
+        const tipsSection = document.getElementById('rulesTipsSection');
+        if (tipsSection) {
+            if (config.rules.showTipsSection === false) {
+                tipsSection.style.display = 'none';
+            } else {
+                tipsSection.style.display = 'block';
             }
         }
 
@@ -2095,7 +2130,8 @@ try {
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && successModal?.classList.contains('visible')) successModal.classList.remove('visible'); });
 
             // --- Initial Population & Start Hero Animation ---
-            populateSimpleData(); 
+            populateSimpleData();
+            applyColorOverrides();
 
             if (heroSection) {
                 setTimeout(() => {

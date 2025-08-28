@@ -1,209 +1,268 @@
 const config = {
-  "modalQuestions": [
-    {
-      "id": "live_event_experience",
-      "questionText": "When it comes to experiences, how do you rate attending live sports events?",
-      "options": [
-        { "value": "must_have_regular", "text": "Must-have, I attend games regularly" },
-        { "value": "enjoyable_few_times", "text": "Enjoyable, I go a few times a year" },
-        { "value": "fun_rarely", "text": "Fun, but I rarely go" },
-        { "value": "not_sports_fan", "text": "I'm not a sports fan" }
-      ]
-    },
-    {
-      "id": "current_living_situation",
-      "questionText": "Which of the following best describes your current living situation?",
-      "options": [
-        { "value": "own_consider_upgrading", "text": "I own my home and am considering upgrading" },
-        { "value": "own_happy", "text": "I own my home and am happy with it" },
-        { "value": "rent_plan_buy_soon", "text": "I rent but plan to buy soon" },
-        { "value": "rent_no_plans", "text": "I rent with no immediate plans to purchase" }
-      ]
-    },
-    {
-      "id": "canada_day_celebration",
-      "questionText": "How do you usually celebrate national holidays, like Canada Day?",
-      "options": [
-        { "value": "hosting_events", "text": "Hosting/attending events or parties" },
-        { "value": "traveling_vacations", "text": "Travelling or planning vacations" },
-        { "value": "local_public_events", "text": "Enjoying local public events or festivals" },
-        { "value": "relaxing_home", "text": "Relaxing at home" }
-      ]
-    },
-    {
-      "id": "transport_preference",
-      "questionText": "What is your preference for transportation to a sporting event?",
-      "options": [
-        { "value": "public_transport", "text": "Public transport" },
-        { "value": "drive", "text": "Drive my own car" },
-        { "value": "ride_sharing", "text": "Ride-sharing services" },
-        { "value": "walk", "text": "I live close enough to walk" }
-      ]
-    }
-  ],
+  "meta": {
+    "pageTitle": "Win $400 Blue Jays Tickets - Summer Game Night Giveaway!",
+    "navBrandLogoText": "Julian Kashani",
+    "privacyPolicyLink": "https://property.ca/privacy"
+  },
   "giveaway": {
-    "name": "Jays Tickets Canada Day Giveaway",
-    "heroHeadline": "Win <span class='highlight'>Free Jays Game Tickets</span> At Our Canada Day Booth!",
-    "heroSubheadline": "Love baseball? Celebrate Canada Day in style with your chance to catch the Jays live! Enter now for a shot at tickets worth $100 	6ront miss out!",
-    "promotionDates": "Enter at our Canada Day booth on July 1st. Winner will be drawn July 2, 2025!",
-    "endDate": "2025-07-02T23:59:59",
-    "heroBackgroundImageUrl": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/38xw2wnjphrma0cqgnk8eq6n2r.jpg",
-    "heroCtaText": "Enter to Win Now",
-    "entryFormCtaText": "Enter for Jays Tickets!",
-    "successModalHeaderText": "You're In!",
-    "successModalMainMessage": "Your entry for the <strong>Jays Tickets Canada Day Giveaway</strong> has been received! We9ll draw and notify the winner by email on July 2, 2025. Good luck!",
-    "successModalEmailPrompt": "Watch your inbox on July 2nd for winner news!"
+    "heroHeadline": "Win <span class='highlight'>Free Toronto Blue Jays Tickets</span> for an Epic Summer Game Night!",
+    "heroSubheadline": "Score two premium seats to see the Toronto Blue Jays take on the Texas Rangers, valued at $400! Make your summer unforgettable with this all-star night out. Entry closes July 25th, winner picked July 29th.",
+    "heroBackgroundImageUrl": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/3x4pjwf8h1rma0cqhn6tw7t808.jpg",
+    "promotionDates": "Enter from June 27th to July 25th, 2025 - winner announced July 29th!",
+    "endDate": "2025-07-26T03:59:00.000Z",
+    "heroCtaText": "Enter to Win Now!",
+    "entryFormCtaText": "Enter Game Night Draw!",
+    "name": "Blue Jays Summer Game Night Giveaway",
+    "successModalHeaderText": "You’re in the Draw!",
+    "successModalMainMessage": "Your entry for the <strong>Toronto Blue Jays Summer Game Night</strong> is in! Winner will be announced July 29th and notified by email. Good luck!",
+    "successModalEmailPrompt": "Watch your email and keep July 29th on your calendar—you could be on your way to the ballpark!"
+  },
+  "settings": {
+    "confettiColors": [
+      "#0055A4",
+      "#003366",
+      "#FFFFFF"
+    ],
+    "showCountdownInHero": true,
+    "theme": "dark",
+    "primaryColorOverride": "#0055A4",
+    "secondaryColorOverride": "#FFEE58",
+    "ghlWebhookUrl": "https://services.leadconnectorhq.com/hooks/bJbBMjcW619cJrLUJ3kY/webhook-trigger/3yNsurfrt9oBUtRBuygb",
+    "webhookUrl": "https://n8n.salesgenius.co/webhook/giveawayupdate",
+    "facebookPixelId": "1057475448873422",
+    "salesGeniusAppApi": "",
+    "followUpBossEmail": ""
+  },
+  "thankYouPage": {
+    "pageTitle": "Thank You for Your Entry!",
+    "headerText": "🎉 ONE MORE STEP",
+    "mainMessage": "Your spot for the <strong>Toronto Blue Jays Summer Game Night</strong> is almost locked in! You've made it to the final step of the giveaway - congratulations! Now all you need to do is follow my social media accounts to officially lock in your entry and stay connected",
+    "socialPromptText": "FOLLOW BOTH TO WIN! Complete Your Entry Now"
   },
   "prize": {
-    "name": "Jays Game Ticket Giveaway",
-    "value": "$100 Value",
-    "description": "Imagine yourself cheering in the stands, feeling the excitement as the Jays play under the bright summer sun. Win tickets for a Toronto Blue Jays game and enjoy a day of fun, food, and unforgettable moments. We love going to the ballpark and want to share that with you!",
     "images": [
       {
-        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/9cjh4n7sanrmc0cqgnk9ntmzfc.jpg",
-        "alt": "People cheering in the stands at a Toronto Blue Jays game"
+        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/hg2dnqs7yhrm80cqhn79nt68j8.jpg",
+        "alt": "Cheering fans at a Blue Jays baseball game"
       },
       {
-        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/zszwdhstedrme0cqgnkrxegrq0.jpg",
-        "alt": "Jays fans smiling and having fun at the ballpark"
+        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/bk4ehhbc35rmc0cqhn78wzw7t8.jpg",
+        "alt": "Couple enjoying a summer night at the Rogers Centre"
       },
       {
-        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/v4bsm43t2hrma0cqgnktq7jajc.jpg",
-        "alt": "Canada Day celebration at a baseball stadium"
+        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/w99mghnswxrm80cqhn7bm108b0.jpg",
+        "alt": "Exciting baseball action between Toronto Blue Jays and Texas Rangers"
       },
       {
-        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/9keqpgnt8hrme0cqgnksjdkxf4.jpg",
-        "alt": "Kids and adults enjoying a summer Jays game"
+        "src": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/wzcq768e4drme0cqhn7v49g7tr.jpg",
+        "alt": "Tickets for a premier Blue Jays game experience"
       }
     ],
     "includedItems": [
-      { "icon": "fas fa-ticket-alt", "text": "Tickets for a Jays baseball game" },
-      { "icon": "fas fa-baseball-ball", "text": "Choose your game date (from available options)" },
-      { "icon": "fas fa-users", "text": "Perfect for friends, families, or fans" },
-      { "icon": "fas fa-star", "text": "$100 total prize value" }
+      {
+        "icon": "fas fa-baseball-ball",
+        "text": "Two premium tickets to Blue Jays vs. Rangers"
+      },
+      {
+        "icon": "fas fa-user-friends",
+        "text": "Perfect for couples, friends, or a special family outing"
+      },
+      {
+        "icon": "fas fa-star",
+        "text": "$400 total value - for a big-time experience"
+      },
+      {
+        "icon": "fas fa-city",
+        "text": "Catch live baseball in downtown Toronto"
+      },
+      {
+        "icon": "fas fa-calendar-day",
+        "text": "Game date: Summer 2025, Texas Rangers matchup"
+      }
     ],
-    "limitedTimeOfferText": "Limited Canada Day Giveaway 	6 Only One Winner!",
-    "ctaButtonText": "I Want Jays Tickets!"
+    "name": "Toronto Blue Jays Summer Game Night Experience",
+    "value": "$400 Value",
+    "description": "Imagine you and your favorite person cheering in the stands as the Blue Jays play live against the Texas Rangers! Feel the rush, eat ballpark snacks, and enjoy a big summer night in the city. This giveaway gets you <span class='highlight'>two premium tickets</span> for the best seats in the house. Whether it’s a fun date or a night with a friend, you’ll remember it all year long.",
+    "limitedTimeOfferText": "Summer Only - Limited Entry!",
+    "ctaButtonText": "I Want These Game Tickets!"
   },
   "howToEnter": {
     "steps": [
       {
         "icon": "fas fa-edit",
         "title": "Fill Out the Form",
-        "description": "Stop by our booth on Canada Day and fill out a quick entry form. Just your name and email needed!"
+        "description": "Enter your name and email in the quick form below—done in under 30 seconds!"
       },
       {
-        "icon": "fas fa-check-circle",
-        "title": "Submit Your Entry",
-        "description": "Drop your entry into our giveaway box 	6 it only takes a few seconds."
+        "icon": "fas fa-question-circle",
+        "title": "Answer Simple Questions",
+        "description": "Tell us a little about who you’d bring and why you’d love this summer baseball night."
       },
       {
         "icon": "fas fa-trophy",
-        "title": "Winner Announced",
-        "description": "We9ll draw and contact the winner on July 2, 2025 	6 just in time for summer fun!"
+        "title": "Get Your Chance to Win!",
+        "description": "That’s it! Watch your inbox—winner picked July 29th."
       }
     ],
     "highlights": [
-      { "icon": "fas fa-clock", "text": "Entry takes less than 1 minute" },
-      { "icon": "fas fa-gift", "text": "No purchase, completely free" },
-      { "icon": "fas fa-users", "text": "Open to anyone who loves baseball" },
-      { "icon": "fas fa-random", "text": "Fair and random winner" }
+      {
+        "icon": "fas fa-clock",
+        "text": "Super quick and easy entry"
+      },
+      {
+        "icon": "fas fa-gift",
+        "text": "No purchase needed"
+      },
+      {
+        "icon": "fas fa-heart",
+        "text": "Great night out with someone special"
+      },
+      {
+        "icon": "fas fa-star",
+        "text": "Random, fair winner pick"
+      }
     ]
   },
-  "entryForm": {
-    "subtitle": "Enter your details below for a chance to win Jays tickets 	6 perfect for baseball fans!",
-    "entryCountText": "Hundreds of neighbors have already entered 	6 don9t miss out!",
-    "socialSharePrompt": "Love this chance? Share with your fellow baseball fans!",
-    "sharePlatforms": {
-      "facebook": "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href),
-      "twitter": "https://twitter.com/intent/tweet?url=" + encodeURIComponent(window.location.href) + "&text=" + encodeURIComponent("Celebrate Canada Day with a chance to win Jays tickets!")
-    },
-    "entryFormCtaText": "Enter for Jays Tickets!"
-  },
   "rules": {
-    "fairSelectionInfo": {
-      "title": "Every Entry Counts!",
-      "text": "All entries go into a fair, random draw. No tricks or hidden rules."
-    },
-    "importantNotice": {
-      "title": "Winner Chosen July 2nd!",
-      "text": "The lucky winner will be contacted by email on July 2, 2025. Watch your inbox!"
-    },
+    "finePrintText": "Please read the fine print before entering. Anyone can enter.",
+    "showTipsSection": true,
     "faq": [
       {
         "q": "Who can enter this giveaway?",
-        "a": "Anyone who loves baseball can enter. All ages welcome!"
+        "a": "Anyone 18 or older living in Ontario can enter. Couples, families, and friends are welcome!"
       },
       {
-        "q": "Do I need to buy anything to enter?",
-        "a": "No! Stopping by the booth and filling out the entry form is all it takes."
+        "q": "How will I know if I win?",
+        "a": "Winner will get an email from jk@property.ca on July 29th. Check your inbox and spam!"
       },
       {
-        "q": "How is the winner chosen?",
-        "a": "A random draw from all valid entries. It9s fair and simple!"
+        "q": "Do I have to pay for anything?",
+        "a": "Nope—the tickets are totally free! Just show up and enjoy the game."
       },
       {
-        "q": "When will the winner be announced?",
-        "a": "We will contact the winner by email on July 2, 2025."
-      },
-      {
-        "q": "What if I can9t make it to the Jays game?",
-        "a": "We9ll discuss alternative dates if possible 	6 but the prize is for Jays tickets only."
+        "q": "What if I can’t make the game?",
+        "a": "If you can’t attend, let us know so someone else can use this amazing prize."
       }
     ],
     "tips": [
-      "Double-check your email for accuracy",
-      "Add shar@theskygroup.ca to your contacts to get winner updates",
-      "Tell your friends and enjoy the booth fun on Canada Day",
-      "Follow us on Instagram and Facebook for prize updates"
-    ]
+      "Double-check your email for typos—make sure you can be reached",
+      "Think of who you'd take for this special night",
+      "Tell family and friends to enter too",
+      "Follow Julian Kashani on Instagram or Facebook for the winner post"
+    ],
+    "fairSelectionInfo": {
+      "title": "Fair and Random Drawing",
+      "text": "Every entry has the same fair shot! Winner is chosen by a random draw. No tricks, just luck."
+    },
+    "importantNotice": {
+      "title": "Watch Your Email",
+      "text": "Only the email you use here will be contacted. Be sure to check your spam, too, on July 29th."
+    }
   },
+  "entryForm": {
+    "sharePlatforms": {
+      "facebook": "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fgiveaway-558.netlify.app%2Fadmin",
+      "twitter": "https://twitter.com/intent/tweet?url=https%3A%2F%2Fgiveaway-558.netlify.app%2Fadmin&text=Win%20Toronto%20Blue%20Jays%20Tickets%20for%20an%20Epic%20Summer%20Game%20Night!"
+    },
+    "subtitle": "Enter your details below for a shot at your dream Blue Jays night out!",
+    "entryCountText": "Hundreds of Toronto fans are already in—don’t miss your chance!",
+    "socialSharePrompt": "Share with your friends—make it a race to win!"
+  },
+  "modalQuestions": [
+    {
+      "id": "q_auto_1750445840887_0",
+      "questionText": "What do you like the most about your current home?",
+      "options": [
+        {
+          "value": "The location",
+          "text": "The location"
+        },
+        {
+          "value": "The layout",
+          "text": "The layout"
+        },
+        {
+          "value": "The finishes (paint, lighting, etc.)",
+          "text": "The finishes (paint, lighting, etc.)"
+        },
+        {
+          "value": "The outdoor space",
+          "text": "The outdoor space"
+        }
+      ]
+    },
+    {
+      "id": "q_auto_1750445840887_1",
+      "questionText": "Is a move on your radar in the near future?",
+      "options": [
+        {
+          "value": "Yes, sometime in 2025",
+          "text": "Yes, sometime in 2025"
+        },
+        {
+          "value": "Yes, in the next 1–2 years",
+          "text": "Yes, in the next 1–2 years"
+        },
+        {
+          "value": "Not at the moment",
+          "text": "Not at the moment"
+        },
+        {
+          "value": "I’m not sure yet",
+          "text": "I’m not sure yet"
+        }
+      ]
+    },
+    {
+      "id": "q_auto_1750445840887_2",
+      "questionText": "What’s your current housing situation?",
+      "options": [
+        {
+          "value": "I rent and am interested in buying",
+          "text": "I rent and am interested in buying"
+        },
+        {
+          "value": "I own and might sell within 2 years",
+          "text": "I own and might sell within 2 years"
+        },
+        {
+          "value": "I own and am happy where I am",
+          "text": "I own and am happy where I am"
+        },
+        {
+          "value": "I’m actively looking to buy or sell now",
+          "text": "I’m actively looking to buy or sell now"
+        }
+      ]
+    }
+  ],
   "footerContact": {
-    "organizerName": "Sky Group",
-    "organizerLogoUrl": "https://prod-files-secure.s3.us-west-2.amazonaws.com/8e0c10a0-da43-409c-b191-91135b7161ff/eed1f4ef-c781-4015-8092-dda5b2f860d9/68278639dbfc24a322fd422d.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466XFL2HBOV%2F20250618%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250618T232937Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEK%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIGecz6R5WMRJ39mO4X9uZiwszyoeZfExmst4AxoYWbcVAiEA%2BYO%2Fu2Uey7e8UO2ahVk6rP2uDWFR9VhVc8S%2Fu7TmIM0qiAQIl%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDGiIO382jJwxty9tpyrcAwELds8vvPeW6qyLvgUnQ0WH4VamcQG0mFgBpkci5o6iVkrZTCkWlV8Qc%2BV2rsnjljjLwsKTPNnFtfGM%2FYT1JwrYGb9HBw2707rIEFa4xgWUdjWJT4FqtCWbiOmlMhBd8S6G1ZI2rSp5iAbCDgrNt7exXqlULGs8DJgPlTqXG69K6iRRxE3RL06I883NpWy5rko0FS2qlrq1T4fzd66hUrcOCAqgxxQkBcjGb1Ry05phxsnp%2Fd0x4PgH25JFzQZMDe8J5xyXyH17RHiGk0HjPSe9kfWKe5p%2Fo%2B0uNb4Ds9gyMpaTouugQixH3VOMaBK49%2BFw3vXwUqK93n35nl%2BnQTzxBs5eXKJLEYnhcte8tvT7jLeHvymzh1PvFTEhwgEsRjAAOYTC4zk7SXCuprzs%2BnQTNiVddaVZIqK8znhIgrG3V0z7M6OlrgMvJTgFrxqdd0chPBBEwu5lHACTCafaMA905NhaOexmaps45Jkiy%2F3lhqEzrx23GlK1iKn4832Ofu9nP2P3cHfZ7YxU6qAWSN5PFdUd8RW%2F41ERgZ5R%2Be%2BhpucM1IGYfjGCpMAZbdHyfkvgairyR8xTZvmNz4HRwXSP485uNCwsbitqj72W%2FP%2BH8%2FfyuYOYlhxf2BnMMMD3zMIGOqUBh6q489Wjxh55K55TqXIEXZ24sGDWV0Ib6iPy0CDmtDgTBKBh5l%2F8tVYgXL27iQvQyjVp%2Bhd3MIvNQm3fHYrRz%2FIOPeSUuJYQq85eVvh9gocJfpUPCyqg7G%2FeEmlzTOqLBtldd8CqZjRhSE0cIOHZ7Nx70x0g%2B%2Bd1aYgF309UG7A%2F8hx%2BujBo%2Fx27syn5YFy7IJDn25cmqQjaMr5q1C4oONGUYvRl&X-Amz-Signature=53488ac36a5877db5a5f3156fc0032f963734cfd0c7b75cdfba6c479e58fd9b2&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
-    "secondaryLogoUrl": "https://prod-files-secure.s3.us-west-2.amazonaws.com/8e0c10a0-da43-409c-b191-91135b7161ff/eed1f4ef-c781-4015-8092-dda5b2f860d9/68278639dbfc24a322fd422d.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466XFL2HBOV%2F20250618%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250618T232937Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEK%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIGecz6R5WMRJ39mO4X9uZiwszyoeZfExmst4AxoYWbcVAiEA%2BYO%2Fu2Uey7e8UO2ahVk6rP2uDWFR9VhVc8S%2Fu7TmIM0qiAQIl%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDGiIO382jJwxty9tpyrcAwELds8vvPeW6qyLvgUnQ0WH4VamcQG0mFgBpkci5o6iVkrZTCkWlV8Qc%2BV2rsnjljjLwsKTPNnFtfGM%2FYT1JwrYGb9HBw2707rIEFa4xgWUdjWJT4FqtCWbiOmlMhBd8S6G1ZI2rSp5iAbCDgrNt7exXqlULGs8DJgPlTqXG69K6iRRxE3RL06I883NpWy5rko0FS2qlrq1T4fzd66hUrcOCAqgxxQkBcjGb1Ry05phxsnp%2Fd0x4PgH25JFzQZMDe8J5xyXyH17RHiGk0HjPSe9kfWKe5p%2Fo%2B0uNb4Ds9gyMpaTouugQixH3VOMaBK49%2BFw3vXwUqK93n35nl%2BnQTzxBs5eXKJLEYnhcte8tvT7jLeHvymzh1PvFTEhwgEsRjAAOYTC4zk7SXCuprzs%2BnQTNiVddaVZIqK8znhIgrG3V0z7M6OlrgMvJTgFrxqdd0chPBBEwu5lHACTCafaMA905NhaOexmaps45Jkiy%2F3lhqEzrx23GlK1iKn4832Ofu9nP2P3cHfZ7YxU6qAWSN5PFdUd8RW%2F41ERgZ5R%2Be%2BhpucM1IGYfjGCpMAZbdHyfkvgairyR8xTZvmNz4HRwXSP485uNCwsbitqj72W%2FP%2BH8%2FfyuYOYlhxf2BnMMMD3zMIGOqUBh6q489Wjxh55K55TqXIEXZ24sGDWV0Ib6iPy0CDmtDgTBKBh5l%2F8tVYgXL27iQvQyjVp%2Bhd3MIvNQm3fHYrRz%2FIOPeSUuJYQq85eVvh9gocJfpUPCyqg7G%2FeEmlzTOqLBtldd8CqZjRhSE0cIOHZ7Nx70x0g%2B%2Bd1aYgF309UG7A%2F8hx%2BujBo%2Fx27syn5YFy7IJDn25cmqQjaMr5q1C4oONGUYvRl&X-Amz-Signature=53488ac36a5877db5a5f3156fc0032f963734cfd0c7b75cdfba6c479e58fd9b2&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
-    "secondaryLogoAlt": "Property.Ca Brokerage Logo",
-    "email": "shar@theskygroup.ca",
-    "phone": "1 647 887 4996",
-    "address": "36 Distillery Lane Unit 500 Toronto M5A3C4",
-    "brokerageName": "Property.Ca",
     "social": {
-      "facebook": "https://www.facebook.com/theskygroupre",
-      "instagram": "https://www.instagram.com/theskygroup_re"
+      "facebook": "https://www.facebook.com/JulianKashaniRealtor",
+      "instagram": "http://instagram.com/juliankashani"
     },
     "agentContact": {
-      "name": "Shar Banifatemi",
-      "title": "Realtor, Sky Group",
-      "phone": "1 647 887 4996",
-      "email": "shar@theskygroup.ca"
+      "name": "Julian Kashani",
+      "title": "Real Estate Agent",
+      "phone": "(416) 837-7775",
+      "email": "jk@property.ca"
     },
-    "copyrightOwner": "Property.Ca",
-    "footerDisclaimer": "This giveaway is not sponsored by or affiliated with the Toronto Blue Jays or Rogers Centre. Winner will be drawn at random from all entries on July 2, 2025. Open to all attendees. No purchase necessary."
-  },
-  "meta": {
-    "pageTitle": "Win Free Jays Tickets This Canada Day 	6 $100 Value!",
-    "navBrandLogoText": "Sky Group",
-    "privacyPolicyLink": "https://www.mls.theskygroup.ca/privacy-policy"
-  },
-  "settings": {
-    "theme": "dark",
-    "primaryColorOverride": "",
-    "showCountdownInHero": true,
-    "facebookPixelId": "1057475448873422",
-    "salesGeniusAppApi": "",
-    "followUpBossEmail": ""
-  },
-"thankYouPage": {
-    "pageTitle": "Thank You for Your Entry!",
-    "headerText": "🎉 Thank You! 🎉",
-    "mainMessage": "Your entry has been successfully submitted. We'll announce the winner soon. Good luck!",
-    "socialPromptText": "To complete your giveaway entry and stay updated, please follow us on our social media channels:"
-    
+    "footerDisclaimer": "This giveaway is sponsored by Julian Kashani, REALTOR®, and is not sponsored by or affiliated with the Toronto Blue Jays or Texas Rangers. Winner selected at random from entries received by July 25th, 2025. Must be 18+ and an Ontario resident to enter.",
+    "organizerLogoUrl": "",
+    "secondaryLogoUrl": "",
+    "secondaryLogoAlt": "Property.Ca Brokerage Logo",
+    "organizerName": "Julian Kashani",
+    "brokerageName": "Property.Ca",
+    "address": "36 Distillery Lane Unit 500 Toronto M5A3C4",
+    "email": "jk@property.ca",
+    "phone": "(416) 837-7775",
+    "copyrightOwner": "Property.Ca"
   },
   "deploymentInfo": {
-    "repoName": "Giveaway-598",
-    "repoUrl": "https://github.com/arslvn93/Giveaway-598",
-    "netlifyUrl": "http://Giveaway-598.netlify.app",
-    "netlifyId": "1004625043"
+    "repoName": "Giveaway-558",
+    "repoUrl": "https://github.com/arslvn93/Giveaway-558",
+    "netlifyUrl": "http://Giveaway-558.netlify.app",
+    "netlifyId": "",
+    "tag": "Blue Jays Giveaway"
   }
 };
