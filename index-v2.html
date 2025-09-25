@@ -85,6 +85,7 @@
         .prize-stage .stage-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: saturate(1.05) contrast(1.05); transform: scale(1.06); }
         .prize-stage .stage-overlay { position: absolute; inset: 0; background: radial-gradient(75% 60% at 50% 0%, rgba(108,124,255,0.18), transparent 60%), linear-gradient(180deg, rgba(12,16,34,0.05), rgba(12,16,34,0.85)); }
         .stage-ticker { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; border-bottom: 1px solid var(--stroke); background: rgba(0,0,0,0.25); z-index: 2; }
+        .rules-stage .stage-ticker { top: auto; bottom: 0; border-bottom: 0; border-top: 1px solid var(--stroke); }
         .ticker-track { display: inline-block; white-space: nowrap; animation: ticker-scroll 18s linear infinite; padding: 8px 0; color: var(--muted); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
         @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .prize-content { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr; gap: clamp(16px, 3vw, 28px); padding: clamp(28px, 4vw, 40px) 0 clamp(90px, 10vw, 160px); align-items: center; width: min(1200px, 92vw); margin: 0 auto; }
@@ -467,6 +468,7 @@
 
         <section id="rules">
             <div class="rules-stage">
+                <div class="stage-ticker"><div class="ticker-track" id="rulesTickerTrack"></div></div>
                 <div class="rules-bg" id="rulesBg"></div>
                 <div class="rules-overlay"></div>
                 <div class="rules-pattern"></div>
@@ -896,6 +898,17 @@
                 }
             }
         } catch (e) { console.error('Err Rules:', e); }
+
+        // Rules ticker uses same message
+        const rulesTicker = document.getElementById('rulesTickerTrack');
+        if (rulesTicker) {
+            const parts = [];
+            if (config.giveaway?.name) parts.push(config.giveaway.name);
+            if (config.prize?.value) parts.push((config.prize.value + ' Value').trim());
+            if (config.prize?.ctaButtonText) parts.push(config.prize.ctaButtonText);
+            const msg = parts.filter(Boolean).join(' • ');
+            rulesTicker.textContent = `${msg} • ${msg} • ${msg} • ${msg}`;
+        }
     });
     </script>
 </body>
