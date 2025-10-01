@@ -10,6 +10,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="config.js"></script>
+    <script>
+    // Sanitize config strings before page scripts use it
+    (function(){
+        try {
+            if (typeof config === 'undefined') return;
+            const seen = new WeakSet();
+            function sanitizeString(str){
+                return String(str)
+                    .replace(/\u0019/g, "\u2019")
+                    .replace(/[\u0000-\u0018\u001A-\u001F\u007F-\u009F]/g, "");
+            }
+            function sanitizeDeep(val){
+                if (typeof val === 'string') return sanitizeString(val);
+                if (val && typeof val === 'object'){
+                    if (seen.has(val)) return val;
+                    seen.add(val);
+                    if (Array.isArray(val)){
+                        for (let i=0;i<val.length;i++) val[i] = sanitizeDeep(val[i]);
+                    } else {
+                        for (const k in val){ if (Object.prototype.hasOwnProperty.call(val, k)) val[k] = sanitizeDeep(val[k]); }
+                    }
+                }
+                return val;
+            }
+            sanitizeDeep(config);
+        } catch(e) { /* no-op */ }
+    })();
+    </script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,6 +63,7 @@
         /* Ensure gradient applies on prize name despite id color */
         #prizeName.title-gradient { color: transparent; }
         .section-subtitle { color: var(--muted); text-align: center; margin: 0 auto 12px; max-width: 720px; }
+        .highlight { color: var(--primary-2); font-weight: 800; }
 
         /* Premium section title treatment */
         .title-wrap { text-align: center; margin-bottom: 12px; position: relative; padding-top: clamp(60px, 8vw, 120px); }
@@ -646,7 +675,7 @@
                     const amt = config.prize.value || '';
                     valueBadge.innerHTML = `<span>${amt}</span>`;
                 }
-                setText('prizeDescription', config.prize.description);
+                setHTML('prizeDescription', config.prize.description);
                 const limited = document.getElementById('prizeLimitedOffer');
                 if (limited) limited.textContent = config.prize.limitedTimeOfferText || 'Limited';
 

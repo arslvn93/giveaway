@@ -20,6 +20,34 @@
     <meta name="twitter:description" content="Enter our exciting giveaway for a chance to win! Don't miss out.">
     <meta name="twitter:image" content="https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/tmp29y4k7bt.jpg">
     <script src="config.js"></script> <!-- Load config first -->
+    <script>
+    // Sanitize config strings before any page logic uses it
+    (function(){
+        try {
+            if (typeof config === 'undefined') return;
+            const seen = new WeakSet();
+            function sanitizeString(str){
+                return String(str)
+                    .replace(/\u0019/g, "\u2019")
+                    .replace(/[\u0000-\u0018\u001A-\u001F\u007F-\u009F]/g, "");
+            }
+            function sanitizeDeep(val){
+                if (typeof val === 'string') return sanitizeString(val);
+                if (val && typeof val === 'object'){
+                    if (seen.has(val)) return val;
+                    seen.add(val);
+                    if (Array.isArray(val)){
+                        for (let i=0;i<val.length;i++) val[i] = sanitizeDeep(val[i]);
+                    } else {
+                        for (const k in val){ if (Object.prototype.hasOwnProperty.call(val, k)) val[k] = sanitizeDeep(val[k]); }
+                    }
+                }
+                return val;
+            }
+            sanitizeDeep(config);
+        } catch(e) { /* no-op */ }
+    })();
+    </script>
 <!-- Meta Pixel Code Base -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -100,6 +128,9 @@ fbq('track', 'PageView');
             --glass-border-color-theme: rgba(162, 213, 171, 0.3);
             --shadow-color-theme: rgba(0, 0, 0, 0.05);
         }
+
+        /* Highlight spans inside config-rendered HTML */
+        .highlight { color: var(--primary-color-theme); font-weight: 700; }
 
         /* --- UTILITY & BUTTONS --- */
         .container { width: 90%; max-width: 1000px; margin-left: auto; margin-right: auto; }
@@ -1830,7 +1861,7 @@ function populateNewFooterData() {
 
         setText('prizeName', config.prize.name);
         setText('prizeValue', config.prize.value);
-        setText('prizeDescription', config.prize.description);
+        setHTML('prizeDescription', config.prize.description);
 
         const incList = document.querySelector('#prizeIncludedList ul');
         if (incList && config.prize.includedItems) {
