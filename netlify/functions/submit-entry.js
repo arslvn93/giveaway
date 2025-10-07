@@ -19,6 +19,12 @@ exports.handler = async (event, context) => {
         const password = process.env.N8N_PASSWORD;
         const webhookUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.salesgenius.co/webhook/giveaway';
 
+        // Debug logging (safely, without exposing full password)
+        console.log('Username length:', username?.length, 'Password length:', password?.length);
+        console.log('Username:', username);
+        console.log('Password first 3 chars:', password?.substring(0, 3));
+        console.log('Webhook URL:', webhookUrl);
+
         // Validate that credentials are configured
         if (!username || !password) {
             console.error('Missing authentication credentials in environment variables');
@@ -30,6 +36,7 @@ exports.handler = async (event, context) => {
 
         // Create Basic Auth header
         const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+        console.log('Generated auth header (base64):', credentials.substring(0, 10) + '...');
 
         // Forward the request to n8n with authentication
         const response = await fetch(webhookUrl, {
