@@ -466,7 +466,8 @@
                             </div>
                             <div class="entry-divider"></div>
                             <form id="giveawayEntryForm">
-                                <div class="cf-turnstile" data-sitekey="" data-theme="auto" data-size="compact"></div>
+                                <div id="turnstile-container" style="min-height:65px;"></div>
+                                <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-token">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="fullName">Full Name</label>
@@ -590,10 +591,19 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         try {
-            const tsDiv = document.querySelector('.cf-turnstile');
-            if (tsDiv && window.env && window.env.turnstileSiteKey) {
-                tsDiv.setAttribute('data-sitekey', window.env.turnstileSiteKey);
-            }
+            const renderTS = () => {
+                if (window.turnstile && window.env && window.env.turnstileSiteKey) {
+                    window.__tsWidgetId = window.turnstile.render('#turnstile-container', {
+                        sitekey: window.env.turnstileSiteKey,
+                        theme: 'auto',
+                        size: 'compact',
+                        callback: (token) => { const h = document.getElementById('cf-turnstile-token'); if (h) h.value = token; }
+                    });
+                    return true;
+                }
+                return false;
+            };
+            if (!(renderTS())) { const i = setInterval(() => { if (renderTS()) clearInterval(i); }, 100); }
         } catch(e) { /* no-op */ }
         if (typeof config === 'undefined') { alert('Missing config.js'); return; }
 
