@@ -1148,6 +1148,11 @@ body.theme-pastel #rules::before {
                             <p class="text-center" id="entryFormCount"></p>
                             <form id="giveawayEntryForm" style="margin-top:1rem;">
                                 <div class="form-grid">
+                                    <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+                                        <label for="website">Website</label>
+                                        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                                    </div>
+                                    <input type="hidden" id="formStartedAtMs" name="formStartedAtMs" value="">
                                     <div class="form-group">
                                         <label for="fullName">Your Name:</label>
                                         <div class="input-wrapper">
@@ -1671,6 +1676,9 @@ function populateNewFooterData() {
                     phoneNumber: storedPhoneNumber,
                     giveawayName: config.giveaway?.name || "N/A",
                     submittedAt: new Date().toISOString(),
+                    // Bot-mitigation fields (evaluated server-side)
+                    honeypot: (document.getElementById('website')?.value || '').trim(),
+                    formStartedAtMs: Number(document.getElementById('formStartedAtMs')?.value || 0),
                     questions: [],
                     deploymentInfo: config.deploymentInfo || {},
                     ghlWebhookUrl: config.settings?.ghlWebhookUrl || "",
@@ -1694,7 +1702,7 @@ function populateNewFooterData() {
                 }
 
                 // console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
-                const webhookUrl = "https://n8n.salesgenius.co/webhook/giveaway";
+                const webhookUrl = "/.netlify/functions/submit-entry";
 
                 if (webhookUrl && webhookUrl.startsWith("http")) { // Check if it's a valid-looking URL
                     try {
@@ -2112,6 +2120,12 @@ try {
                 countdownIntervalRef = setInterval(update, 1000); 
             }
 
+
+            // Pre-populate anti-bot timestamp
+            const formStartField = document.getElementById('formStartedAtMs');
+            if (formStartField) {
+                formStartField.value = String(Date.now());
+            }
 
             // --- Form Submission & Modal ---
             const giveawayForm = document.getElementById('giveawayEntryForm');
