@@ -15,14 +15,16 @@ exports.handler = async (event, context) => {
         const submissionData = JSON.parse(event.body);
 
         // Get credentials from environment variables (set in Netlify dashboard)
-        const username = process.env.N8N_USERNAME;
-        const password = process.env.N8N_PASSWORD;
-        const webhookUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.salesgenius.co/webhook/giveaway';
+        // IMPORTANT: Trim whitespace that might have been accidentally added
+        const username = process.env.N8N_USERNAME?.trim();
+        const password = process.env.N8N_PASSWORD?.trim();
+        const webhookUrl = process.env.N8N_WEBHOOK_URL?.trim() || 'https://n8n.salesgenius.co/webhook/giveaway';
 
         // Debug logging (safely, without exposing full password)
         console.log('Username length:', username?.length, 'Password length:', password?.length);
-        console.log('Username:', username);
+        console.log('Username:', JSON.stringify(username)); // JSON.stringify shows hidden chars
         console.log('Password first 3 chars:', password?.substring(0, 3));
+        console.log('Password last 3 chars:', password?.substring(password.length - 3));
         console.log('Webhook URL:', webhookUrl);
 
         // Validate that credentials are configured
