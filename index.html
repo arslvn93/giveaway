@@ -1718,6 +1718,20 @@ function populateNewFooterData() {
 
                 if (webhookUrl && webhookUrl.startsWith("http")) { // Check if it's a valid-looking URL
                     try {
+                        // Refresh Turnstile token just before submit
+                        try {
+                            if (window.turnstile && window.__tsWidgetId) {
+                                await new Promise((resolve) => {
+                                    try {
+                                        window.turnstile.reset(window.__tsWidgetId);
+                                        const done = () => { setTimeout(resolve, 50); };
+                                        // callback will update hidden input
+                                        window.turnstile.execute(window.__tsWidgetId);
+                                        setTimeout(done, 800); // fallback in case callback timing varies
+                                    } catch(e) { resolve(); }
+                                });
+                            }
+                        } catch(e) { /* no-op */ }
                         // Attach Turnstile token if present
                         try { finalPayload.turnstileToken = document.querySelector('input[name="cf-turnstile-response"]')?.value || ''; } catch(_) {}
                         const response = await fetch(webhookUrl, {
