@@ -20,6 +20,8 @@ exports.handler = async (event) => {
 
   const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
   const sharedSecret = process.env.N8N_SHARED_SECRET;
+  const basicUser = process.env.N8N_BASIC_USER;
+  const basicPass = process.env.N8N_BASIC_PASS;
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean);
 
   if (!n8nWebhookUrl || !sharedSecret) {
@@ -54,13 +56,18 @@ exports.handler = async (event) => {
 
   // Forward to n8n with secret header
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      "x-shared-secret": sharedSecret,
+      "x-source": "giveaway-site",
+    };
+    if (basicUser && basicPass) {
+      const token = Buffer.from(`${basicUser}:${basicPass}`).toString("base64");
+      headers["Authorization"] = `Basic ${token}`;
+    }
     const forwardRes = await fetch(n8nWebhookUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-shared-secret": sharedSecret,
-        "x-source": "giveaway-site",
-      },
+      headers,
       body: JSON.stringify({
         ...payload,
         meta: {

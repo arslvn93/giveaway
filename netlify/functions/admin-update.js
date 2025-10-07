@@ -20,6 +20,8 @@ exports.handler = async (event) => {
 
   const n8nAdminWebhookUrl = process.env.N8N_ADMIN_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL;
   const sharedSecret = process.env.N8N_SHARED_SECRET;
+  const basicUser = process.env.N8N_BASIC_USER;
+  const basicPass = process.env.N8N_BASIC_PASS;
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean);
 
   if (!n8nAdminWebhookUrl || !sharedSecret) {
@@ -38,13 +40,18 @@ exports.handler = async (event) => {
   }
 
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      "x-shared-secret": sharedSecret,
+      "x-source": "giveaway-admin",
+    };
+    if (basicUser && basicPass) {
+      const token = Buffer.from(`${basicUser}:${basicPass}`).toString("base64");
+      headers["Authorization"] = `Basic ${token}`;
+    }
     const forwardRes = await fetch(n8nAdminWebhookUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-shared-secret": sharedSecret,
-        "x-source": "giveaway-admin",
-      },
+      headers,
       body: JSON.stringify(payload),
     });
 
