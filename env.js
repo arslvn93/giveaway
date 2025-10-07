@@ -1,8 +1,8 @@
 // Public runtime configuration for frontend (safe values only)
 // Do not include secrets here. Server-side secrets stay in n8n/edge.
 window.env = {
-	entryWebhookUrl: "https://n8n.salesgenius.co/webhook/giveaway",
-	adminWebhookUrl: "https://n8n.salesgenius.co/webhook/giveawayupdate"
+	entryWebhookUrl: "/.netlify/functions/submit-entry",
+	adminWebhookUrl: "/.netlify/functions/admin-update"
 };
 
 
