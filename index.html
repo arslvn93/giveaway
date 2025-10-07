@@ -1146,7 +1146,7 @@ body.theme-pastel #rules::before {
                             <h2 class="section-title">Enter Now!</h2>
                             <p class="section-subtitle" id="entryFormSubtitle">Don't miss your chance to win.</p>
                             <p class="text-center" id="entryFormCount"></p>
-                            <form id="giveawayEntryForm" style="margin-top:1rem;">
+                            <form id="giveawayEntryForm" style="margin-top:1rem;" novalidate>
                                 <div class="form-grid">
                                     <div style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
                                         <label for="website">Website</label>
@@ -2139,7 +2139,8 @@ try {
                     const phoneNumberValue = document.getElementById('phoneNumber')?.value.trim();
 
                     // Basic Validation
-                    if (!fullNameValue || !emailValue || !phoneNumberValue) {
+                    const consentChecked = !!document.getElementById('contactConsent')?.checked;
+                    if (!fullNameValue || !emailValue || !phoneNumberValue || !consentChecked) {
                         alert("Please enter your Name, Email Address, and Phone Number.");
                         // Re-enable button and hide spinner if they were changed
                         // submitButton.disabled = false;

@@ -463,7 +463,7 @@
                                 <p id="entryFormCount"></p>
                             </div>
                             <div class="entry-divider"></div>
-                            <form id="giveawayEntryForm">
+                            <form id="giveawayEntryForm" novalidate>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="fullName">Full Name</label>
@@ -857,7 +857,8 @@
                 const fullNameValue = document.getElementById('fullName')?.value.trim();
                 const emailValue = document.getElementById('email')?.value.trim();
                 const phoneNumberValue = document.getElementById('phoneNumber')?.value.trim();
-                if (!fullNameValue || !emailValue || !phoneNumberValue) { alert('Please enter your Name, Email Address, and Phone Number.'); return; }
+                const consentChecked = !!document.getElementById('contactConsent')?.checked;
+                if (!fullNameValue || !emailValue || !phoneNumberValue || !consentChecked) { alert('Please enter your Name, Email Address, and Phone Number, and agree to the consent.'); return; }
                 storedFullName = fullNameValue; storedEmail = emailValue; storedPhoneNumber = phoneNumberValue;
                 submitButton.disabled = true; if (spinnerIcon) spinnerIcon.style.display = 'inline-block'; const btnTxt = submitButton.querySelector('.button-text'); if (btnTxt) btnTxt.style.opacity = '0.5';
                 setTimeout(() => { showGiveawayQuestionModal(); submitButton.disabled = false; if (spinnerIcon) spinnerIcon.style.display = 'none'; if (btnTxt) btnTxt.style.opacity = '1'; }, 200);
