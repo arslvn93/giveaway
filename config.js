@@ -9,7 +9,7 @@ const config = {
     "heroSubheadline": "Score two premium seats to see the Toronto Blue Jays take on the Texas Rangers, valued at $400! Make your summer unforgettable with this all-star night out. Entry closes July 25th, winner picked July 29th.",
     "heroBackgroundImageUrl": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/3x4pjwf8h1rma0cqhn6tw7t808.jpg",
     "promotionDates": "Enter from June 27th to July 25th, 2025 - winner announced July 29th!",
-    "endDate": "2025-07-26T03:59:00.000Z",
+    "endDate": "2026-12-31T23:59:59.000Z",
     "heroCtaText": "Enter to Win Now!",
     "entryFormCtaText": "Enter Game Night Draw!",
     "name": "Blue Jays Summer Game Night Giveaway",
