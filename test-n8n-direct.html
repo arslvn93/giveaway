@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test n8n Direct</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px 0 0;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        button.secondary {
+            background: #666;
+        }
+        button.secondary:hover {
+            background: #444;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { background: #e3f2fd; padding: 15px; border-radius: 4px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test n8n Webhook Directly</h1>
+    
+    <div class="info">
+        <strong>📋 Instructions:</strong>
+        <ol>
+            <li>Enter the credentials you set in n8n</li>
+            <li>Click "Test with Auth" to test with Basic Auth</li>
+            <li>Click "Test without Auth" to see if auth is even required</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Credentials</h2>
+        <label>Username:</label>
+        <input type="text" id="username" value="salesgenius_api" placeholder="Username">
+        
+        <label>Password:</label>
+        <input type="password" id="password" value="TestPass123456789012345678901234" placeholder="Password">
+        
+        <label>n8n Webhook URL:</label>
+        <input type="text" id="webhookUrl" value="https://n8n.salesgenius.co/webhook/giveaway" placeholder="Webhook URL">
+        
+        <button onclick="testWithAuth()">Test with Auth</button>
+        <button onclick="testWithoutAuth()" class="secondary">Test without Auth</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testWithAuth() {
+            const resultDiv = document.getElementById('result');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const webhookUrl = document.getElementById('webhookUrl').value;
+            
+            resultDiv.innerHTML = '<p>Testing with Basic Auth... ⏳</p>';
+
+            const testData = {
+                name: "Direct Test User",
+                email: "directtest@example.com",
+                phone: "1234567890"
+            };
+
+            try {
+                // Create Basic Auth header
+                const credentials = btoa(`${username}:${password}`);
+                console.log('Username:', username);
+                console.log('Password length:', password.length);
+                console.log('Base64 credentials:', credentials);
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${credentials}`
+                    },
+                    body: JSON.stringify(testData),
+                    mode: 'cors'
+                });
+
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Response:', responseText);
+
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
+                    responseData = { raw: responseText };
+                }
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <h3 class="success">✅ Success with Auth!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>n8n accepted the credentials!</p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3 class="error">❌ Failed with Auth</h3>
+                        <p>Status: ${response.status}</p>
+                        <p><strong>This means the credentials in n8n don't match what you entered above.</strong></p>
+                        <h4>Response:</h4>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                        <h4>Troubleshooting:</h4>
+                        <ul>
+                            <li>Go to n8n workflow</li>
+                            <li>Click the Webhook node</li>
+                            <li>Check Authentication is set to "Basic Auth"</li>
+                            <li>Click on the credentials and verify username/password match exactly</li>
+                            <li>Make sure workflow is Active</li>
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <h3 class="error">❌ Error</h3>
+                    <p>${error.message}</p>
+                    <p>This might be a CORS issue or network error.</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+
+        async function testWithoutAuth() {
+            const resultDiv = document.getElementById('result');
+            const webhookUrl = document.getElementById('webhookUrl').value;
+            
+            resultDiv.innerHTML = '<p>Testing WITHOUT auth... ⏳</p>';
+
+            const testData = {
+                name: "No Auth Test",
+                email: "noauth@example.com",
+                phone: "1234567890"
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData),
+                    mode: 'cors'
+                });
+
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Response:', responseText);
+
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
+                    responseData = { raw: responseText };
+                }
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <h3 class="success">✅ Success WITHOUT Auth!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p><strong>⚠️ This means your n8n webhook doesn't have authentication enabled!</strong></p>
+                        <p>You need to enable Basic Auth in the webhook node settings.</p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3 class="error">❌ Failed without Auth</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>This is expected if auth is required.</p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <h3 class="error">❌ Error</h3>
+                    <p>${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
+
