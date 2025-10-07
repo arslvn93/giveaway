@@ -37,16 +37,24 @@ exports.handler = async (event, context) => {
         }
 
         // Create Basic Auth header
-        const credentials = Buffer.from(`${username}:${password}`).toString('base64');
-        console.log('Generated auth header (base64):', credentials.substring(0, 10) + '...');
+        const authString = `${username}:${password}`;
+        const credentials = Buffer.from(authString, 'utf-8').toString('base64');
+        console.log('Auth string length:', authString.length);
+        console.log('Generated auth header (base64):', credentials.substring(0, 20) + '...');
+        console.log('Full base64 for verification:', credentials);
 
         // Forward the request to n8n with authentication
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${credentials}`,
+            'User-Agent': 'Netlify-Function/1.0'
+        };
+        
+        console.log('Sending headers:', JSON.stringify(headers, null, 2).substring(0, 200));
+        
         const response = await fetch(webhookUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${credentials}`
-            },
+            headers: headers,
             body: JSON.stringify(submissionData)
         });
 
