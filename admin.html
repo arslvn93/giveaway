@@ -691,6 +691,7 @@
 
     <!-- Load config first -->
     <script src="config.js"></script>
+    <script src="env.js"></script>
     <script>
         // Config object is now loaded from config.js
 
@@ -1228,7 +1229,7 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                 // console.log("Submitting updated config (v2):", updatedConfig);
 
                 // --- Webhook Submission ---
-                const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate"; // Hardcoded webhook URL for admin submissions
+                const adminWebhookUrl = (window.env && window.env.adminWebhookUrl) ? window.env.adminWebhookUrl : "https://n8n.salesgenius.co/webhook/giveawayupdate"; // Prefer env, fallback to original
                 // console.log(`Admin panel submitting to hardcoded URL: ${adminWebhookUrl}`);
 
                 if (!adminWebhookUrl) { // Should not happen with hardcoded URL but good practice

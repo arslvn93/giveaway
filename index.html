@@ -20,6 +20,8 @@
     <meta name="twitter:description" content="Enter our exciting giveaway for a chance to win! Don't miss out.">
     <meta name="twitter:image" content="https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/tmp29y4k7bt.jpg">
     <script src="config.js"></script> <!-- Load config first -->
+    <script src="env.js"></script> <!-- Public runtime env (site key + webhooks) -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
     // Sanitize config strings before any page logic uses it
     (function(){
@@ -1147,6 +1149,7 @@ body.theme-pastel #rules::before {
                             <p class="section-subtitle" id="entryFormSubtitle">Don't miss your chance to win.</p>
                             <p class="text-center" id="entryFormCount"></p>
                             <form id="giveawayEntryForm" style="margin-top:1rem;">
+                                <div class="cf-turnstile" data-sitekey="" data-theme="auto" data-size="invisible"></div>
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label for="fullName">Your Name:</label>
@@ -1285,6 +1288,13 @@ body.theme-pastel #rules::before {
          // ========================================================================
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Turnstile widget with site key from env.js
+            try {
+                const tsDiv = document.querySelector('.cf-turnstile');
+                if (tsDiv && window.env && window.env.turnstileSiteKey) {
+                    tsDiv.setAttribute('data-sitekey', window.env.turnstileSiteKey);
+                }
+            } catch(e) { /* no-op */ }
             // console.log("Full Script Loaded. Config available:", !!config);
             if (!config) { alert("ERROR: Config missing!"); return; }
 
@@ -1694,10 +1704,12 @@ function populateNewFooterData() {
                 }
 
                 // console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
-                const webhookUrl = "https://n8n.salesgenius.co/webhook/giveaway";
+                const webhookUrl = (window.env && window.env.entryWebhookUrl) ? window.env.entryWebhookUrl : (config.settings?.webhookUrl || "");
 
                 if (webhookUrl && webhookUrl.startsWith("http")) { // Check if it's a valid-looking URL
                     try {
+                        // Attach Turnstile token if present
+                        try { finalPayload.turnstileToken = document.querySelector('input[name="cf-turnstile-response"]')?.value || ''; } catch(_) {}
                         const response = await fetch(webhookUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
