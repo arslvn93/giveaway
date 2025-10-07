@@ -691,7 +691,6 @@
 
     <!-- Load config first -->
     <script src="config.js"></script>
-    <script src="env.js"></script>
     <script>
         // Config object is now loaded from config.js
 
@@ -1222,14 +1221,14 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                 updatedConfig.thankYouPage.socialLinks.tiktok = getVal('thankYouPageSocialTikTok');
                 updatedConfig.deploymentInfo.tag = getVal('deploymentTag');
 
-                // Preserve webhook URL from settings (now proxied through Netlify Function)
-                updatedConfig.settings.webhookUrl = config.settings?.webhookUrl || "/.netlify/functions/admin-update";
+                // Preserve hardcoded webhook URL from original settings if it existed, otherwise set default
+                updatedConfig.settings.webhookUrl = config.settings?.webhookUrl || "https://n8n.salesgenius.co/webhook/giveawayupdate";
 
 
                 // console.log("Submitting updated config (v2):", updatedConfig);
 
                 // --- Webhook Submission ---
-                const adminWebhookUrl = (window.env && window.env.adminWebhookUrl) ? window.env.adminWebhookUrl : "/.netlify/functions/admin-update"; // Prefer env, fallback to function path
+                const adminWebhookUrl = "https://n8n.salesgenius.co/webhook/giveawayupdate"; // Hardcoded webhook URL for admin submissions
                 // console.log(`Admin panel submitting to hardcoded URL: ${adminWebhookUrl}`);
 
                 if (!adminWebhookUrl) { // Should not happen with hardcoded URL but good practice
