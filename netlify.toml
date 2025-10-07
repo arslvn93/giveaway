@@ -11,6 +11,8 @@
 
 # Secrets scanning configuration
 [build.processing.secrets]
-  # Omit documentation files from secrets scanning
-  omit_paths = ["NETLIFY_SETUP.md", "*.md"]
+  # Omit specific keys that appear in URLs/domains (not actual secrets)
+  # N8N_USERNAME is "salesgenius" which appears in many URLs/domains
+  # N8N_WEBHOOK_URL is a public URL, not a secret
+  omit_keys = ["N8N_USERNAME", "N8N_WEBHOOK_URL"]
 
