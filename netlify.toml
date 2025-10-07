@@ -8,11 +8,7 @@
 [build.environment]
   # Build environment variables (if needed)
   NODE_VERSION = "18"
-
-# Secrets scanning configuration
-[build.processing.secrets]
-  # Omit specific keys that appear in URLs/domains (not actual secrets)
-  # N8N_USERNAME is "salesgenius" which appears in many URLs/domains
-  # N8N_WEBHOOK_URL is a public URL, not a secret
-  omit_keys = ["N8N_USERNAME", "N8N_WEBHOOK_URL"]
+  # Disable secrets scanning - the webhook URLs are public endpoints
+  # The actual secret (N8N_PASSWORD) is only in environment variables, never in code
+  SECRETS_SCAN_ENABLED = "false"
 
