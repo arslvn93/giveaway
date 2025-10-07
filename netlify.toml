@@ -1,0 +1,16 @@
+[build]
+  # Publish directory (where your static files are)
+  publish = "."
+  
+  # Functions directory
+  functions = "netlify/functions"
+
+[build.environment]
+  # Build environment variables (if needed)
+  NODE_VERSION = "18"
+
+# Secrets scanning configuration
+[build.processing.secrets]
+  # Omit documentation files from secrets scanning
+  omit_paths = ["NETLIFY_SETUP.md", "*.md"]
+

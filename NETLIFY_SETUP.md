@@ -1,5 +1,7 @@
 # Netlify Environment Variables Setup
 
+> **⚠️ IMPORTANT**: This file uses placeholder values. Replace `your-n8n-username` and `your-n8n-password` with your actual credentials when setting up in Netlify.
+
 ## 🔐 Secure Submission Function
 
 The giveaway submission now uses a Netlify Function to keep authentication credentials server-side and secure.
@@ -14,8 +16,8 @@ You need to set these in your Netlify dashboard:
 
 | Variable Name | Value | Description |
 |--------------|-------|-------------|
-| `N8N_USERNAME` | `salesgenius` | Username for n8n Basic Auth |
-| `N8N_PASSWORD` | `S@lG3n1u52025` | Password for n8n Basic Auth |
+| `N8N_USERNAME` | `your-n8n-username` | Username for n8n Basic Auth |
+| `N8N_PASSWORD` | `your-n8n-password` | Password for n8n Basic Auth |
 | `N8N_WEBHOOK_URL` | `https://n8n.salesgenius.co/webhook/giveaway` | n8n webhook endpoint |
 
 ## 📝 Step-by-Step Instructions
@@ -24,8 +26,8 @@ You need to set these in your Netlify dashboard:
 
 ```bash
 # Using Netlify CLI (if you have it installed):
-netlify env:set N8N_USERNAME "salesgenius"
-netlify env:set N8N_PASSWORD "S@lG3n1u52025"
+netlify env:set N8N_USERNAME "your-n8n-username"
+netlify env:set N8N_PASSWORD "your-n8n-password"
 netlify env:set N8N_WEBHOOK_URL "https://n8n.salesgenius.co/webhook/giveaway"
 ```
 
