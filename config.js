@@ -9,7 +9,7 @@ const config = {
     "heroSubheadline": "Score two premium seats to see the Toronto Blue Jays take on the Texas Rangers, valued at $400! Make your summer unforgettable with this all-star night out. Entry closes July 25th, winner picked July 29th.",
     "heroBackgroundImageUrl": "https://salesgenius.s3.ca-central-1.amazonaws.com/giveaways/generations/3x4pjwf8h1rma0cqhn6tw7t808.jpg",
     "promotionDates": "Enter from June 27th to July 25th, 2025 - winner announced July 29th!",
-    "endDate": "2026-12-31T23:59:59.000Z",
+    "endDate": "2026-12-31T23:59:00.000Z",
     "heroCtaText": "Enter to Win Now!",
     "entryFormCtaText": "Enter Game Night Draw!",
     "name": "Blue Jays Summer Game Night Giveaway",
@@ -28,16 +28,10 @@ const config = {
     "primaryColorOverride": "#0055A4",
     "secondaryColorOverride": "#FFEE58",
     "ghlWebhookUrl": "https://services.leadconnectorhq.com/hooks/bJbBMjcW619cJrLUJ3kY/webhook-trigger/3yNsurfrt9oBUtRBuygb",
-    "webhookUrl": "/.netlify/functions/admin-update",
     "facebookPixelId": "1057475448873422",
     "salesGeniusAppApi": "",
-    "followUpBossEmail": ""
-  },
-  "thankYouPage": {
-    "pageTitle": "Thank You for Your Entry!",
-    "headerText": "🎉 ONE MORE STEP",
-    "mainMessage": "Your spot for the <strong>Toronto Blue Jays Summer Game Night</strong> is almost locked in! You've made it to the final step of the giveaway - congratulations! Now all you need to do is follow my social media accounts to officially lock in your entry and stay connected",
-    "socialPromptText": "FOLLOW BOTH TO WIN! Complete Your Entry Now"
+    "followUpBossEmail": "",
+    "webhookUrl": "/.netlify/functions/admin-update"
   },
   "prize": {
     "images": [
@@ -124,8 +118,6 @@ const config = {
     ]
   },
   "rules": {
-    "finePrintText": "Please read the fine print before entering. Anyone can enter.",
-    "showTipsSection": true,
     "faq": [
       {
         "q": "Who can enter this giveaway?",
@@ -150,6 +142,8 @@ const config = {
       "Tell family and friends to enter too",
       "Follow Julian Kashani on Instagram or Facebook for the winner post"
     ],
+    "finePrintText": "Please read the fine print before entering. Anyone can enter.",
+    "showTipsSection": true,
     "fairSelectionInfo": {
       "title": "Fair and Random Drawing",
       "text": "Every entry has the same fair shot! Winner is chosen by a random draw. No tricks, just luck."
@@ -167,11 +161,11 @@ const config = {
     "subtitle": "Enter your details below for a shot at your dream Blue Jays night out!",
     "entryCountText": "Hundreds of Toronto fans are already in—don't miss your chance!",
     "socialSharePrompt": "Share with your friends—make it a race to win!",
-    "consentLabel": ""
+    "consentLabel": "TEST"
   },
   "modalQuestions": [
     {
-      "id": "q_auto_1750445840887_0",
+      "id": "q_auto_1760120229034_0",
       "questionText": "What do you like the most about your current home?",
       "options": [
         {
@@ -193,7 +187,7 @@ const config = {
       ]
     },
     {
-      "id": "q_auto_1750445840887_1",
+      "id": "q_auto_1760120229035_1",
       "questionText": "Is a move on your radar in the near future?",
       "options": [
         {
@@ -215,7 +209,7 @@ const config = {
       ]
     },
     {
-      "id": "q_auto_1750445840887_2",
+      "id": "q_auto_1760120229035_2",
       "questionText": "What’s your current housing situation?",
       "options": [
         {
@@ -237,6 +231,18 @@ const config = {
       ]
     }
   ],
+  "thankYouPage": {
+    "socialLinks": {
+      "facebook": "",
+      "instagram": "",
+      "twitter": "",
+      "tiktok": ""
+    },
+    "pageTitle": "Thank You for Your Entry!",
+    "headerText": "🎉 ONE MORE STEP",
+    "mainMessage": "Your spot for the <strong>Toronto Blue Jays Summer Game Night</strong> is almost locked in! You've made it to the final step of the giveaway - congratulations! Now all you need to do is follow my social media accounts to officially lock in your entry and stay connected",
+    "socialPromptText": "FOLLOW BOTH TO WIN! Complete Your Entry Now"
+  },
   "footerContact": {
     "social": {
       "facebook": "https://www.facebook.com/JulianKashaniRealtor",
