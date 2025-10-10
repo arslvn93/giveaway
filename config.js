@@ -165,8 +165,9 @@ const config = {
       "twitter": "https://twitter.com/intent/tweet?url=https%3A%2F%2Fgiveaway-558.netlify.app%2Fadmin&text=Win%20Toronto%20Blue%20Jays%20Tickets%20for%20an%20Epic%20Summer%20Game%20Night!"
     },
     "subtitle": "Enter your details below for a shot at your dream Blue Jays night out!",
-    "entryCountText": "Hundreds of Toronto fans are already in—don’t miss your chance!",
-    "socialSharePrompt": "Share with your friends—make it a race to win!"
+    "entryCountText": "Hundreds of Toronto fans are already in—don't miss your chance!",
+    "socialSharePrompt": "Share with your friends—make it a race to win!",
+    "consentLabel": ""
   },
   "modalQuestions": [
     {

@@ -829,7 +829,22 @@
         } catch(e){ console.error(e); }})();
 
         // Consent label
-        (function populateConsent(){ const consentLabel = document.getElementById('contactConsentLabel'); if (!consentLabel) return; const brokerageName = config.footerContact?.brokerageName || 'the brokerage'; const privacyPolicyLink = config.meta?.privacyPolicyLink || '#'; consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.`; })();
+        (function populateConsent(){ 
+            const consentLabel = document.getElementById('contactConsentLabel'); 
+            if (!consentLabel) return; 
+            
+            // Check if there's a custom consent label override
+            const customConsentLabel = config?.entryForm?.consentLabel;
+            if (customConsentLabel && customConsentLabel.trim() !== '') {
+                // Use the custom consent label from config
+                consentLabel.innerHTML = customConsentLabel;
+            } else {
+                // Use the default consent label
+                const brokerageName = config?.footerContact?.brokerageName || 'the brokerage'; 
+                const privacyPolicyLink = config?.meta?.privacyPolicyLink || '#'; 
+                consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.`; 
+            }
+        })();
 
         // Entry form copy
         (function populateEntryForm(){ try { if (!config.entryForm) return; setText('entryFormSubtitle', config.entryForm.subtitle); setText('entryFormCount', config.entryForm.entryCountText); const subBtnTxt = submitButton?.querySelector('.button-text'); if (subBtnTxt) subBtnTxt.textContent = 'Next'; } catch(e){ console.error(e);} })();
