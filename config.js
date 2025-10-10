@@ -161,11 +161,11 @@ const config = {
     "subtitle": "Enter your details below for a shot at your dream Blue Jays night out!",
     "entryCountText": "Hundreds of Toronto fans are already in—don't miss your chance!",
     "socialSharePrompt": "Share with your friends—make it a race to win!",
-    "consentLabel": "TEST"
+    "consentLabel": ""
   },
   "modalQuestions": [
     {
-      "id": "q_auto_1760120229034_0",
+      "id": "q_auto_1760120269880_0",
       "questionText": "What do you like the most about your current home?",
       "options": [
         {
@@ -187,7 +187,7 @@ const config = {
       ]
     },
     {
-      "id": "q_auto_1760120229035_1",
+      "id": "q_auto_1760120269880_1",
       "questionText": "Is a move on your radar in the near future?",
       "options": [
         {
@@ -209,7 +209,7 @@ const config = {
       ]
     },
     {
-      "id": "q_auto_1760120229035_2",
+      "id": "q_auto_1760120269880_2",
       "questionText": "What’s your current housing situation?",
       "options": [
         {
