@@ -260,9 +260,9 @@ const config = {
     "copyrightOwner": "Property.Ca"
   },
   "deploymentInfo": {
-    "repoName": "Giveaway-558",
-    "repoUrl": "https://github.com/arslvn93/Giveaway-558",
-    "netlifyUrl": "http://Giveaway-558.netlify.app",
+    "repoName": "giveaway",
+    "repoUrl": "https://github.com/arslvn93/giveaway",
+    "netlifyUrl": "http://giveawaymain.netlify.app",
     "netlifyId": "",
     "tag": "Blue Jays Giveaway"
   }
