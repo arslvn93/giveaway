@@ -1,199 +1,140 @@
-# Cloudflare Turnstile Integration
+# Cloudflare Turnstile Setup
 
-This giveaway site now includes Cloudflare Turnstile bot protection with server-side validation.
-
-## Features
-
-- ✅ Form inputs are hidden until user completes Turnstile verification
-- ✅ Server-side validation using your custom endpoint at `https://sgturnstile.replit.app/api/validate`
-- ✅ Automatic token expiration handling with widget reset
-- ✅ Graceful fallback if Turnstile is not configured
-- ✅ Works on both `index.html` and `v2.html`
-
-## Setup Instructions
-
-### 1. Get Your Turnstile Site Key
-
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Navigate to **Turnstile**
-3. Create a new site or use an existing one
-4. Copy your **Site Key**
-
-### 2. Configure the Site
-
-1. Open `config.js`
-2. Find the `settings` section
-3. Replace `YOUR_TURNSTILE_SITE_KEY` with your actual site key:
-
-```javascript
-"settings": {
-  // ... other settings ...
-  "turnsiteSiteKey": "0x4AAAAAAAA..." // Your actual Turnstile site key
-}
-```
-
-### 3. Deploy
-
-That's it! When you deploy your site, Turnstile will automatically:
-- Show the verification widget before form inputs
-- Validate tokens on the server using your custom endpoint
-- Prevent bot submissions
+## Overview
+Both `index.html` and `v2.html` now include Cloudflare Turnstile bot protection. Users must verify they're human before they can see and access the entry form.
 
 ## How It Works
+1. When users navigate to the entry form section, they see a Turnstile verification widget
+2. The actual form inputs are hidden until verification is complete
+3. After successful verification, the Turnstile widget disappears and the form becomes visible
+4. The verification is tracked via Facebook Pixel (if configured)
 
-### Client-Side Flow
+## Current Site Key
+The current site key being used is: `0x4AAAAAAAzNuRW8DlxyZgJ2`
 
-1. User navigates to the entry form section
-2. Turnstile widget is displayed, form inputs are hidden
-3. User completes the Turnstile challenge
-4. On successful verification:
-   - Token is stored in memory
-   - Form inputs become visible
-   - Success message is displayed
-5. When user submits the form, the token is sent with the form data
+⚠️ **IMPORTANT**: This is a placeholder/testing site key. You should replace it with your own Cloudflare Turnstile site key.
 
-### Server-Side Validation
+## How to Get Your Own Site Key
 
-1. The Netlify function receives the form submission with the Turnstile token
-2. It makes a POST request to your validation endpoint:
-   ```
-   POST https://sgturnstile.replit.app/api/validate
-   ```
-3. Validation payload includes:
-   - `siteId`: Your Turnstile site key
-   - `token`: The user's verification token
-   - `remoteIp`: User's IP address (for additional security)
-4. If validation fails, the submission is rejected with a 403 error
-5. If validation succeeds, the submission proceeds normally
+1. **Sign up for Cloudflare** (if you haven't already)
+   - Go to: https://dash.cloudflare.com/sign-up
+
+2. **Access Turnstile**
+   - Log in to your Cloudflare Dashboard
+   - Navigate to: **Turnstile** section
+   - Or go directly to: https://dash.cloudflare.com/?to=/:account/turnstile
+
+3. **Create a New Site**
+   - Click "Add Site"
+   - Enter your domain name (e.g., `yourdomain.com`)
+   - Choose "Managed" mode (recommended for most use cases)
+   - Click "Create"
+
+4. **Get Your Site Key**
+   - After creating the site, you'll see two keys:
+     - **Site Key** (public) - This is what you need
+     - **Secret Key** (private) - Keep this secure, not used in client-side code
+
+5. **Replace the Site Key**
+   - In both `index.html` and `v2.html`, find this line:
+     ```html
+     data-sitekey="0x4AAAAAAAzNuRW8DlxyZgJ2"
+     ```
+   - Replace `0x4AAAAAAAzNuRW8DlxyZgJ2` with your actual site key
+
+## Turnstile Modes
+
+### Managed (Recommended)
+- Cloudflare automatically determines the difficulty level
+- Most users will see a simple checkbox
+- Suspicious traffic may see more challenges
+
+### Non-Interactive
+- No user interaction required
+- Runs in the background
+- Best user experience but may allow more bots
+
+### Invisible
+- No visible widget
+- Challenge only appears when needed
+- Requires more integration work
+
+## Configuration Options
+
+In the HTML, you can customize the Turnstile widget:
+
+```html
+<div class="cf-turnstile" 
+     data-sitekey="YOUR_SITE_KEY_HERE"
+     data-callback="onTurnstileSuccess"
+     data-theme="auto"
+     data-size="normal"
+     data-language="auto"></div>
+```
+
+### Available Options:
+- `data-theme`: `light`, `dark`, or `auto` (matches system theme)
+- `data-size`: `normal` or `compact`
+- `data-language`: Language code (e.g., `en`, `es`, `fr`) or `auto`
+- `data-callback`: JavaScript function to call on success
 
 ## Testing
 
-### Test with Turnstile Disabled
+### Test Site Keys (Always Pass)
+Cloudflare provides test site keys that always pass:
+- **Always Passes**: `1x00000000000000000000AA`
+- **Always Fails**: `2x00000000000000000000AB`
+- **Forces Interactive**: `3x00000000000000000000FF`
 
-If you want to test without Turnstile (e.g., in development):
-- Simply leave `turnsiteSiteKey` as `"YOUR_TURNSTILE_SITE_KEY"` or an empty string
-- The form will automatically show without verification
+### Testing in Development
+The current placeholder key should work in development, but you should replace it before going live.
 
-### Test with Turnstile Enabled
+## Client-Side Only Implementation
 
-1. Set a valid site key in `config.js`
-2. Load the page and scroll to the entry form
-3. You should see the Turnstile widget
-4. Complete the challenge
-5. Form inputs should appear
-6. Fill out and submit the form
-7. Check server logs to verify validation
+**Note**: This implementation is client-side only and does not include server-side verification. This means:
+- ✅ Protects against casual bots and automated scrapers
+- ✅ Reduces spam form submissions significantly
+- ⚠️ Determined attackers could potentially bypass it
+- ⚠️ Not as secure as server-side verification
 
-## Validation Endpoint Details
+### Adding Server-Side Verification (Optional)
 
-Your custom validation endpoint is configured at:
-```
-https://sgturnstile.replit.app/api/validate
-```
-
-### Request Format
-```json
-{
-  "siteId": "your-site-id",
-  "token": "turnstile-token",
-  "remoteIp": "visitor-ip-address"
-}
-```
-
-### Success Response
-```json
-{
-  "success": true,
-  "challenge_ts": "timestamp",
-  "hostname": "your-domain.com"
-}
-```
-
-### Error Response
-```json
-{
-  "success": false,
-  "error-codes": ["invalid-input-response"]
-}
-```
-
-## Customization
-
-### Change Verification Message
-
-In both `index.html` and `v2.html`, find:
-```html
-<div class="verification-message" id="verificationMessage">
-    <i class="fas fa-shield-check"></i>
-    Please verify you're human to continue
-</div>
-```
-
-Modify the text as needed.
-
-### Change Widget Theme
-
-The widget automatically uses the site's theme (light/dark) based on `config.settings.theme`.
-
-To force a specific theme, edit the Turnstile initialization:
-```javascript
-turnstile.render(turnstileContainer, {
-    sitekey: config.settings.turnsiteSiteKey,
-    theme: 'light', // or 'dark'
-    // ... other options
-});
-```
-
-### Adjust Widget Styling
-
-Edit the CSS in the `<style>` section:
-```css
-/* Turnstile Widget Styling */
-#turnstile-container { 
-    margin: 16px 0; 
-    display: flex; 
-    justify-content: center; 
-}
-```
+If you want maximum security, you should:
+1. Store the Turnstile response token when the form is submitted
+2. Send it to your server with the form data
+3. Verify the token server-side using Cloudflare's API
+4. See: https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
 
 ## Troubleshooting
 
-### Form doesn't show after verification
+### Widget Not Appearing
 - Check browser console for errors
+- Ensure the Turnstile script is loaded: `https://challenges.cloudflare.com/turnstile/v0/api.js`
 - Verify your site key is correct
-- Ensure Turnstile script is loading (check Network tab)
 
-### Server validation fails
-- Check that your validation endpoint is accessible
-- Verify the site key matches between config and Cloudflare
-- Check Netlify function logs for error details
+### Form Not Showing After Verification
+- Check that the `onTurnstileSuccess` callback function is defined
+- Ensure the form has the class `hidden` initially
+- Check browser console for JavaScript errors
 
-### Widget doesn't appear
-- Verify Turnstile script is loaded: `<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`
-- Check that `config.settings.turnsiteSiteKey` is set
-- Look for console warnings
+### Domain Errors
+- Make sure your domain is added to the allowed domains in Cloudflare Turnstile settings
+- For local testing, add `localhost` to the allowed domains
 
-## Security Notes
+## Additional Resources
 
-- ✅ Tokens are validated on the server, not just client-side
-- ✅ User IP addresses are sent for additional validation
-- ✅ Failed validations reject the submission (fail closed)
-- ✅ Tokens expire and require re-verification
-- ✅ Site key is public (safe to include in client code)
-- ❌ Never expose your Cloudflare API secret key in client code
-
-## Files Modified
-
-- `config.js` - Added `turnsiteSiteKey` setting
-- `index.html` - Added Turnstile widget and validation logic
-- `v2.html` - Added Turnstile widget and validation logic
-- `netlify/functions/submit-entry.js` - Added server-side token validation
+- **Official Documentation**: https://developers.cloudflare.com/turnstile/
+- **API Reference**: https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
+- **Best Practices**: https://developers.cloudflare.com/turnstile/troubleshooting/
 
 ## Support
 
-For Cloudflare Turnstile documentation, visit:
-https://developers.cloudflare.com/turnstile/
+For issues with:
+- **Turnstile Service**: Contact Cloudflare Support
+- **Implementation**: Check the official Cloudflare Turnstile documentation
+- **This Codebase**: Contact your development team
 
-For issues with the validation endpoint, check:
-https://sgturnstile.replit.app/api/validate
+---
+
+Last Updated: October 20, 2025
 

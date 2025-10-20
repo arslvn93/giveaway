@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <!-- Social Share Meta Tags -->
     <meta property="og:title" content="GIVEAWAY - ENTER NOW">
@@ -115,7 +114,7 @@ fbq('track', 'PageView');
             --shadow-color-theme: rgba(0, 0, 0, 0.08);
         }
         body.theme-dark {
-            --primary-color-theme: #FFA726; --secondary-color-theme: #FFFFFF; --accent-color-theme: #FFEE58;
+            --primary-color-theme: #FFA726; --secondary-color-theme: #66BB6A; --accent-color-theme: #FFEE58;
             --body-bg-color-theme: #1C1C1E; --card-bg-color-theme: #2C2C2E;
             --text-color-dark-theme: #F5F5F5; --text-color-medium-theme: #B0B0B0; --text-color-light-theme: #808080;
             --header-bg-color-theme: rgba(28, 28, 30, 0.85);
@@ -263,6 +262,12 @@ fbq('track', 'PageView');
         .form-social-icons a:hover { color: var(--primary-color-theme); }
         .form-terms { text-align: center; font-size: 0.75rem; color: var(--text-color-light-theme); margin-top: 1rem; }
         .form-terms a { color: var(--primary-color-theme); text-decoration: underline; }
+
+        /* Turnstile Widget Styling */
+        #turnstile-container { margin: 16px 0; display: flex; justify-content: center; }
+        .form-inputs-hidden { display: none !important; }
+        .verification-message { text-align: center; padding: 20px; color: var(--text-color-medium-theme); font-size: 15px; }
+        .verification-message i { color: var(--primary-color-theme); margin-right: 8px; }
 
         .rules-text-block h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
         .rules-text-block p, .faq-answer, .tips-list li { font-size: 0.875rem; color: var(--text-color-medium-theme); margin-bottom: 0.75rem; }
@@ -829,8 +834,10 @@ fbq('track', 'PageView');
         }
 
         /* General style for Font Awesome icons within the new footer, if needed */
-        /* Default spacing for icons next to text is handled in .footer-brokerage-info i and .footer-social-icons */
-        
+        #new-main-footer .fab, #new-main-footer .fas {
+            /* margin-right: 0.3em; /* Default spacing for icons next to text */
+            /* Specific icon spacing is handled in .footer-brokerage-info i and .footer-social-icons */
+        }
         /* Reset margin for social icons as they are standalone */
         #new-main-footer .footer-column-info .footer-social-icons .fab,
         #new-main-footer .footer-column-info .footer-social-icons .fas {
@@ -874,32 +881,6 @@ fbq('track', 'PageView');
             height: 100%;
             pointer-events: none; /* Allows clicks to pass through */
             z-index: 9999;      /* Ensures it's on top of other content */
-        }
-
-        /* --- TURNSTILE STYLES --- */
-        .turnstile-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-            text-align: center;
-        }
-        .turnstile-container h3 {
-            font-size: 1.25rem;
-            color: var(--text-color-dark-theme);
-            margin-bottom: 0.75rem;
-        }
-        .turnstile-container p {
-            font-size: 0.9rem;
-            color: var(--text-color-medium-theme);
-            margin-bottom: 1.5rem;
-        }
-        #giveawayEntryForm.hidden {
-            display: none;
-        }
-        .turnstile-container.hidden {
-            display: none;
         }
 
         /* --- DESKTOP STYLES (Enhancements from mobile base) --- */
@@ -1174,16 +1155,13 @@ body.theme-pastel #rules::before {
                             <p class="text-center" id="entryFormCount"></p>
                             
                             <!-- Turnstile Verification -->
-                            <div class="turnstile-container" id="turnstileContainer">
-                                <h3>🔒 Verify You're Human</h3>
-                                <p>Please complete this quick verification to proceed with your entry.</p>
-                                <div class="cf-turnstile" 
-                                     data-sitekey="0x4AAAAAAAzNuRW8DlxyZgJ2" 
-                                     data-callback="onTurnstileSuccess"
-                                     data-theme="auto"></div>
+                            <div id="turnstile-container"></div>
+                            <div class="verification-message" id="verificationMessage">
+                                <i class="fas fa-shield-check"></i>
+                                Please verify you're human to continue
                             </div>
                             
-                            <form id="giveawayEntryForm" class="hidden" style="margin-top:1rem;">
+                            <form id="giveawayEntryForm" style="margin-top:1rem;" class="form-inputs-hidden">
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label for="fullName">Your Name:</label>
@@ -1320,26 +1298,6 @@ body.theme-pastel #rules::before {
          // ========================================================================
          // ★★★ GIVEAWAY CONFIGURATION IS NOW IN config.js ★★★
          // ========================================================================
-
-        // Turnstile callback - runs when user successfully verifies
-        window.onTurnstileSuccess = function(token) {
-            // Hide the Turnstile container
-            const turnstileContainer = document.getElementById('turnstileContainer');
-            if (turnstileContainer) {
-                turnstileContainer.classList.add('hidden');
-            }
-            
-            // Show the form
-            const form = document.getElementById('giveawayEntryForm');
-            if (form) {
-                form.classList.remove('hidden');
-            }
-            
-            // Track the verification in Facebook Pixel if available
-            if (typeof fbq === 'function') {
-                fbq('track', 'TurnstileVerified');
-            }
-        };
 
         document.addEventListener('DOMContentLoaded', () => {
             // console.log("Full Script Loaded. Config available:", !!config);
@@ -1559,10 +1517,18 @@ body.theme-pastel #rules::before {
 
 function populateConsentText() {
     const consentLabel = document.getElementById('contactConsentLabel');
-    if (consentLabel && config) {
-        const brokerageName = config.footerContact?.brokerageName || "the brokerage";
-        const privacyPolicyLink = config.meta?.privacyPolicyLink || "#";
-        consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply ‘stop’ at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary-color-theme); text-decoration: underline;">Privacy Policy</a>.`;
+    if (consentLabel) {
+        // Check if there's a custom consent label override
+        const customConsentLabel = config?.entryForm?.consentLabel;
+        if (customConsentLabel && customConsentLabel.trim() !== '') {
+            // Use the custom consent label from config
+            consentLabel.innerHTML = customConsentLabel;
+        } else {
+            // Use the default consent label
+            const brokerageName = config?.footerContact?.brokerageName || "the brokerage";
+            const privacyPolicyLink = config?.meta?.privacyPolicyLink || "#";
+            consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary-color-theme); text-decoration: underline;">Privacy Policy</a>.`;
+        }
     }
 }
 
@@ -1733,7 +1699,10 @@ function populateNewFooterData() {
                     ghlWebhookUrl: config.settings?.ghlWebhookUrl || "",
                     salesGeniusAppApi: config.settings?.salesGeniusAppApi || "",
                     followUpBossEmail: config.settings?.followUpBossEmail || "",
-                    agentEmail: config.footerContact?.email || ""
+                    agentEmail: config.footerContact?.email || "",
+                    turnstileToken: window.turnstileToken || "",
+                    turnsiteSiteKey: config.settings?.turnsiteSiteKey || "",
+                    turnstileReplitSiteId: config.settings?.turnstileReplitSiteId || ""
                 };
 
                 for (const questionId in collectedQuestionAnswers) {
@@ -1750,7 +1719,10 @@ function populateNewFooterData() {
                     }
                 }
 
-                // console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
+                console.log('Submitting entry with payload:', {
+                    ...finalPayload,
+                    turnstileToken: finalPayload.turnstileToken ? 'present' : 'missing'
+                });
                 
                 // Use Netlify Function as secure proxy (keeps auth credentials server-side)
                 const functionUrl = "/.netlify/functions/submit-entry";
@@ -1764,17 +1736,19 @@ function populateNewFooterData() {
                         body: JSON.stringify(finalPayload)
                     });
 
+                    console.log('Response status:', response.status);
+
                     if (!response.ok) {
                         const responseData = await response.json().catch(() => ({ error: 'Unknown error' }));
                         console.error("Submission failed:", response.status, responseData);
-                        alert('There was an issue submitting your entry. Please try again.');
+                        alert(`Submission failed: ${responseData.error || 'Please try again.'}\n${responseData.details || ''}`);
                     } else {
-                        // console.log("Submission successful. Redirecting to thank you page.");
+                        console.log("Submission successful. Redirecting to thank you page.");
                         window.location.href = 'thankyou.html';
                     }
                 } catch (error) {
                     console.error("Submission error:", error);
-                    alert('An error occurred while submitting your entry. Please check your connection and try again.');
+                    alert('Network error: Could not reach the server. Please check your connection and try again.');
                 }
             }
 
@@ -2168,12 +2142,80 @@ try {
             }
 
 
+            // --- Turnstile Integration ---
+            window.turnstileToken = null;
+            let turnstileWidgetId = null;
+            
+            function initializeTurnstile() {
+                const turnstileContainer = document.getElementById('turnstile-container');
+                const verificationMessage = document.getElementById('verificationMessage');
+                const giveawayForm = document.getElementById('giveawayEntryForm');
+                
+                if (!turnstileContainer || !config?.settings?.turnsiteSiteKey) {
+                    // If no site key configured, show form without verification
+                    console.warn('Turnstile site key not configured');
+                    if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
+                    if (verificationMessage) verificationMessage.style.display = 'none';
+                    return;
+                }
+                
+                // Render Turnstile widget
+                turnstileWidgetId = turnstile.render(turnstileContainer, {
+                    sitekey: config.settings.turnsiteSiteKey,
+                    theme: config.settings.theme === 'dark' ? 'dark' : 'light',
+                    size: 'normal',
+                    retry: 'auto',
+                    'refresh-expired': 'auto',
+                    callback: function(token) {
+                        window.turnstileToken = token;
+                        console.log('✅ Turnstile completed - token received');
+                        
+                        // Show form immediately (no validation delay)
+                        if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
+                        if (verificationMessage) {
+                            verificationMessage.innerHTML = '<i class="fas fa-check-circle"></i> Verified! You can now enter the giveaway.';
+                            verificationMessage.style.color = 'var(--secondary-color-theme)';
+                        }
+                    },
+                    'error-callback': function() {
+                        alert('Verification failed. Please refresh the page and try again.');
+                    },
+                    'expired-callback': function() {
+                        window.turnstileToken = null;
+                        if (giveawayForm) giveawayForm.classList.add('form-inputs-hidden');
+                        if (verificationMessage) {
+                            verificationMessage.innerHTML = '<i class="fas fa-shield-check"></i> Verification expired. Please verify again.';
+                            verificationMessage.style.color = 'var(--text-color-medium-theme)';
+                        }
+                        // Reset the widget
+                        if (turnstileWidgetId !== null) {
+                            turnstile.reset(turnstileWidgetId);
+                        }
+                    }
+                });
+            }
+            
+            // Initialize Turnstile when the script is loaded
+            if (window.turnstile) {
+                initializeTurnstile();
+            } else {
+                // Wait for Turnstile script to load
+                window.addEventListener('load', initializeTurnstile);
+            }
+
             // --- Form Submission & Modal ---
             const giveawayForm = document.getElementById('giveawayEntryForm');
             if (giveawayForm && submitButton) {
                 giveawayForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     if (submitButton.disabled) return;
+                    
+                    // Check if Turnstile token exists
+                    if (!window.turnstileToken) {
+                        alert('Please complete the verification first.');
+                        return;
+                    }
+                    
                     // This is now the "Next" button action
                     const fullNameValue = document.getElementById('fullName')?.value.trim();
                     const emailValue = document.getElementById('email')?.value.trim();

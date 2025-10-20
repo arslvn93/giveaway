@@ -13,14 +13,6 @@ exports.handler = async (event, context) => {
     try {
         // Parse the incoming submission data
         const submissionData = JSON.parse(event.body);
-        
-        // Turnstile server-side validation DISABLED for performance
-        // Users still must complete Turnstile widget on client-side
-        if (submissionData.turnstileToken) {
-            console.log('✅ Turnstile token received from client (server validation disabled for speed)');
-        } else {
-            console.log('⚠️ No Turnstile token provided');
-        }
 
         // Get credentials from environment variables (set in Netlify dashboard)
         const username = process.env.N8N_USERNAME?.trim();

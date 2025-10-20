@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="config.js"></script>
     <script>
@@ -233,11 +234,31 @@
         .secure-row { display: flex; align-items: center; gap: 10px; color: #586072; font-size: 13px; margin-top: 8px; }
         .secure-row i { color: #7DFFA7; }
 
-        /* Turnstile Widget Styling */
-        #turnstile-container { margin: 16px 0; display: flex; justify-content: center; }
-        .form-inputs-hidden { display: none !important; }
-        .verification-message { text-align: center; padding: 20px; color: var(--muted); font-size: 15px; }
-        .verification-message i { color: var(--primary-2); margin-right: 8px; }
+        /* --- TURNSTILE STYLES --- */
+        .turnstile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        .turnstile-container h3 {
+            font-size: 1.25rem;
+            color: #0b0d17;
+            margin-bottom: 0.75rem;
+        }
+        .turnstile-container p {
+            font-size: 0.9rem;
+            color: #586072;
+            margin-bottom: 1.5rem;
+        }
+        #giveawayEntryForm.hidden {
+            display: none;
+        }
+        .turnstile-container.hidden {
+            display: none;
+        }
 
         /* Footer (redesigned) */
         footer#footer-contact { position: relative; border-top: 1px solid var(--stroke); background: radial-gradient(60% 60% at 50% 10%, rgba(108,124,255,0.08), rgba(10,13,26,0.9)); padding: 48px 0; color: var(--muted); }
@@ -472,13 +493,16 @@
                             <div class="entry-divider"></div>
                             
                             <!-- Turnstile Verification -->
-                            <div id="turnstile-container"></div>
-                            <div class="verification-message" id="verificationMessage">
-                                <i class="fas fa-shield-check"></i>
-                                Please verify you're human to continue
+                            <div class="turnstile-container" id="turnstileContainer">
+                                <h3>🔒 Verify You're Human</h3>
+                                <p>Please complete this quick verification to proceed with your entry.</p>
+                                <div class="cf-turnstile" 
+                                     data-sitekey="0x4AAAAAAAzNuRW8DlxyZgJ2" 
+                                     data-callback="onTurnstileSuccess"
+                                     data-theme="auto"></div>
                             </div>
                             
-                            <form id="giveawayEntryForm" class="form-inputs-hidden">
+                            <form id="giveawayEntryForm" class="hidden">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="fullName">Full Name</label>
@@ -600,6 +624,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
+    // Turnstile callback - runs when user successfully verifies
+    window.onTurnstileSuccess = function(token) {
+        // Hide the Turnstile container
+        const turnstileContainer = document.getElementById('turnstileContainer');
+        if (turnstileContainer) {
+            turnstileContainer.classList.add('hidden');
+        }
+        
+        // Show the form
+        const form = document.getElementById('giveawayEntryForm');
+        if (form) {
+            form.classList.remove('hidden');
+        }
+        
+        // Track the verification in Facebook Pixel if available
+        if (typeof fbq === 'function') {
+            fbq('track', 'TurnstileVerified');
+        }
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof config === 'undefined') { alert('Missing config.js'); return; }
 
@@ -873,141 +917,17 @@
 
         function hideGiveawayQuestionModal(){ if (questionModalOverlay) questionModalOverlay.classList.remove('visible'); }
         function showGiveawayQuestionModal(){ if (!questionModalOverlay || !config?.modalQuestions?.length) { const entry = document.getElementById('entry-form'); if (entry) entry.scrollIntoView({behavior:'smooth'}); return; } currentQuestionStepIndex = 0; collectedQuestionAnswers = {}; if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = ''; questionModalOverlay.classList.add('visible'); displayGiveawayQuestionStep(currentQuestionStepIndex); }
-        async function submitFullEntry(){ 
-            const finalPayload = { 
-                fullName: storedFullName, 
-                email: storedEmail, 
-                phoneNumber: storedPhoneNumber, 
-                giveawayName: config.giveaway?.name || 'N/A', 
-                submittedAt: new Date().toISOString(), 
-                questions: [], 
-                deploymentInfo: config.deploymentInfo || {}, 
-                ghlWebhookUrl: config.settings?.ghlWebhookUrl || '', 
-                salesGeniusAppApi: config.settings?.salesGeniusAppApi || '', 
-                followUpBossEmail: config.settings?.followUpBossEmail || '', 
-                agentEmail: config.footerContact?.email || '', 
-                turnstileToken: turnstileToken || '', 
-                turnsiteSiteKey: config.settings?.turnsiteSiteKey || '',
-                turnstileReplitSiteId: config.settings?.turnstileReplitSiteId || ''
-            }; 
-            
-            for (const qid in collectedQuestionAnswers) { 
-                const qObj = config.modalQuestions.find(q => q.id === qid); 
-                if (qObj) { 
-                    const opt = qObj.options.find(o => o.value === collectedQuestionAnswers[qid]); 
-                    finalPayload.questions.push({ 
-                        question: qObj.questionText, 
-                        answer: opt ? opt.text : collectedQuestionAnswers[qid] 
-                    }); 
-                } 
-            } 
-            
-            console.log('Submitting entry with payload:', { 
-                ...finalPayload, 
-                turnstileToken: finalPayload.turnstileToken ? 'present' : 'missing' 
-            });
-            
-            const functionUrl = '/.netlify/functions/submit-entry'; 
-            try { 
-                const res = await fetch(functionUrl, { 
-                    method:'POST', 
-                    headers:{'Content-Type':'application/json'}, 
-                    body: JSON.stringify(finalPayload) 
-                }); 
-                
-                console.log('Response status:', res.status);
-                
-                if (!res.ok) { 
-                    const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
-                    console.error('Submission failed:', res.status, errorData);
-                    alert(`Submission failed: ${errorData.error || 'Please try again.'}\n${errorData.details || ''}`); 
-                } else { 
-                    console.log('Submission successful, redirecting...');
-                    window.location.href = 'thankyou.html'; 
-                } 
-            } catch (e) { 
-                console.error('Submission error:', e); 
-                alert('Network error: Could not reach the server. Please check your connection and try again.'); 
-            } 
-        }
+        async function submitFullEntry(){ const finalPayload = { fullName: storedFullName, email: storedEmail, phoneNumber: storedPhoneNumber, giveawayName: config.giveaway?.name || 'N/A', submittedAt: new Date().toISOString(), questions: [], deploymentInfo: config.deploymentInfo || {}, ghlWebhookUrl: config.settings?.ghlWebhookUrl || '', salesGeniusAppApi: config.settings?.salesGeniusAppApi || '', followUpBossEmail: config.settings?.followUpBossEmail || '', agentEmail: config.footerContact?.email || '' }; for (const qid in collectedQuestionAnswers) { const qObj = config.modalQuestions.find(q => q.id === qid); if (qObj) { const opt = qObj.options.find(o => o.value === collectedQuestionAnswers[qid]); finalPayload.questions.push({ question: qObj.questionText, answer: opt ? opt.text : collectedQuestionAnswers[qid] }); } } const functionUrl = '/.netlify/functions/submit-entry'; try { const res = await fetch(functionUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(finalPayload) }); if (!res.ok) { alert('There was an issue submitting your entry. Please try again.'); } else { window.location.href = 'thankyou.html'; } } catch (e) { console.error(e); alert('An error occurred while submitting your entry. Please try again.'); } }
         async function displayGiveawayQuestionStep(stepIndex){ if (!questionModalContent || !questionModalStepsContainer || !config) { console.error('Question modal structure missing'); hideGiveawayQuestionModal(); return; } questionModalStepsContainer.innerHTML = ''; if (stepIndex >= 0 && stepIndex < config.modalQuestions.length) { const q = config.modalQuestions[stepIndex]; const stepDiv = document.createElement('div'); stepDiv.classList.add('modal-step'); stepDiv.id = `giveaway-modal-step-${q.id}`; stepDiv.innerHTML = `<p class="question-text" id="giveawayModalStepTitle-${q.id}">${q.questionText}</p><div class="modal-options">${q.options.map(o => `<button type="button" class="modal-option-btn" data-step="${stepIndex}" data-question-id="${q.id}" data-answer="${o.value}">${o.text}</button>`).join('')}</div>`; stepDiv.querySelectorAll('.modal-option-btn').forEach(btn => btn.addEventListener('click', handleGiveawayAnswerClick)); questionModalStepsContainer.appendChild(stepDiv); setTimeout(() => stepDiv.classList.add('active'), 10); } else { if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = '<p>Submitting your entry...</p>'; await submitFullEntry(); hideGiveawayQuestionModal(); } }
         function handleGiveawayAnswerClick(e){ try { const btn = e.currentTarget; const stepIndex = parseInt(btn.dataset.step, 10); const qid = btn.dataset.questionId; const ans = btn.dataset.answer; if (isNaN(stepIndex) || !qid || ans === undefined) return; collectedQuestionAnswers[qid] = ans; const current = btn.closest('.modal-options'); if (current) { current.querySelectorAll('.modal-option-btn').forEach(b => { b.classList.remove('selected'); b.disabled = true; }); btn.classList.add('selected'); } const activeStep = questionModalStepsContainer.querySelector('.modal-step.active'); if (activeStep) { activeStep.style.transition = 'opacity 0.3s ease-out'; activeStep.style.opacity = '0'; setTimeout(() => displayGiveawayQuestionStep(stepIndex + 1), 300); } else { setTimeout(() => displayGiveawayQuestionStep(stepIndex + 1), 300); } } catch(err){ console.error(err); hideGiveawayQuestionModal(); } }
         if (questionModalCloseBtn) questionModalCloseBtn.addEventListener('click', hideGiveawayQuestionModal);
         if (questionModalOverlay) questionModalOverlay.addEventListener('click', (evt) => { if (evt.target === questionModalOverlay) hideGiveawayQuestionModal(); });
-
-        // Turnstile Integration
-        let turnstileToken = null;
-        let turnstileWidgetId = null;
-        
-        function initializeTurnstile() {
-            const turnstileContainer = document.getElementById('turnstile-container');
-            const verificationMessage = document.getElementById('verificationMessage');
-            const giveawayForm = document.getElementById('giveawayEntryForm');
-            
-            if (!turnstileContainer || !config?.settings?.turnsiteSiteKey) {
-                // If no site key configured, show form without verification
-                console.warn('Turnstile site key not configured');
-                if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
-                if (verificationMessage) verificationMessage.style.display = 'none';
-                return;
-            }
-            
-            // Render Turnstile widget
-            turnstileWidgetId = turnstile.render(turnstileContainer, {
-                sitekey: config.settings.turnsiteSiteKey,
-                theme: 'light',
-                size: 'normal',
-                retry: 'auto',
-                'refresh-expired': 'auto',
-                callback: function(token) {
-                    turnstileToken = token;
-                    console.log('✅ Turnstile completed - token received');
-                    
-                    // Show form immediately (no validation delay)
-                    if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
-                    if (verificationMessage) {
-                        verificationMessage.innerHTML = '<i class="fas fa-check-circle"></i> Verified! You can now enter the giveaway.';
-                        verificationMessage.style.color = '#7DFFA7';
-                    }
-                },
-                'error-callback': function() {
-                    alert('Verification failed. Please refresh the page and try again.');
-                },
-                'expired-callback': function() {
-                    turnstileToken = null;
-                    if (giveawayForm) giveawayForm.classList.add('form-inputs-hidden');
-                    if (verificationMessage) {
-                        verificationMessage.innerHTML = '<i class="fas fa-shield-check"></i> Verification expired. Please verify again.';
-                        verificationMessage.style.color = 'var(--muted)';
-                    }
-                    // Reset the widget
-                    if (turnstileWidgetId !== null) {
-                        turnstile.reset(turnstileWidgetId);
-                    }
-                }
-            });
-        }
-        
-        // Initialize Turnstile when the script is loaded
-        if (window.turnstile) {
-            initializeTurnstile();
-        } else {
-            // Wait for Turnstile script to load
-            window.addEventListener('load', initializeTurnstile);
-        }
 
         // Form submission → open questions modal
         const giveawayForm = document.getElementById('giveawayEntryForm');
         if (giveawayForm && submitButton) {
             giveawayForm.addEventListener('submit', (e) => {
                 e.preventDefault(); if (submitButton.disabled) return;
-                
-                // Check if Turnstile token exists
-                if (!turnstileToken) {
-                    alert('Please complete the verification first.');
-                    return;
-                }
-                
                 const fullNameValue = document.getElementById('fullName')?.value.trim();
                 const emailValue = document.getElementById('email')?.value.trim();
                 const phoneNumberValue = document.getElementById('phoneNumber')?.value.trim();
