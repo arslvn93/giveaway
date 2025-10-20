@@ -39,29 +39,34 @@ Cloudflare Turnstile has been successfully integrated into your giveaway site to
 
 ### Environment Variables
 
-You need to add the following environment variable to your Netlify dashboard:
+You need to add the following environment variables to your Netlify dashboard:
 
-**Variable Name:** `TURNSTILE_SECRET_KEY`  
-**Value:** Your Turnstile Secret Key (from Cloudflare dashboard)
+**Required Variables:**
+- **Variable Name:** `TURNSTILE_SITE_ID`  
+  **Value:** Your site ID from the custom validation server
 
-#### How to Add Environment Variable in Netlify:
+**Optional Variables:**
+- **Variable Name:** `TURNSTILE_VALIDATION_URL`  
+  **Value:** `https://sgturnstile.replit.app/api/validate` (default if not set)
+
+#### How to Add Environment Variables in Netlify:
 
 1. Go to your Netlify dashboard
 2. Select your site (giveaway)
 3. Go to **Site settings** → **Environment variables**
 4. Click **Add a variable**
-5. Add:
-   - **Key:** `TURNSTILE_SECRET_KEY`
-   - **Value:** Your secret key from Cloudflare
-6. Click **Save**
+5. Add each variable:
+   - **Key:** `TURNSTILE_SITE_ID`
+   - **Value:** Your site ID from the validation server
+6. (Optional) Add custom validation URL if different from default
+7. Click **Save**
 
-### Getting Your Secret Key
+### Getting Your Site ID
 
-1. Go to the [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Navigate to **Turnstile** section
-3. Find your site or create a new one
-4. Copy the **Secret Key** (NOT the Site Key - you already have that)
-5. Add it to Netlify as described above
+1. Access your custom validation server dashboard
+2. Navigate to the **Sites** page
+3. Copy your **Site ID** for this giveaway
+4. Add it to Netlify as described above
 
 ## Site Key Used
 
@@ -91,9 +96,11 @@ This is already configured in both HTML files.
 ### Backend (Security)
 
 1. Netlify function receives the form submission with Turnstile token
-2. Function validates the token with Cloudflare's verification API
-3. If valid: proceeds with form submission
-4. If invalid: returns error and prevents submission
+2. Function extracts visitor's IP address from request headers
+3. Function validates the token with custom validation server (`https://sgturnstile.replit.app/api/validate`)
+4. Validation server checks token with Cloudflare and applies custom rules
+5. If valid: proceeds with form submission
+6. If invalid: returns error and prevents submission
 
 ## Testing
 
@@ -114,8 +121,10 @@ After deploying these changes:
 
 ### "Security verification failed" error
 - The token verification failed on the backend
-- Ensure `TURNSTILE_SECRET_KEY` is set correctly in Netlify
+- Ensure `TURNSTILE_SITE_ID` is set correctly in Netlify
+- Verify the custom validation server is accessible: `https://sgturnstile.replit.app/api/validate`
 - Check Netlify function logs for detailed error messages
+- Ensure your site ID is registered in the validation server
 
 ### Widget not appearing
 - Check if the Turnstile script is loading (check browser network tab)
@@ -130,20 +139,25 @@ After deploying these changes:
 - ✅ **Better loading state**: "✨ Submitting your entry..." message during final API call
 - ✅ The Turnstile widget is configured with `theme="light"` via JavaScript render
 - ✅ The widget appears above the submit button in both forms
-- ⚠️ If the secret key is not configured, the backend will log a warning but still process submissions (for backwards compatibility during setup)
-- ⚠️ Once you add the secret key, all submissions will require valid Turnstile verification
+- ⚠️ If the site ID is not configured, the backend will log a warning but still process submissions (for backwards compatibility during setup)
+- ⚠️ Once you add the site ID, all submissions will require valid Turnstile verification
+- 🔐 **Custom validation server**: Uses `https://sgturnstile.replit.app/api/validate` instead of direct Cloudflare validation
+- 📍 **IP tracking**: Automatically captures visitor's IP address for validation (helps prevent abuse)
 
 ## Next Steps
 
 1. ✅ Code changes are complete
-2. ⏳ Add `TURNSTILE_SECRET_KEY` to Netlify environment variables
-3. ⏳ Deploy the changes to Netlify (git push or manual deploy)
-4. ⏳ Test the forms to ensure Turnstile is working
-5. ⏳ Monitor Netlify function logs for any issues
+2. ⏳ Get your site ID from the custom validation server
+3. ⏳ Add `TURNSTILE_SITE_ID` to Netlify environment variables
+4. ⏳ (Optional) Add `TURNSTILE_VALIDATION_URL` if using custom endpoint
+5. ⏳ Deploy the changes to Netlify (git push or manual deploy)
+6. ⏳ Test the forms to ensure Turnstile is working
+7. ⏳ Monitor Netlify function logs for any issues
 
 ## Resources
 
 - [Cloudflare Turnstile Documentation](https://developers.cloudflare.com/turnstile/)
 - [Turnstile Dashboard](https://dash.cloudflare.com/?to=/:account/turnstile)
 - [Netlify Environment Variables Guide](https://docs.netlify.com/environment-variables/overview/)
+- [Custom Validation Server](https://sgturnstile.replit.app/api/validate) - Your custom Turnstile validation endpoint
 

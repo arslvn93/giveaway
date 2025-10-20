@@ -14,9 +14,10 @@ exports.handler = async (event, context) => {
         // Parse the incoming submission data
         const submissionData = JSON.parse(event.body);
 
-        // Verify Cloudflare Turnstile token
+        // Verify Turnstile token using custom validation server
         const turnstileToken = submissionData.turnstileToken;
-        const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+        const turnstilesiteId = process.env.TURNSTILE_SITE_ID;
+        const turnstileValidationUrl = process.env.TURNSTILE_VALIDATION_URL || 'https://sgturnstile.replit.app/api/validate';
 
         if (!turnstileToken) {
             return {
@@ -25,17 +26,20 @@ exports.handler = async (event, context) => {
             };
         }
 
-        if (turnstileSecret) {
-            // Verify the Turnstile token with Cloudflare
-            const turnstileVerifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-            const verifyResponse = await fetch(turnstileVerifyUrl, {
+        if (turnstilesiteId) {
+            // Get visitor's IP address from Netlify headers
+            const visitorIp = event.headers['x-forwarded-for'] || event.headers['x-nf-client-connection-ip'] || '';
+            
+            // Verify the Turnstile token with custom validation server
+            const verifyResponse = await fetch(turnstileValidationUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    secret: turnstileSecret,
-                    response: turnstileToken,
+                    siteId: turnstilesiteId,
+                    token: turnstileToken,
+                    remoteIp: visitorIp
                 })
             });
 
@@ -47,12 +51,12 @@ exports.handler = async (event, context) => {
                     statusCode: 403,
                     body: JSON.stringify({ 
                         error: 'Security verification failed. Please try again.',
-                        details: verifyResult['error-codes']
+                        details: verifyResult.message || verifyResult['error-codes'] || 'Verification failed'
                     })
                 };
             }
         } else {
-            console.warn('TURNSTILE_SECRET_KEY not configured in environment variables');
+            console.warn('TURNSTILE_SITE_ID not configured in environment variables');
         }
 
         // Remove the Turnstile token from the submission data before forwarding
