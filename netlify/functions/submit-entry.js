@@ -14,67 +14,12 @@ exports.handler = async (event, context) => {
         // Parse the incoming submission data
         const submissionData = JSON.parse(event.body);
         
-        // Validate Turnstile token if present
-        if (submissionData.turnstileToken && (submissionData.turnstileReplitSiteId || submissionData.turnsiteSiteKey)) {
-            const turnstileValidationUrl = 'https://sgturnstile.replit.app/api/validate';
-            
-            // Get the visitor's IP address
-            const remoteIp = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || 'unknown';
-            
-            // Use Replit Site ID, not Cloudflare Site Key
-            const replitSiteId = submissionData.turnstileReplitSiteId || submissionData.turnsiteSiteKey;
-            
-            console.log('Attempting Turnstile validation...', {
-                hasToken: !!submissionData.turnstileToken,
-                hasReplitSiteId: !!submissionData.turnstileReplitSiteId,
-                usingFallback: !submissionData.turnstileReplitSiteId,
-                remoteIp: remoteIp
-            });
-            
-            try {
-                const turnstileResponse = await fetch(turnstileValidationUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        siteId: replitSiteId,
-                        token: submissionData.turnstileToken,
-                        remoteIp: remoteIp
-                    })
-                });
-                
-                const turnstileResult = await turnstileResponse.json();
-                
-                console.log('Turnstile validation response:', {
-                    status: turnstileResponse.status,
-                    success: turnstileResult.success,
-                    result: turnstileResult
-                });
-                
-                // Check if validation was successful
-                if (!turnstileResponse.ok || !turnstileResult.success) {
-                    console.warn('Turnstile validation failed, but allowing submission:', turnstileResult);
-                    // For now, log warning but allow submission to continue
-                    // In production, you might want to block this
-                    // return {
-                    //     statusCode: 403,
-                    //     body: JSON.stringify({ 
-                    //         error: 'Bot verification failed',
-                    //         details: 'Please refresh the page and try again.'
-                    //     })
-                    // };
-                } else {
-                    console.log('Turnstile validation successful');
-                }
-            } catch (turnstileError) {
-                console.error('Turnstile validation error:', turnstileError.message);
-                // Log error but allow submission to continue for now
-                // In production, you might want to fail closed
-                console.warn('Turnstile validation service error, allowing submission to continue');
-            }
+        // Turnstile server-side validation DISABLED for performance
+        // Users still must complete Turnstile widget on client-side
+        if (submissionData.turnstileToken) {
+            console.log('✅ Turnstile token received from client (server validation disabled for speed)');
         } else {
-            console.log('No Turnstile token provided, skipping validation');
+            console.log('⚠️ No Turnstile token provided');
         }
 
         // Get credentials from environment variables (set in Netlify dashboard)
