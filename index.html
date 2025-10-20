@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <!-- Social Share Meta Tags -->
     <meta property="og:title" content="GIVEAWAY - ENTER NOW">
     <meta property="og:description" content="Enter our exciting giveaway for a chance to win! Don't miss out.">
@@ -1177,6 +1178,7 @@ body.theme-pastel #rules::before {
                                             </label>
                                         </div>
                                     </div>
+                                    <div class="cf-turnstile" data-sitekey="0x4AAAAAAB5SpbWeBo7JnEIs" data-theme="light" style="margin: 1rem 0;"></div>
                                     <div class="form-group">
                                         <button type="submit" class="button-primary" id="entryFormSubmitButton">
                                             <span class="button-text">Next</span>
@@ -1673,6 +1675,13 @@ function populateNewFooterData() {
                 // This function now handles the final submission logic
                 // console.log("Attempting full entry submission...");
 
+                // Get Turnstile token
+                const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
+                if (!turnstileResponse) {
+                    alert('Please complete the security verification.');
+                    return;
+                }
+
                 const finalPayload = {
                     fullName: storedFullName,
                     email: storedEmail,
@@ -1684,7 +1693,8 @@ function populateNewFooterData() {
                     ghlWebhookUrl: config.settings?.ghlWebhookUrl || "",
                     salesGeniusAppApi: config.settings?.salesGeniusAppApi || "",
                     followUpBossEmail: config.settings?.followUpBossEmail || "",
-                    agentEmail: config.footerContact?.email || ""
+                    agentEmail: config.footerContact?.email || "",
+                    turnstileToken: turnstileResponse
                 };
 
                 for (const questionId in collectedQuestionAnswers) {

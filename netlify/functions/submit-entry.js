@@ -14,6 +14,50 @@ exports.handler = async (event, context) => {
         // Parse the incoming submission data
         const submissionData = JSON.parse(event.body);
 
+        // Verify Cloudflare Turnstile token
+        const turnstileToken = submissionData.turnstileToken;
+        const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+
+        if (!turnstileToken) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Security verification required' })
+            };
+        }
+
+        if (turnstileSecret) {
+            // Verify the Turnstile token with Cloudflare
+            const turnstileVerifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+            const verifyResponse = await fetch(turnstileVerifyUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    secret: turnstileSecret,
+                    response: turnstileToken,
+                })
+            });
+
+            const verifyResult = await verifyResponse.json();
+            
+            if (!verifyResult.success) {
+                console.error('Turnstile verification failed:', verifyResult);
+                return {
+                    statusCode: 403,
+                    body: JSON.stringify({ 
+                        error: 'Security verification failed. Please try again.',
+                        details: verifyResult['error-codes']
+                    })
+                };
+            }
+        } else {
+            console.warn('TURNSTILE_SECRET_KEY not configured in environment variables');
+        }
+
+        // Remove the Turnstile token from the submission data before forwarding
+        delete submissionData.turnstileToken;
+
         // Get credentials from environment variables (set in Netlify dashboard)
         const username = process.env.N8N_USERNAME?.trim();
         const password = process.env.N8N_PASSWORD?.trim();
