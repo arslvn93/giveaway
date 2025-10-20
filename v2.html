@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="config.js"></script>
     <script>
     // Sanitize config strings before page scripts use it
@@ -483,7 +482,7 @@
                                 <input type="checkbox" id="contactConsent" name="contactConsent" required>
                                 <label for="contactConsent" id="contactConsentLabel">I agree to be contacted...</label>
                             </div>
-                            <div class="cf-turnstile" data-sitekey="0x4AAAAAAB5SpbWeBo7JnEIs" data-theme="light" style="margin: 14px 0;"></div>
+                            <div id="turnstile-container" style="margin: 14px 0;"></div>
                             <button type="submit" id="entryFormSubmitButton">
                                 <i class="fas fa-spinner fa-spin"></i>
                                 <span class="button-text">Next</span>
@@ -856,25 +855,24 @@
         const questionModalContent = document.getElementById('questionModalContent');
         const questionModalCloseBtn = document.getElementById('questionModalCloseBtn');
         const questionModalStepsContainer = document.getElementById('question-modal-steps-container');
-        let currentQuestionStepIndex = 0; let collectedQuestionAnswers = {}; let storedFullName = '', storedEmail = '', storedPhoneNumber = '';
+        let currentQuestionStepIndex = 0; let collectedQuestionAnswers = {}; let storedFullName = '', storedEmail = '', storedPhoneNumber = '', storedTurnstileToken = '';
 
         function hideGiveawayQuestionModal(){ if (questionModalOverlay) questionModalOverlay.classList.remove('visible'); }
         function showGiveawayQuestionModal(){ if (!questionModalOverlay || !config?.modalQuestions?.length) { const entry = document.getElementById('entry-form'); if (entry) entry.scrollIntoView({behavior:'smooth'}); return; } currentQuestionStepIndex = 0; collectedQuestionAnswers = {}; if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = ''; questionModalOverlay.classList.add('visible'); displayGiveawayQuestionStep(currentQuestionStepIndex); }
         async function submitFullEntry(){ 
-            // Get Turnstile token
-            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
-            if (!turnstileResponse) {
-                alert('Please complete the security verification.');
+            // Use the pre-validated Turnstile token (no need to check again)
+            if (!storedTurnstileToken) {
+                alert('Security verification expired. Please refresh and try again.');
                 return;
             }
             
-            const finalPayload = { fullName: storedFullName, email: storedEmail, phoneNumber: storedPhoneNumber, giveawayName: config.giveaway?.name || 'N/A', submittedAt: new Date().toISOString(), questions: [], deploymentInfo: config.deploymentInfo || {}, ghlWebhookUrl: config.settings?.ghlWebhookUrl || '', salesGeniusAppApi: config.settings?.salesGeniusAppApi || '', followUpBossEmail: config.settings?.followUpBossEmail || '', agentEmail: config.footerContact?.email || '', turnstileToken: turnstileResponse }; for (const qid in collectedQuestionAnswers) { const qObj = config.modalQuestions.find(q => q.id === qid); if (qObj) { const opt = qObj.options.find(o => o.value === collectedQuestionAnswers[qid]); finalPayload.questions.push({ question: qObj.questionText, answer: opt ? opt.text : collectedQuestionAnswers[qid] }); } } const functionUrl = '/.netlify/functions/submit-entry'; try { const res = await fetch(functionUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(finalPayload) }); if (!res.ok) { alert('There was an issue submitting your entry. Please try again.'); } else { window.location.href = 'thankyou.html'; } } catch (e) { console.error(e); alert('An error occurred while submitting your entry. Please try again.'); } }
-        async function displayGiveawayQuestionStep(stepIndex){ if (!questionModalContent || !questionModalStepsContainer || !config) { console.error('Question modal structure missing'); hideGiveawayQuestionModal(); return; } questionModalStepsContainer.innerHTML = ''; if (stepIndex >= 0 && stepIndex < config.modalQuestions.length) { const q = config.modalQuestions[stepIndex]; const stepDiv = document.createElement('div'); stepDiv.classList.add('modal-step'); stepDiv.id = `giveaway-modal-step-${q.id}`; stepDiv.innerHTML = `<p class="question-text" id="giveawayModalStepTitle-${q.id}">${q.questionText}</p><div class="modal-options">${q.options.map(o => `<button type="button" class="modal-option-btn" data-step="${stepIndex}" data-question-id="${q.id}" data-answer="${o.value}">${o.text}</button>`).join('')}</div>`; stepDiv.querySelectorAll('.modal-option-btn').forEach(btn => btn.addEventListener('click', handleGiveawayAnswerClick)); questionModalStepsContainer.appendChild(stepDiv); setTimeout(() => stepDiv.classList.add('active'), 10); } else { if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = '<p>Submitting your entry...</p>'; await submitFullEntry(); hideGiveawayQuestionModal(); } }
+            const finalPayload = { fullName: storedFullName, email: storedEmail, phoneNumber: storedPhoneNumber, giveawayName: config.giveaway?.name || 'N/A', submittedAt: new Date().toISOString(), questions: [], deploymentInfo: config.deploymentInfo || {}, ghlWebhookUrl: config.settings?.ghlWebhookUrl || '', salesGeniusAppApi: config.settings?.salesGeniusAppApi || '', followUpBossEmail: config.settings?.followUpBossEmail || '', agentEmail: config.footerContact?.email || '', turnstileToken: storedTurnstileToken }; for (const qid in collectedQuestionAnswers) { const qObj = config.modalQuestions.find(q => q.id === qid); if (qObj) { const opt = qObj.options.find(o => o.value === collectedQuestionAnswers[qid]); finalPayload.questions.push({ question: qObj.questionText, answer: opt ? opt.text : collectedQuestionAnswers[qid] }); } } const functionUrl = '/.netlify/functions/submit-entry'; try { const res = await fetch(functionUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(finalPayload) }); if (!res.ok) { alert('There was an issue submitting your entry. Please try again.'); } else { window.location.href = 'thankyou.html'; } } catch (e) { console.error(e); alert('An error occurred while submitting your entry. Please try again.'); } }
+        async function displayGiveawayQuestionStep(stepIndex){ if (!questionModalContent || !questionModalStepsContainer || !config) { console.error('Question modal structure missing'); hideGiveawayQuestionModal(); return; } questionModalStepsContainer.innerHTML = ''; if (stepIndex >= 0 && stepIndex < config.modalQuestions.length) { const q = config.modalQuestions[stepIndex]; const stepDiv = document.createElement('div'); stepDiv.classList.add('modal-step'); stepDiv.id = `giveaway-modal-step-${q.id}`; stepDiv.innerHTML = `<p class="question-text" id="giveawayModalStepTitle-${q.id}">${q.questionText}</p><div class="modal-options">${q.options.map(o => `<button type="button" class="modal-option-btn" data-step="${stepIndex}" data-question-id="${q.id}" data-answer="${o.value}">${o.text}</button>`).join('')}</div>`; stepDiv.querySelectorAll('.modal-option-btn').forEach(btn => btn.addEventListener('click', handleGiveawayAnswerClick)); questionModalStepsContainer.appendChild(stepDiv); setTimeout(() => stepDiv.classList.add('active'), 10); } else { if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = '<p style="text-align:center;font-size:1.5em;">✨ Submitting your entry...</p>'; await submitFullEntry(); hideGiveawayQuestionModal(); } }
         function handleGiveawayAnswerClick(e){ try { const btn = e.currentTarget; const stepIndex = parseInt(btn.dataset.step, 10); const qid = btn.dataset.questionId; const ans = btn.dataset.answer; if (isNaN(stepIndex) || !qid || ans === undefined) return; collectedQuestionAnswers[qid] = ans; const current = btn.closest('.modal-options'); if (current) { current.querySelectorAll('.modal-option-btn').forEach(b => { b.classList.remove('selected'); b.disabled = true; }); btn.classList.add('selected'); } const activeStep = questionModalStepsContainer.querySelector('.modal-step.active'); if (activeStep) { activeStep.style.transition = 'opacity 0.3s ease-out'; activeStep.style.opacity = '0'; setTimeout(() => displayGiveawayQuestionStep(stepIndex + 1), 300); } else { setTimeout(() => displayGiveawayQuestionStep(stepIndex + 1), 300); } } catch(err){ console.error(err); hideGiveawayQuestionModal(); } }
         if (questionModalCloseBtn) questionModalCloseBtn.addEventListener('click', hideGiveawayQuestionModal);
         if (questionModalOverlay) questionModalOverlay.addEventListener('click', (evt) => { if (evt.target === questionModalOverlay) hideGiveawayQuestionModal(); });
 
-        // Form submission → open questions modal
+        // Form submission → validate Turnstile → open questions modal
         const giveawayForm = document.getElementById('giveawayEntryForm');
         if (giveawayForm && submitButton) {
             giveawayForm.addEventListener('submit', (e) => {
@@ -883,7 +881,15 @@
                 const emailValue = document.getElementById('email')?.value.trim();
                 const phoneNumberValue = document.getElementById('phoneNumber')?.value.trim();
                 if (!fullNameValue || !emailValue || !phoneNumberValue) { alert('Please enter your Name, Email Address, and Phone Number.'); return; }
-                storedFullName = fullNameValue; storedEmail = emailValue; storedPhoneNumber = phoneNumberValue;
+                
+                // Validate Turnstile BEFORE opening modal
+                const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
+                if (!turnstileResponse) {
+                    alert('Please complete the security verification above.');
+                    return;
+                }
+                
+                storedFullName = fullNameValue; storedEmail = emailValue; storedPhoneNumber = phoneNumberValue; storedTurnstileToken = turnstileResponse;
                 submitButton.disabled = true; if (spinnerIcon) spinnerIcon.style.display = 'inline-block'; const btnTxt = submitButton.querySelector('.button-text'); if (btnTxt) btnTxt.style.opacity = '0.5';
                 setTimeout(() => { showGiveawayQuestionModal(); submitButton.disabled = false; if (spinnerIcon) spinnerIcon.style.display = 'none'; if (btnTxt) btnTxt.style.opacity = '1'; }, 200);
             });
@@ -963,6 +969,55 @@
             const msg = parts.filter(Boolean).join(' • ');
             rulesTicker.textContent = `${msg} • ${msg} • ${msg} • ${msg}`;
         }
+
+        // Lazy load Turnstile when form section is visible
+        (function lazyLoadTurnstile() {
+            let turnstileLoaded = false;
+            let turnstileWidgetId = null;
+
+            function loadTurnstileScript() {
+                if (turnstileLoaded) return;
+                turnstileLoaded = true;
+
+                const script = document.createElement('script');
+                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+                script.onload = () => {
+                    // Render Turnstile widget after script loads
+                    const container = document.getElementById('turnstile-container');
+                    if (container && window.turnstile) {
+                        turnstileWidgetId = window.turnstile.render('#turnstile-container', {
+                            sitekey: '0x4AAAAAAB5SpbWeBo7JnEIs',
+                            theme: 'light',
+                            callback: function(token) {
+                                console.log('Turnstile verification complete');
+                            }
+                        });
+                    }
+                };
+                document.head.appendChild(script);
+            }
+
+            // Load when user scrolls to entry form section
+            const formSection = document.getElementById('entry-form');
+            if (formSection) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            loadTurnstileScript();
+                            observer.disconnect();
+                        }
+                    });
+                }, { rootMargin: '200px' }); // Start loading 200px before form is visible
+
+                observer.observe(formSection);
+            }
+
+            // Also load if user clicks on any form input (backup)
+            const giveawayForm = document.getElementById('giveawayEntryForm');
+            if (giveawayForm) {
+                giveawayForm.addEventListener('focus', loadTurnstileScript, { once: true, capture: true });
+            }
+        })();
     });
     </script>
 </body>

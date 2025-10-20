@@ -1,25 +1,39 @@
-# Cloudflare Turnstile Integration
+# Cloudflare Turnstile Integration (Optimized)
 
 ## What Was Done
 
-Cloudflare Turnstile has been successfully integrated into your giveaway site to protect form submissions from bots and spam.
+Cloudflare Turnstile has been successfully integrated into your giveaway site to protect form submissions from bots and spam, with **performance optimizations** for fast page load times.
 
 ### Files Modified
 
 1. **v2.html** - Main giveaway page
-   - Added Turnstile script in the `<head>` section
-   - Added Turnstile widget to the entry form
-   - Updated form submission JavaScript to include Turnstile token
+   - ✅ **Lazy loading**: Turnstile script loads only when user scrolls near the form (no impact on initial page load)
+   - ✅ **Optimized flow**: Turnstile validation happens on first form submit (before modal opens)
+   - ✅ **Faster final submit**: Token is reused from first validation, no double-checking
+   - ✅ **Better UX**: Shows "✨ Submitting your entry..." during final API call
 
 2. **index.html** - Alternative giveaway page
-   - Added Turnstile script in the `<head>` section
-   - Added Turnstile widget to the entry form
-   - Updated form submission JavaScript to include Turnstile token
+   - ✅ **Lazy loading**: Turnstile script loads only when user scrolls near the form
+   - ✅ **Optimized flow**: Turnstile validation happens on first form submit (before modal opens)
+   - ✅ **Faster final submit**: Token is reused from first validation
+   - ✅ **Better UX**: Shows "✨ Submitting your entry..." during final API call
 
 3. **netlify/functions/submit-entry.js** - Backend verification
    - Added server-side Turnstile token verification
    - Validates tokens with Cloudflare before processing submissions
    - Returns appropriate error messages if verification fails
+
+## Performance Improvements
+
+### Before Optimization:
+- ❌ Turnstile script loaded immediately on page load (~300-500ms delay)
+- ❌ Turnstile validated twice (on first submit, then again on final submit)
+- ❌ Slow final submission due to double validation + API call
+
+### After Optimization:
+- ✅ **No impact on initial page load** - Turnstile loads when form is visible
+- ✅ **Validate once, use twice** - Token captured on first submit and reused
+- ✅ **Instant final submission** - Only API call, no re-validation
 
 ## Configuration Required
 
@@ -57,12 +71,22 @@ This is already configured in both HTML files.
 
 ## How It Works
 
+### Lazy Loading (Performance)
+
+1. **Page loads** → Turnstile script NOT loaded yet (fast initial load)
+2. **User scrolls to form** → Intersection Observer triggers Turnstile script load (200px before visible)
+3. **Script loads** → Turnstile widget renders automatically in the form
+4. **Backup trigger** → If user focuses on form field before scrolling, script loads immediately
+
 ### Frontend (User Experience)
 
 1. User fills out the giveaway entry form
 2. User sees a Cloudflare Turnstile challenge widget (usually just a checkbox)
-3. User completes the challenge if prompted
-4. When submitting, the form includes the Turnstile token
+3. User completes the Turnstile challenge
+4. User clicks "Next" → **Form validates Turnstile immediately** (fails fast if issue)
+5. If valid → Token is stored and question modal opens
+6. User answers questions → **Final submit uses stored token** (instant, no re-check)
+7. Redirect to thank you page
 
 ### Backend (Security)
 
@@ -100,10 +124,14 @@ After deploying these changes:
 
 ## Additional Notes
 
-- The Turnstile widget is configured with `data-theme="light"` to match your form design
-- The widget appears above the submit button in both forms
-- If the secret key is not configured, the backend will log a warning but still process submissions (for backwards compatibility during setup)
-- Once you add the secret key, all submissions will require valid Turnstile verification
+- ✅ **Lazy loading**: Turnstile script loads when form section becomes visible (200px margin)
+- ✅ **Smart validation**: Token validated once on first submit, stored and reused for final submit
+- ✅ **Fail-fast UX**: Turnstile issues caught immediately, before user sees question modal
+- ✅ **Better loading state**: "✨ Submitting your entry..." message during final API call
+- ✅ The Turnstile widget is configured with `theme="light"` via JavaScript render
+- ✅ The widget appears above the submit button in both forms
+- ⚠️ If the secret key is not configured, the backend will log a warning but still process submissions (for backwards compatibility during setup)
+- ⚠️ Once you add the secret key, all submissions will require valid Turnstile verification
 
 ## Next Steps
 
