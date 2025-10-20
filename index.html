@@ -2165,60 +2165,15 @@ try {
                     size: 'normal',
                     retry: 'auto',
                     'refresh-expired': 'auto',
-                    callback: async function(token) {
+                    callback: function(token) {
                         window.turnstileToken = token;
+                        console.log('✅ Turnstile completed - token received');
                         
-                        // Update message to show we're validating
+                        // Show the form immediately (server will validate on submission)
+                        if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
                         if (verificationMessage) {
-                            verificationMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validating your verification...';
-                            verificationMessage.style.color = 'var(--primary-color-theme)';
-                        }
-                        
-                        // Validate token with server endpoint IMMEDIATELY
-                        try {
-                            console.log('🔍 Validating Turnstile token with server...');
-                            const validationResponse = await fetch('https://sgturnstile.replit.app/api/validate', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    siteId: config.settings.turnsiteSiteKey,
-                                    token: token,
-                                    remoteIp: '' // Client doesn't have access to real IP
-                                })
-                            });
-                            
-                            const validationResult = await validationResponse.json();
-                            console.log('Validation response:', validationResult);
-                            
-                            if (validationResponse.ok && validationResult.success) {
-                                // Valid! Show the form
-                                console.log('✅ Turnstile validation successful - showing form');
-                                if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
-                                if (verificationMessage) {
-                                    verificationMessage.innerHTML = '<i class="fas fa-check-circle"></i> Verified! You can now enter the giveaway.';
-                                    verificationMessage.style.color = 'var(--secondary-color-theme)';
-                                }
-                            } else {
-                                // Invalid! Don't show form
-                                console.error('❌ Turnstile validation failed:', validationResult);
-                                window.turnstileToken = null;
-                                if (verificationMessage) {
-                                    verificationMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Verification failed. Please try again.';
-                                    verificationMessage.style.color = '#ff6b6b';
-                                }
-                                // Reset the widget so they can try again
-                                if (turnstileWidgetId !== null) {
-                                    setTimeout(() => turnstile.reset(turnstileWidgetId), 2000);
-                                }
-                            }
-                        } catch (error) {
-                            console.error('⚠️ Validation service error:', error);
-                            // Validation service error - show form with warning (lenient mode)
-                            if (giveawayForm) giveawayForm.classList.remove('form-inputs-hidden');
-                            if (verificationMessage) {
-                                verificationMessage.innerHTML = '<i class="fas fa-info-circle"></i> Verification service unavailable. Proceeding with caution...';
-                                verificationMessage.style.color = '#ffa500';
-                            }
+                            verificationMessage.innerHTML = '<i class="fas fa-check-circle"></i> Verified! You can now enter the giveaway.';
+                            verificationMessage.style.color = 'var(--secondary-color-theme)';
                         }
                     },
                     'error-callback': function() {
