@@ -482,10 +482,6 @@
                             <label for="entryFormSocialSharePrompt">Social Share Prompt Text:</label>
                             <textarea id="entryFormSocialSharePrompt" name="entryFormSocialSharePrompt"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="entryFormConsentLabel">Consent Label Override (HTML allowed, leave blank to use default):</label>
-                            <textarea id="entryFormConsentLabel" name="entryFormConsentLabel" placeholder="Leave blank to use default consent text"></textarea>
-                        </div>
                          <!-- Note: Share platform URLs are generated dynamically in the main page script -->
                         <div class="form-group">
                             <label for="giveawayName">Giveaway Name (for internal reference, modal):</label>
@@ -658,6 +654,10 @@
                         <div class="form-group">
                             <label for="settingsFacebookPixelId">Facebook Pixel ID:</label>
                             <input type="text" id="settingsFacebookPixelId" name="settingsFacebookPixelId" placeholder="Enter your Facebook Pixel ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsTurnstileSiteKey">Cloudflare Turnstile Site Key (Bot Protection):</label>
+                            <input type="text" id="settingsTurnstileSiteKey" name="settingsTurnstileSiteKey" placeholder="Enter your Turnstile Site Key (e.g., 0x4AAAAAAB...)">
                         </div>
                     </div>
 
@@ -1009,7 +1009,6 @@
                 renderDynamicItems('modalQuestionsContainer', c.modalQuestions, createModalQuestionInputs, addModalQuestion);
             }
             setVal('entryFormSocialSharePrompt', c.entryForm?.socialSharePrompt);
-            setVal('entryFormConsentLabel', c.entryForm?.consentLabel);
             setVal('giveawayName', c.giveaway?.name);
             setVal('giveawaySuccessModalHeaderText', c.giveaway?.successModalHeaderText);
             setVal('giveawaySuccessModalMainMessage', c.giveaway?.successModalMainMessage);
@@ -1047,6 +1046,7 @@
             setVal('deploymentNetlifyUrl', c.deploymentInfo?.netlifyUrl);
             setVal('deploymentNetlifyId', c.deploymentInfo?.netlifyId);
             setVal('settingsFacebookPixelId', c.settings?.facebookPixelId);
+            setVal('settingsTurnstileSiteKey', c.settings?.turnstileSiteKey);
 
             // 8. Automations Panel
             setVal('settingsGhlWebhookUrl', c.settings?.ghlWebhookUrl);
@@ -1170,7 +1170,6 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                     }
                 });
                 updatedConfig.entryForm.socialSharePrompt = getVal('entryFormSocialSharePrompt');
-                updatedConfig.entryForm.consentLabel = getVal('entryFormConsentLabel');
                 updatedConfig.giveaway.name = getVal('giveawayName');
                 updatedConfig.giveaway.successModalHeaderText = getVal('giveawaySuccessModalHeaderText');
                 updatedConfig.giveaway.successModalMainMessage = getVal('giveawaySuccessModalMainMessage');
@@ -1214,6 +1213,7 @@ thankYouPage: { socialLinks: {} }, // Initialize thankYouPage
                 // 8. Automations Panel
                 updatedConfig.settings.ghlWebhookUrl = getVal('settingsGhlWebhookUrl');
                 updatedConfig.settings.facebookPixelId = getVal('settingsFacebookPixelId');
+                updatedConfig.settings.turnstileSiteKey = getVal('settingsTurnstileSiteKey');
                 updatedConfig.settings.salesGeniusAppApi = getVal('settingsSalesGeniusAppApi');
                 updatedConfig.settings.followUpBossEmail = getVal('settingsFollowUpBossEmail');
 // 9. Thank You Page Panel

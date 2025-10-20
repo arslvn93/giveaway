@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="config.js"></script>
     <script>
@@ -234,31 +233,19 @@
         .secure-row { display: flex; align-items: center; gap: 10px; color: #586072; font-size: 13px; margin-top: 8px; }
         .secure-row i { color: #7DFFA7; }
 
-        /* --- TURNSTILE STYLES --- */
-        .turnstile-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-            text-align: center;
-        }
-        .turnstile-container h3 {
-            font-size: 1.25rem;
-            color: #0b0d17;
-            margin-bottom: 0.75rem;
-        }
-        .turnstile-container p {
-            font-size: 0.9rem;
-            color: #586072;
-            margin-bottom: 1.5rem;
-        }
-        #giveawayEntryForm.hidden {
-            display: none;
-        }
-        .turnstile-container.hidden {
-            display: none;
-        }
+        /* Turnstile Verification Gate */
+        .verification-gate { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px; background: rgba(255,255,255,0.05); border: 1px solid var(--stroke); border-radius: 16px; margin-bottom: 20px; }
+        .verification-gate h3 { color: var(--text); font-size: 18px; margin: 0; text-align: center; }
+        .verification-gate p { color: var(--muted); font-size: 14px; margin: 0; text-align: center; }
+        .verification-gate.verified { display: none; }
+        .entry-card form { display: none; }
+        .entry-card form.verified { display: grid; }
+        
+        /* Honeypot field - invisible but accessible to bots */
+        .honeypot-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        
+        /* Verification loading state */
+        .verification-gate.loading { opacity: 0.6; pointer-events: none; }
 
         /* Footer (redesigned) */
         footer#footer-contact { position: relative; border-top: 1px solid var(--stroke); background: radial-gradient(60% 60% at 50% 10%, rgba(108,124,255,0.08), rgba(10,13,26,0.9)); padding: 48px 0; color: var(--muted); }
@@ -492,17 +479,14 @@
                             </div>
                             <div class="entry-divider"></div>
                             
-                            <!-- Turnstile Verification -->
-                            <div class="turnstile-container" id="turnstileContainer">
-                                <h3>🔒 Verify You're Human</h3>
-                                <p>Please complete this quick verification to proceed with your entry.</p>
-                                <div class="cf-turnstile" 
-                                     data-sitekey="0x4AAAAAAAzNuRW8DlxyZgJ2" 
-                                     data-callback="onTurnstileSuccess"
-                                     data-theme="auto"></div>
+                            <!-- Verification Gate (shows first) -->
+                            <div class="verification-gate" id="verificationGate">
+                                <h3><i class="fas fa-shield-check"></i> Security Verification</h3>
+                                <p>Please complete the verification below to access the entry form</p>
+                                <div id="turnstileWidget"></div>
                             </div>
                             
-                            <form id="giveawayEntryForm" class="hidden">
+                            <form id="giveawayEntryForm">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="fullName">Full Name</label>
@@ -517,6 +501,13 @@
                                 <label for="phoneNumber">Phone Number</label>
                                 <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., (555) 123-4567" required autocomplete="tel" inputmode="tel">
                             </div>
+                            
+                            <!-- Honeypot field (invisible, bots will fill it) -->
+                            <div class="honeypot-field">
+                                <label for="website">Website</label>
+                                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                            </div>
+                            
                             <div class="consent">
                                 <input type="checkbox" id="contactConsent" name="contactConsent" required>
                                 <label for="contactConsent" id="contactConsentLabel">I agree to be contacted...</label>
@@ -624,26 +615,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-    // Turnstile callback - runs when user successfully verifies
-    window.onTurnstileSuccess = function(token) {
-        // Hide the Turnstile container
-        const turnstileContainer = document.getElementById('turnstileContainer');
-        if (turnstileContainer) {
-            turnstileContainer.classList.add('hidden');
-        }
-        
-        // Show the form
-        const form = document.getElementById('giveawayEntryForm');
-        if (form) {
-            form.classList.remove('hidden');
-        }
-        
-        // Track the verification in Facebook Pixel if available
-        if (typeof fbq === 'function') {
-            fbq('track', 'TurnstileVerified');
-        }
-    };
-
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof config === 'undefined') { alert('Missing config.js'); return; }
 
@@ -655,6 +626,11 @@
         const successModal = document.getElementById('successModalOverlay');
         const modalClose = document.getElementById('modalCloseBtn');
         const myConfettiInstance = (typeof confetti === 'function' && document.getElementById('confetti-canvas')) ? confetti.create(document.getElementById('confetti-canvas'), { resize: true, useWorker: true }) : null;
+        
+        // Turnstile variables
+        let turnstileToken = null;
+        const verificationGate = document.getElementById('verificationGate');
+        const giveawayForm = document.getElementById('giveawayEntryForm');
 
         function setText(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.textContent = value; }
         function setHTML(id, value) { const el = document.getElementById(id); if (el && value !== undefined) el.innerHTML = value; }
@@ -667,6 +643,73 @@
             const primary = config.settings?.primaryColorOverride; const secondary = config.settings?.secondaryColorOverride;
             if (primary && /^#([0-9A-Fa-f]{3}){1,2}$/.test(primary)) document.body.style.setProperty('--primary', primary);
             if (secondary && /^#([0-9A-Fa-f]{3}){1,2}$/.test(secondary)) document.body.style.setProperty('--primary-2', secondary);
+        })();
+        
+        // Initialize Cloudflare Turnstile
+        (function initTurnstile(){
+            if (!config.settings?.turnstileSiteKey) {
+                console.warn('Turnstile site key not configured, skipping verification');
+                // If no Turnstile configured, show form immediately
+                if (verificationGate) verificationGate.classList.add('verified');
+                if (giveawayForm) giveawayForm.classList.add('verified');
+                return;
+            }
+            
+            // Wait for Turnstile API to load
+            const checkTurnstile = setInterval(() => {
+                if (typeof turnstile !== 'undefined') {
+                    clearInterval(checkTurnstile);
+                    try {
+                        turnstile.render('#turnstileWidget', {
+                            sitekey: config.settings.turnstileSiteKey,
+                            theme: config.settings?.theme === 'light' ? 'light' : 'dark',
+                            size: 'normal',
+                            callback: function(token) {
+                                turnstileToken = token;
+                                // Verification successful - show the form
+                                if (verificationGate) {
+                                    verificationGate.classList.add('verified');
+                                }
+                                if (giveawayForm) {
+                                    giveawayForm.classList.add('verified');
+                                }
+                                console.log('Turnstile verification successful');
+                            },
+                            'error-callback': function() {
+                                console.error('Turnstile verification failed');
+                                alert('Security verification failed. Please refresh the page and try again.');
+                            },
+                            'expired-callback': function() {
+                                turnstileToken = null;
+                                console.warn('Turnstile token expired');
+                                // Hide form again if token expires
+                                if (verificationGate) {
+                                    verificationGate.classList.remove('verified');
+                                }
+                                if (giveawayForm) {
+                                    giveawayForm.classList.remove('verified');
+                                }
+                            }
+                        });
+                    } catch (e) {
+                        console.error('Failed to initialize Turnstile:', e);
+                        // Fallback: show form anyway
+                        if (verificationGate) verificationGate.classList.add('verified');
+                        if (giveawayForm) giveawayForm.classList.add('verified');
+                    }
+                }
+            }, 100);
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                clearInterval(checkTurnstile);
+                if (typeof turnstile === 'undefined') {
+                    console.error('Turnstile API failed to load');
+                    // Fallback: show form anyway
+                    if (verificationGate) verificationGate.classList.add('verified');
+                    if (giveawayForm) giveawayForm.classList.add('verified');
+                }
+            }, 10000);
         })();
 
         // Populate hero
@@ -888,22 +931,7 @@
         } catch(e){ console.error(e); }})();
 
         // Consent label
-        (function populateConsent(){ 
-            const consentLabel = document.getElementById('contactConsentLabel'); 
-            if (!consentLabel) return; 
-            
-            // Check if there's a custom consent label override
-            const customConsentLabel = config?.entryForm?.consentLabel;
-            if (customConsentLabel && customConsentLabel.trim() !== '') {
-                // Use the custom consent label from config
-                consentLabel.innerHTML = customConsentLabel;
-            } else {
-                // Use the default consent label
-                const brokerageName = config?.footerContact?.brokerageName || 'the brokerage'; 
-                const privacyPolicyLink = config?.meta?.privacyPolicyLink || '#'; 
-                consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.`; 
-            }
-        })();
+        (function populateConsent(){ const consentLabel = document.getElementById('contactConsentLabel'); if (!consentLabel) return; const brokerageName = config.footerContact?.brokerageName || 'the brokerage'; const privacyPolicyLink = config.meta?.privacyPolicyLink || '#'; consentLabel.innerHTML = `I agree to be contacted by ${brokerageName} via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${privacyPolicyLink}" target="_blank" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.`; })();
 
         // Entry form copy
         (function populateEntryForm(){ try { if (!config.entryForm) return; setText('entryFormSubtitle', config.entryForm.subtitle); setText('entryFormCount', config.entryForm.entryCountText); const subBtnTxt = submitButton?.querySelector('.button-text'); if (subBtnTxt) subBtnTxt.textContent = 'Next'; } catch(e){ console.error(e);} })();
@@ -917,17 +945,32 @@
 
         function hideGiveawayQuestionModal(){ if (questionModalOverlay) questionModalOverlay.classList.remove('visible'); }
         function showGiveawayQuestionModal(){ if (!questionModalOverlay || !config?.modalQuestions?.length) { const entry = document.getElementById('entry-form'); if (entry) entry.scrollIntoView({behavior:'smooth'}); return; } currentQuestionStepIndex = 0; collectedQuestionAnswers = {}; if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = ''; questionModalOverlay.classList.add('visible'); displayGiveawayQuestionStep(currentQuestionStepIndex); }
-        async function submitFullEntry(){ const finalPayload = { fullName: storedFullName, email: storedEmail, phoneNumber: storedPhoneNumber, giveawayName: config.giveaway?.name || 'N/A', submittedAt: new Date().toISOString(), questions: [], deploymentInfo: config.deploymentInfo || {}, ghlWebhookUrl: config.settings?.ghlWebhookUrl || '', salesGeniusAppApi: config.settings?.salesGeniusAppApi || '', followUpBossEmail: config.settings?.followUpBossEmail || '', agentEmail: config.footerContact?.email || '' }; for (const qid in collectedQuestionAnswers) { const qObj = config.modalQuestions.find(q => q.id === qid); if (qObj) { const opt = qObj.options.find(o => o.value === collectedQuestionAnswers[qid]); finalPayload.questions.push({ question: qObj.questionText, answer: opt ? opt.text : collectedQuestionAnswers[qid] }); } } const functionUrl = '/.netlify/functions/submit-entry'; try { const res = await fetch(functionUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(finalPayload) }); if (!res.ok) { alert('There was an issue submitting your entry. Please try again.'); } else { window.location.href = 'thankyou.html'; } } catch (e) { console.error(e); alert('An error occurred while submitting your entry. Please try again.'); } }
+        async function submitFullEntry(){ const finalPayload = { fullName: storedFullName, email: storedEmail, phoneNumber: storedPhoneNumber, giveawayName: config.giveaway?.name || 'N/A', submittedAt: new Date().toISOString(), questions: [], deploymentInfo: config.deploymentInfo || {}, ghlWebhookUrl: config.settings?.ghlWebhookUrl || '', salesGeniusAppApi: config.settings?.salesGeniusAppApi || '', followUpBossEmail: config.settings?.followUpBossEmail || '', agentEmail: config.footerContact?.email || '', turnstileToken: turnstileToken || '' }; for (const qid in collectedQuestionAnswers) { const qObj = config.modalQuestions.find(q => q.id === qid); if (qObj) { const opt = qObj.options.find(o => o.value === collectedQuestionAnswers[qid]); finalPayload.questions.push({ question: qObj.questionText, answer: opt ? opt.text : collectedQuestionAnswers[qid] }); } } const functionUrl = '/.netlify/functions/submit-entry'; try { const res = await fetch(functionUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(finalPayload) }); if (!res.ok) { alert('There was an issue submitting your entry. Please try again.'); } else { window.location.href = 'thankyou.html'; } } catch (e) { console.error(e); alert('An error occurred while submitting your entry. Please try again.'); } }
         async function displayGiveawayQuestionStep(stepIndex){ if (!questionModalContent || !questionModalStepsContainer || !config) { console.error('Question modal structure missing'); hideGiveawayQuestionModal(); return; } questionModalStepsContainer.innerHTML = ''; if (stepIndex >= 0 && stepIndex < config.modalQuestions.length) { const q = config.modalQuestions[stepIndex]; const stepDiv = document.createElement('div'); stepDiv.classList.add('modal-step'); stepDiv.id = `giveaway-modal-step-${q.id}`; stepDiv.innerHTML = `<p class="question-text" id="giveawayModalStepTitle-${q.id}">${q.questionText}</p><div class="modal-options">${q.options.map(o => `<button type="button" class="modal-option-btn" data-step="${stepIndex}" data-question-id="${q.id}" data-answer="${o.value}">${o.text}</button>`).join('')}</div>`; stepDiv.querySelectorAll('.modal-option-btn').forEach(btn => btn.addEventListener('click', handleGiveawayAnswerClick)); questionModalStepsContainer.appendChild(stepDiv); setTimeout(() => stepDiv.classList.add('active'), 10); } else { if (questionModalStepsContainer) questionModalStepsContainer.innerHTML = '<p>Submitting your entry...</p>'; await submitFullEntry(); hideGiveawayQuestionModal(); } }
         function handleGiveawayAnswerClick(e){ try { const btn = e.currentTarget; const stepIndex = parseInt(btn.dataset.step, 10); const qid = btn.dataset.questionId; const ans = btn.dataset.answer; if (isNaN(stepIndex) || !qid || ans === undefined) return; collectedQuestionAnswers[qid] = ans; const current = btn.closest('.modal-options'); if (current) { current.querySelectorAll('.modal-option-btn').forEach(b => { b.classList.remove('selected'); b.disabled = true; }); btn.classList.add('selected'); } const activeStep = questionModalStepsContainer.querySelector('.modal-step.active'); if (activeStep) { activeStep.style.transition = 'opacity 0.3s ease-out'; activeStep.style.opacity = '0'; setTimeout(() => displayGiveawayQuestionStep(stepIndex + 1), 300); } else { setTimeout(() => displayGiveawayQuestionStep(stepIndex + 1), 300); } } catch(err){ console.error(err); hideGiveawayQuestionModal(); } }
         if (questionModalCloseBtn) questionModalCloseBtn.addEventListener('click', hideGiveawayQuestionModal);
         if (questionModalOverlay) questionModalOverlay.addEventListener('click', (evt) => { if (evt.target === questionModalOverlay) hideGiveawayQuestionModal(); });
 
         // Form submission → open questions modal
-        const giveawayForm = document.getElementById('giveawayEntryForm');
         if (giveawayForm && submitButton) {
             giveawayForm.addEventListener('submit', (e) => {
                 e.preventDefault(); if (submitButton.disabled) return;
+                
+                // HONEYPOT CHECK: If the "website" field is filled, it's a bot
+                const honeypotValue = document.getElementById('website')?.value;
+                if (honeypotValue && honeypotValue.trim() !== '') {
+                    console.warn('Bot detected via honeypot field');
+                    // Silently fail - don't give bots feedback
+                    submitButton.disabled = false;
+                    return;
+                }
+                
+                // TURNSTILE CHECK: Verify token exists
+                if (config.settings?.turnstileSiteKey && !turnstileToken) {
+                    alert('Please complete the security verification first.');
+                    return;
+                }
+                
                 const fullNameValue = document.getElementById('fullName')?.value.trim();
                 const emailValue = document.getElementById('email')?.value.trim();
                 const phoneNumberValue = document.getElementById('phoneNumber')?.value.trim();
