@@ -887,7 +887,8 @@
                 followUpBossEmail: config.settings?.followUpBossEmail || '', 
                 agentEmail: config.footerContact?.email || '', 
                 turnstileToken: turnstileToken || '', 
-                turnsiteSiteKey: config.settings?.turnsiteSiteKey || '' 
+                turnsiteSiteKey: config.settings?.turnsiteSiteKey || '',
+                turnstileReplitSiteId: config.settings?.turnstileReplitSiteId || ''
             }; 
             
             for (const qid in collectedQuestionAnswers) { 
@@ -973,13 +974,14 @@
                         const startTime = performance.now();
                         try {
                             const payload = {
-                                siteId: config.settings.turnsiteSiteKey,
+                                siteId: config.settings.turnstileReplitSiteId || config.settings.turnsiteSiteKey,
                                 token: token,
                                 remoteIp: ''
                             };
                             
                             console.log('🔍 Starting validation...');
                             console.log('📦 Payload:', payload);
+                            console.log('🔑 Using Replit Site ID (not Cloudflare key)');
                             console.log('🌐 Endpoint: https://sgturnstile.replit.app/api/validate');
                             
                             // 5 second timeout (increased for testing)

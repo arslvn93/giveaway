@@ -15,15 +15,19 @@ exports.handler = async (event, context) => {
         const submissionData = JSON.parse(event.body);
         
         // Validate Turnstile token if present
-        if (submissionData.turnstileToken && submissionData.turnsiteSiteKey) {
+        if (submissionData.turnstileToken && (submissionData.turnstileReplitSiteId || submissionData.turnsiteSiteKey)) {
             const turnstileValidationUrl = 'https://sgturnstile.replit.app/api/validate';
             
             // Get the visitor's IP address
             const remoteIp = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || 'unknown';
             
+            // Use Replit Site ID, not Cloudflare Site Key
+            const replitSiteId = submissionData.turnstileReplitSiteId || submissionData.turnsiteSiteKey;
+            
             console.log('Attempting Turnstile validation...', {
                 hasToken: !!submissionData.turnstileToken,
-                hasSiteKey: !!submissionData.turnsiteSiteKey,
+                hasReplitSiteId: !!submissionData.turnstileReplitSiteId,
+                usingFallback: !submissionData.turnstileReplitSiteId,
                 remoteIp: remoteIp
             });
             
@@ -34,7 +38,7 @@ exports.handler = async (event, context) => {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        siteId: submissionData.turnsiteSiteKey,
+                        siteId: replitSiteId,
                         token: submissionData.turnstileToken,
                         remoteIp: remoteIp
                     })
