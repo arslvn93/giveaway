@@ -13,54 +13,54 @@ exports.handler = async (event, context) => {
     try {
         // Parse the incoming submission data
         const submissionData = JSON.parse(event.body);
-
-        // Verify Turnstile token using custom validation server
-        const turnstileToken = submissionData.turnstileToken;
-        const turnstilesiteId = process.env.TURNSTILE_SITE_ID;
-        const turnstileValidationUrl = process.env.TURNSTILE_VALIDATION_URL || 'https://sgturnstile.replit.app/api/validate';
-
-        if (!turnstileToken) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Security verification required' })
-            };
-        }
-
-        if (turnstilesiteId) {
-            // Get visitor's IP address from Netlify headers
-            const visitorIp = event.headers['x-forwarded-for'] || event.headers['x-nf-client-connection-ip'] || '';
+        
+        // Validate Turnstile token if present
+        if (submissionData.turnstileToken && submissionData.turnsiteSiteKey) {
+            const turnstileValidationUrl = 'https://sgturnstile.replit.app/api/validate';
             
-            // Verify the Turnstile token with custom validation server
-            const verifyResponse = await fetch(turnstileValidationUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    siteId: turnstilesiteId,
-                    token: turnstileToken,
-                    remoteIp: visitorIp
-                })
-            });
-
-            const verifyResult = await verifyResponse.json();
+            // Get the visitor's IP address
+            const remoteIp = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || 'unknown';
             
-            if (!verifyResult.success) {
-                console.error('Turnstile verification failed:', verifyResult);
+            try {
+                const turnstileResponse = await fetch(turnstileValidationUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        siteId: submissionData.turnsiteSiteKey,
+                        token: submissionData.turnstileToken,
+                        remoteIp: remoteIp
+                    })
+                });
+                
+                const turnstileResult = await turnstileResponse.json();
+                
+                // Check if validation was successful
+                if (!turnstileResponse.ok || !turnstileResult.success) {
+                    console.error('Turnstile validation failed:', turnstileResult);
+                    return {
+                        statusCode: 403,
+                        body: JSON.stringify({ 
+                            error: 'Bot verification failed',
+                            details: 'Please refresh the page and try again.'
+                        })
+                    };
+                }
+                
+                console.log('Turnstile validation successful');
+            } catch (turnstileError) {
+                console.error('Turnstile validation error:', turnstileError);
+                // Fail closed - reject the submission if verification service is unavailable
                 return {
-                    statusCode: 403,
+                    statusCode: 503,
                     body: JSON.stringify({ 
-                        error: 'Security verification failed. Please try again.',
-                        details: verifyResult.message || verifyResult['error-codes'] || 'Verification failed'
+                        error: 'Verification service unavailable',
+                        details: 'Please try again in a moment.'
                     })
                 };
             }
-        } else {
-            console.warn('TURNSTILE_SITE_ID not configured in environment variables');
         }
-
-        // Remove the Turnstile token from the submission data before forwarding
-        delete submissionData.turnstileToken;
 
         // Get credentials from environment variables (set in Netlify dashboard)
         const username = process.env.N8N_USERNAME?.trim();

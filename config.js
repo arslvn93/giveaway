@@ -31,7 +31,8 @@ const config = {
     "facebookPixelId": "1057475448873422",
     "salesGeniusAppApi": "",
     "followUpBossEmail": "",
-    "webhookUrl": "/.netlify/functions/admin-update"
+    "webhookUrl": "/.netlify/functions/admin-update",
+    "turnsiteSiteKey": "0x4AAAAAAB5SpbWeBo7JnEIs"
   },
   "prize": {
     "images": [
