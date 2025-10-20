@@ -1718,7 +1718,10 @@ function populateNewFooterData() {
                     }
                 }
 
-                // console.log("Final combined data to be sent:", JSON.stringify(finalPayload, null, 2));
+                console.log('Submitting entry with payload:', {
+                    ...finalPayload,
+                    turnstileToken: finalPayload.turnstileToken ? 'present' : 'missing'
+                });
                 
                 // Use Netlify Function as secure proxy (keeps auth credentials server-side)
                 const functionUrl = "/.netlify/functions/submit-entry";
@@ -1732,17 +1735,19 @@ function populateNewFooterData() {
                         body: JSON.stringify(finalPayload)
                     });
 
+                    console.log('Response status:', response.status);
+
                     if (!response.ok) {
                         const responseData = await response.json().catch(() => ({ error: 'Unknown error' }));
                         console.error("Submission failed:", response.status, responseData);
-                        alert('There was an issue submitting your entry. Please try again.');
+                        alert(`Submission failed: ${responseData.error || 'Please try again.'}\n${responseData.details || ''}`);
                     } else {
-                        // console.log("Submission successful. Redirecting to thank you page.");
+                        console.log("Submission successful. Redirecting to thank you page.");
                         window.location.href = 'thankyou.html';
                     }
                 } catch (error) {
                     console.error("Submission error:", error);
-                    alert('An error occurred while submitting your entry. Please check your connection and try again.');
+                    alert('Network error: Could not reach the server. Please check your connection and try again.');
                 }
             }
 
@@ -2157,6 +2162,9 @@ try {
                 turnstileWidgetId = turnstile.render(turnstileContainer, {
                     sitekey: config.settings.turnsiteSiteKey,
                     theme: config.settings.theme === 'dark' ? 'dark' : 'light',
+                    size: 'normal',
+                    retry: 'auto',
+                    'refresh-expired': 'auto',
                     callback: function(token) {
                         window.turnstileToken = token;
                         // Show the form inputs
