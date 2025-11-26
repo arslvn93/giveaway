@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reservation | Exclusive Entry</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Playfair Display (Editorial) & DM Sans (Clean) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Security -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    
+    <!-- Animation Stack -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Config -->
+    <script src="config.js"></script>
+
+    <!-- Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    if(typeof config!=='undefined'&&config.settings&&config.settings.facebookPixelId){fbq('init',config.settings.facebookPixelId);} fbq('track','PageView');
+    </script>
+
+    <style>
+        :root {
+            --bg: #F2F0E9; /* Alabaster */
+            --ink: #2C3E2E; /* Deep Olive */
+            --accent: #B85C38; /* Terracotta */
+            --line: rgba(44, 62, 46, 0.1);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
+        }
+
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        /* SMOOTH SCROLL */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+
+        /* TEXTURE */
+        .paper-texture {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            opacity: 0.4; pointer-events: none; z-index: 9000;
+        }
+
+        /* CURSOR */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 12px; height: 12px;
+            background: var(--ink); border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); transition: transform 0.2s, opacity 0.2s;
+        }
+        body.hover-active #cursor { transform: translate(-50%, -50%) scale(4); opacity: 0.1; }
+
+        /* HERO REVEAL */
+        .reveal-text span { transform: translateY(100%); display: block; transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .loaded .reveal-text span { transform: translateY(0); }
+
+        /* HORIZONTAL SCROLL */
+        .horizontal-section { width: 400%; display: flex; flex-wrap: nowrap; height: 100vh; }
+        .h-panel { width: 100vw; height: 100vh; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--line); position: relative; }
+
+        /* STACKING CARDS */
+        .card-stack-container { padding-bottom: 10vh; }
+        .card-stack-item {
+            position: sticky; top: 120px;
+            background: #fff; border: 1px solid var(--line);
+            box-shadow: 0 10px 40px -10px rgba(44,62,46,0.1);
+            transform-origin: center top; transition: transform 0.5s;
+        }
+
+        /* BUTTONS */
+        .btn-reservation {
+            border: 1px solid var(--ink); padding: 1rem 2.5rem;
+            text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.8rem;
+            position: relative; overflow: hidden; transition: color 0.4s;
+        }
+        .btn-reservation::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--ink); transform: scaleX(0); transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1); z-index: -1;
+        }
+        .btn-reservation:hover::before { transform: scaleX(1); transform-origin: left; }
+        .btn-reservation:hover { color: var(--bg); }
+
+        /* GUESTBOOK FORM */
+        .input-line {
+            background: transparent; border: none; border-bottom: 1px solid var(--line);
+            width: 100%; padding: 1.5rem 0; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic;
+            color: var(--ink); transition: border-color 0.3s;
+        }
+        .input-line:focus { outline: none; border-color: var(--accent); }
+        .input-line::placeholder { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; color: #999; }
+
+        /* LOADER */
+        #preloader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="paper-texture"></div>
+    <div id="cursor"></div>
+    <canvas id="confetti-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9001;"></canvas>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="text-center">
+            <span class="block font-serif italic text-2xl text-[#B85C38] mb-2">The Experience</span>
+            <div class="overflow-hidden h-12">
+                <h1 class="font-serif text-4xl uppercase tracking-widest translate-y-full transition-transform duration-1000" id="loaderText">Loading</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-darken opacity-0 transition-opacity duration-1000" id="mainNav">
+        <div class="font-serif text-xl tracking-widest uppercase cursor-pointer hover-trigger" id="navBrand">Giveaway</div>
+        <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest font-medium">
+            <a href="#menu" class="hover-trigger">The Menu</a>
+            <a href="#protocol" class="hover-trigger">Protocol</a>
+            <a href="#reservation" class="border-b border-black pb-1 hover-trigger">Reserve Table</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="relative h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden">
+        <!-- Split Layout BG -->
+        <div class="absolute inset-0 grid grid-cols-2 z-0">
+            <div class="bg-[#F2F0E9]"></div> <!-- Left -->
+            <div class="relative overflow-hidden">
+                <!-- Right Image -->
+                <div id="hero-img" class="absolute inset-0 bg-cover bg-center scale-110 transition-transform duration-[3s] grayscale opacity-80"></div>
+                <div class="absolute inset-0 bg-[#2C3E2E]/10"></div>
+            </div>
+        </div>
+
+        <!-- Content Overlay -->
+        <div class="relative z-10 bg-white p-12 md:p-20 shadow-2xl max-w-2xl border border-[#eee]">
+            <div class="mb-8 text-center">
+                <span class="font-serif italic text-[#B85C38] text-xl block mb-2 reveal-text"><span>An Invitation</span></span>
+            </div>
+            
+            <h1 class="font-serif text-5xl md:text-7xl leading-[0.9] mb-8 text-[#2C3E2E]">
+                <div class="overflow-hidden reveal-text"><span id="heroTitle1">THE</span></div>
+                <div class="overflow-hidden reveal-text"><span class="italic" id="heroTitle2">DINNER</span></div>
+            </h1>
+
+            <div class="overflow-hidden mb-10">
+                <p class="reveal-text text-sm leading-relaxed text-gray-500 max-w-md mx-auto">
+                    <span id="heroSubtitle">Loading details...</span>
+                </p>
+            </div>
+
+            <div class="opacity-0 transition-opacity duration-1000 delay-700 fade-el">
+                <a href="#reservation" class="btn-reservation inline-block hover-trigger" id="heroCta">
+                    Request Reservation
+                </a>
+                <p class="mt-6 text-[10px] uppercase tracking-widest text-gray-400" id="heroDates">Dates...</p>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="absolute bottom-8 left-8 z-20 hidden md:block opacity-0 fade-el delay-1000">
+            <div class="flex gap-8 font-serif text-2xl text-[#2C3E2E]">
+                <div><span id="d">00</span><span class="text-[8px] font-sans uppercase block">Days</span></div>
+                <div><span id="h">00</span><span class="text-[8px] font-sans uppercase block">Hrs</span></div>
+                <div><span id="m">00</span><span class="text-[8px] font-sans uppercase block">Mins</span></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- THE MENU (Horizontal Scroll) -->
+    <section id="menu" class="relative h-screen overflow-hidden bg-[#F9F9F7]">
+        <div class="absolute top-8 left-8 z-20">
+            <h2 class="font-serif text-3xl text-[#2C3E2E]">The Menu</h2>
+            <p class="text-[10px] uppercase tracking-widest text-[#B85C38] mt-1" id="prizeValue">Value</p>
+        </div>
+
+        <div class="horizontal-section" id="menuTrack">
+            
+            <!-- Panel 1: Intro -->
+            <div class="h-panel border-r border-[#e5e5e5]">
+                <div class="max-w-xl px-6">
+                    <span class="text-xs font-bold uppercase tracking-widest text-[#B85C38] mb-6 block">First Course</span>
+                    <h3 class="font-serif text-6xl md:text-8xl mb-8" id="prizeName">Prize</h3>
+                    <div class="w-20 h-[1px] bg-[#2C3E2E] mb-8"></div>
+                    <p class="text-lg text-[#555] leading-relaxed font-serif italic" id="prizeDesc">Description...</p>
+                </div>
+            </div>
+
+            <!-- Panel 2: Ingredients (Inclusions) -->
+            <div class="h-panel bg-white">
+                <div class="grid md:grid-cols-2 w-full h-full">
+                    <div class="p-16 flex flex-col justify-center">
+                        <h3 class="font-serif text-5xl mb-12">Accompaniments</h3>
+                        <ul class="space-y-6" id="prizeIncludes">
+                            <!-- JS Populates -->
+                        </ul>
+                    </div>
+                    <div class="relative overflow-hidden border-l border-[#e5e5e5]">
+                        <div class="absolute inset-0 bg-cover bg-center hover:scale-105 transition-transform duration-[2s]" id="prizeImg2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3: The Table (Visuals) -->
+            <div class="h-panel p-0">
+                <div class="w-full h-full relative">
+                    <div class="absolute inset-0 bg-cover bg-center" id="prizeImg3"></div>
+                    <div class="absolute inset-0 bg-black/20"></div>
+                    <div class="absolute center-absolute text-center text-white z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <p class="font-serif italic text-2xl mb-4">A Seat at the Table</p>
+                        <h3 class="font-serif text-7xl">Yours.</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 4: CTA -->
+            <div class="h-panel bg-[#2C3E2E] text-[#F2F0E9]">
+                <div class="text-center">
+                    <h3 class="font-serif text-6xl md:text-8xl mb-8">Bon Appétit</h3>
+                    <a href="#reservation" class="btn-reservation border-[#F2F0E9] text-[#F2F0E9] hover:text-[#2C3E2E] hover:bg-[#F2F0E9] hover-trigger">
+                        Confirm Reservation
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- THE PROTOCOL (Stacking Cards) -->
+    <section id="protocol" class="py-32 px-6 bg-[#F2F0E9]">
+        <div class="text-center mb-24">
+            <span class="text-xs font-bold uppercase tracking-widest text-[#B85C38]">Etiquette</span>
+            <h2 class="font-serif text-5xl mt-4 text-[#2C3E2E]">How To Attend</h2>
+        </div>
+
+        <div class="max-w-3xl mx-auto card-stack-container" id="stackContainer">
+            <!-- JS Injects Cards -->
+        </div>
+    </section>
+
+    <!-- RESERVATION (Guestbook Form) -->
+    <section id="reservation" class="py-32 px-4 min-h-screen flex items-center justify-center bg-white border-t border-[#e5e5e5]">
+        <div class="max-w-2xl w-full p-8 md:p-16 border border-[#eee] shadow-xl relative bg-[#FCFCFA]">
+            <!-- Corner Accents -->
+            <div class="absolute top-4 left-4 w-4 h-4 border-t border-l border-[#2C3E2E]"></div>
+            <div class="absolute top-4 right-4 w-4 h-4 border-t border-r border-[#2C3E2E]"></div>
+            <div class="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-[#2C3E2E]"></div>
+            <div class="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-[#2C3E2E]"></div>
+
+            <div class="text-center mb-12">
+                <span class="font-serif italic text-2xl text-[#B85C38] mb-2 block">The Guestbook</span>
+                <h2 class="font-serif text-5xl uppercase tracking-wider">Reservation</h2>
+                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mt-4" id="entryCount">Capacity Limited</p>
+                <p class="text-sm text-gray-500 mt-2" id="formSubtitle">Please sign below.</p>
+            </div>
+
+            <div id="turnstileWidget" class="flex justify-center mb-10"></div>
+
+            <form id="giveawayEntryForm" class="space-y-8">
+                <div>
+                    <input type="text" id="fullName" class="input-line hover-trigger" placeholder="Name of Guest" required>
+                </div>
+                <div>
+                    <input type="email" id="email" class="input-line hover-trigger" placeholder="Correspondence (Email)" required>
+                </div>
+                <div>
+                    <input type="tel" id="phoneNumber" class="input-line hover-trigger" placeholder="Telephone" required>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" class="hidden">
+
+                <div class="flex items-center justify-center gap-3 pt-4 opacity-60 hover:opacity-100 transition-opacity">
+                    <input type="checkbox" id="contactConsent" required class="mt-1 accent-[#2C3E2E]">
+                    <label for="contactConsent" id="contactConsentLabel" class="text-xs text-gray-500 font-medium"></label>
+                </div>
+
+                <div class="text-center pt-12">
+                    <button type="submit" id="entryFormSubmitButton" class="btn-reservation w-full md:w-auto hover-trigger bg-[#2C3E2E] text-[#F2F0E9] border-none hover:bg-[#B85C38]">
+                        Confirm Seat
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-16 pt-8 border-t border-[#eee] text-center">
+                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6" id="socialPrompt">Extend Invitation</p>
+                <div class="flex justify-center gap-8 text-xl text-[#2C3E2E]" id="socialIcons"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-20 bg-[#2C3E2E] text-[#F2F0E9] border-t border-[#3A4F3D]">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+                
+                <div class="md:w-1/3">
+                    <img id="footerLogo" src="" alt="Logo" class="h-10 mb-6 filter invert opacity-80">
+                    <p class="text-xs leading-relaxed opacity-60" id="footerDisclaimer">Disclaimer...</p>
+                </div>
+
+                <div class="md:w-1/3">
+                    <h4 class="font-serif text-xl mb-6">Maître D'</h4>
+                    <div class="text-xs uppercase tracking-widest space-y-4 opacity-80">
+                        <p><span class="block text-[#B85C38] mb-1">Host</span> <span id="footerOrganizer">Name</span></p>
+                        <p><span class="block text-[#B85C38] mb-1">Venue</span> <span id="footerBrokerage">Brokerage</span></p>
+                        <p><span class="block text-[#B85C38] mb-1">Address</span> <span id="footerAddress">Address</span></p>
+                    </div>
+                </div>
+
+                <div class="md:w-1/3">
+                    <h4 class="font-serif text-xl mb-6">Inquiries</h4>
+                    <div class="space-y-4" id="faqContainer">
+                        <!-- JS Populates -->
+                    </div>
+                    <div class="mt-8 pt-8 border-t border-[#3A4F3D] text-[10px] uppercase tracking-widest opacity-50">
+                        <span id="footerCopyright">© 2025</span> | <a href="#" id="footerPrivacy" class="hover:text-white">Privacy</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="questionModal" class="fixed inset-0 z-[200] bg-[#F2F0E9]/95 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-white p-12 shadow-2xl border border-[#eee]">
+            <div class="text-center mb-8">
+                <span class="font-serif italic text-2xl text-[#B85C38]">Preferences</span>
+                <div class="h-[1px] w-12 bg-[#2C3E2E] mx-auto mt-4"></div>
+            </div>
+            <div id="qContainer"></div>
+            <div class="w-full bg-gray-100 h-1 mt-8"><div id="qProgress" class="h-full bg-[#2C3E2E] w-0 transition-all duration-500"></div></div>
+            <button id="closeQ" class="w-full mt-4 text-xs uppercase tracking-widest text-gray-400 hover:text-black">Cancel</button>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 z-[200] bg-[#2C3E2E] text-[#F2F0E9] hidden flex items-center justify-center p-4">
+        <div class="text-center max-w-md border border-[#F2F0E9]/20 p-12">
+            <div class="font-serif text-6xl italic mb-4">Merci</div>
+            <h2 class="text-sm uppercase tracking-[0.3em] mb-8" id="modalHeader">Confirmed</h2>
+            <p class="font-light text-lg text-gray-300 mb-8" id="modalMessage">Your reservation is set.</p>
+            <div class="h-[1px] w-16 bg-[#B85C38] mx-auto mb-8"></div>
+            <p class="text-[10px] uppercase tracking-widest opacity-50" id="modalPrompt">Check email</p>
+            <button class="mt-12 border-b border-[#F2F0E9] pb-1 text-xs uppercase tracking-widest hover:opacity-50 transition-opacity" onclick="location.reload()">Return</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. VISUALS ---
+        const lenis = new Lenis({ duration: 1.5, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+        document.querySelectorAll('.hover-trigger, a, button, input').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
+        });
+
+        // Preloader
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+            tl.to("#loaderText", { y: 0, duration: 1, ease: "power4.out" })
+              .to("#preloader", { y: "-100%", duration: 1.5, ease: "power2.inOut", delay: 0.5 })
+              .call(() => {
+                  document.body.classList.add('loaded');
+                  gsap.to(".fade-el", { opacity: 1, duration: 1, stagger: 0.2 });
+                  document.getElementById('mainNav').classList.remove('opacity-0');
+              });
+        });
+
+        // Horizontal Scroll
+        gsap.registerPlugin(ScrollTrigger);
+        if(window.innerWidth > 768) {
+            gsap.to("#menuTrack", {
+                xPercent: -100 * (4 - 1) / 4,
+                ease: "none",
+                scrollTrigger: { trigger: "#menu", pin: true, scrub: 1, snap: 1/(4-1), end: "+=3000" }
+            });
+        }
+
+        // --- 2. CONFIG ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config) return;
+
+            if(config.settings?.primaryColorOverride) {
+                document.documentElement.style.setProperty('--ink', config.settings.primaryColorOverride);
+            }
+
+            // HERO
+            if(config.giveaway) {
+                const t = (config.giveaway.name || "DINNER").split(" ");
+                const mid = Math.ceil(t.length/2);
+                document.getElementById('heroTitle1').innerText = t.slice(0,mid).join(" ");
+                document.getElementById('heroTitle2').innerText = t.slice(mid).join(" ");
+                
+                document.getElementById('heroSubtitle').innerText = config.giveaway.heroSubheadline;
+                document.getElementById('heroDates').innerText = config.giveaway.promotionDates;
+                document.getElementById('heroCta').innerText = config.giveaway.heroCtaText;
+                document.getElementById('navBrand').innerText = config.meta?.navBrandLogoText || "GIVEAWAY";
+
+                if(config.giveaway.heroBackgroundImageUrl) {
+                    document.getElementById('hero-img').style.backgroundImage = `url('${config.giveaway.heroBackgroundImageUrl}')`;
+                }
+                if(config.giveaway.endDate) startTimer(config.giveaway.endDate);
+            }
+
+            // PRIZE
+            if(config.prize) {
+                document.getElementById('prizeName').innerText = config.prize.name;
+                document.getElementById('prizeValue').innerText = `Fair Market Value: ${config.prize.value}`;
+                document.getElementById('prizeDesc').innerText = config.prize.description;
+
+                if(config.prize.images) {
+                    if(config.prize.images[1]) document.getElementById('prizeImg2').style.backgroundImage = `url('${config.prize.images[1].src}')`;
+                    if(config.prize.images[2]) document.getElementById('prizeImg3').style.backgroundImage = `url('${config.prize.images[2].src}')`;
+                    else if(config.prize.images[0]) document.getElementById('prizeImg3').style.backgroundImage = `url('${config.prize.images[0].src}')`;
+                }
+
+                if(config.prize.includedItems) {
+                    document.getElementById('prizeIncludes').innerHTML = config.prize.includedItems.map(i => 
+                        `<li class="flex items-center justify-between border-b border-gray-200 pb-2 text-sm text-[#555]">
+                            <span>${i.text}</span>
+                            <span class="font-serif italic text-[#B85C38]">Included</span>
+                        </li>`
+                    ).join('');
+                }
+            }
+
+            // STEPS (Stacking Cards)
+            if(config.howToEnter?.steps) {
+                const stack = document.getElementById('stackContainer');
+                config.howToEnter.steps.forEach((s, i) => {
+                    const card = document.createElement('div');
+                    card.className = "card-stack-item p-12 mb-8 max-w-3xl mx-auto";
+                    card.style.top = `${120 + (i*40)}px`;
+                    card.innerHTML = `
+                        <div class="text-center">
+                            <span class="font-serif italic text-2xl text-[#B85C38] mb-4 block">Step 0${i+1}</span>
+                            <h3 class="font-serif text-4xl mb-4 text-[#2C3E2E]">${s.title}</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed font-sans">${s.description}</p>
+                        </div>
+                    `;
+                    stack.appendChild(card);
+                });
+            }
+
+            // FORM
+            if(config.entryForm) {
+                document.getElementById('formSubtitle').innerText = config.entryForm.subtitle;
+                document.getElementById('socialPrompt').innerText = config.entryForm.socialSharePrompt;
+                document.getElementById('entryCount').innerText = config.entryForm.entryCountText;
+                
+                if(config.entryForm.sharePlatforms) {
+                    let html = '';
+                    for(const [k,v] of Object.entries(config.entryForm.sharePlatforms)) {
+                        html += `<a href="${v}" target="_blank" class="hover:text-[#B85C38] transition-colors"><i class="fab fa-${k}"></i></a>`;
+                    }
+                    document.getElementById('socialIcons').innerHTML = html;
+                }
+            }
+
+            // FOOTER & FAQ
+            if(config.footerContact) {
+                const fc = config.footerContact;
+                if(fc.organizerLogoUrl) document.getElementById('footerLogo').src = fc.organizerLogoUrl;
+                document.getElementById('footerOrganizer').innerText = fc.organizerName;
+                document.getElementById('footerBrokerage').innerText = fc.brokerageName;
+                document.getElementById('footerAddress').innerText = fc.address;
+                document.getElementById('footerDisclaimer').innerText = fc.footerDisclaimer;
+                
+                const em = document.getElementById('footerEmail'); em.innerText = fc.agentContact?.email; em.href = `mailto:${fc.agentContact?.email}`;
+                document.getElementById('footerCopyright').innerText = `© ${new Date().getFullYear()} ${fc.organizerName}`;
+                
+                const priv = config.meta?.privacyPolicyLink || "#";
+                document.getElementById('footerPrivacy').href = priv;
+                document.getElementById('contactConsentLabel').innerHTML = `I consent to contact from ${fc.brokerageName}. <a href="${priv}" target="_blank" class="underline">Privacy</a>.`;
+            }
+
+            if(config.rules?.faq) {
+                document.getElementById('faqContainer').innerHTML = config.rules.faq.map(f => `
+                    <div class="mb-4 border-b border-[#3A4F3D] pb-2">
+                        <p class="font-serif text-sm mb-1 text-[#F2F0E9]">${f.q}</p>
+                        <p class="text-[10px] text-gray-400">${f.a}</p>
+                    </div>
+                `).join('');
+            }
+
+            // COUNTDOWN
+            function startTimer(end) {
+                const t = new Date(end).getTime();
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const d = t - now;
+                    if(d<0) return;
+                    document.getElementById('d').innerText = Math.floor(d/(1000*60*60*24)).toString().padStart(2,'0');
+                    document.getElementById('h').innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+                    document.getElementById('m').innerText = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+                },1000);
+            }
+
+            // SUBMISSION
+            let turnstileToken = null;
+            let storedForm = {};
+            let qAnswers = {};
+
+            if(config.settings?.turnstileSiteKey) {
+                setTimeout(() => {
+                    try {
+                        turnstile.render('#turnstileWidget', {
+                            sitekey: config.settings.turnstileSiteKey,
+                            theme: 'light',
+                            callback: (t) => turnstileToken = t
+                        });
+                    } catch(e){}
+                }, 1500);
+            }
+
+            const form = document.getElementById('giveawayEntryForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if(document.getElementById('website').value) return;
+                if(config.settings?.turnstileSiteKey && !turnstileToken) { alert('Human verification required.'); return; }
+                
+                storedForm = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('phoneNumber').value
+                };
+
+                if(config.modalQuestions?.length > 0) openQ();
+                else finalSubmit();
+            });
+
+            const qModal = document.getElementById('questionModal');
+            const qCont = document.getElementById('qContainer');
+            
+            function openQ() {
+                qModal.classList.remove('hidden');
+                qModal.classList.add('flex');
+                renderQ(0);
+            }
+
+            function renderQ(idx) {
+                if(idx >= config.modalQuestions.length) {
+                    qModal.classList.add('hidden');
+                    qModal.classList.remove('flex');
+                    finalSubmit();
+                    return;
+                }
+                
+                const pct = ((idx)/config.modalQuestions.length)*100;
+                document.getElementById('qProgress').style.width = `${pct}%`;
+
+                const q = config.modalQuestions[idx];
+                qCont.innerHTML = `
+                    <h3 class="font-serif text-3xl text-[#2C3E2E] mb-8">${q.questionText}</h3>
+                    <div class="space-y-3">
+                        ${q.options.map(opt => `
+                            <button class="w-full py-4 border-b border-[#eee] text-left hover:text-[#B85C38] transition-colors font-serif italic text-lg q-btn" data-val="${opt.value}">
+                                ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                qCont.querySelectorAll('.q-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        qAnswers[q.id] = btn.dataset.val;
+                        renderQ(idx+1);
+                    });
+                });
+            }
+            document.getElementById('closeQ').addEventListener('click', () => qModal.classList.add('hidden'));
+
+            async function finalSubmit() {
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                
+                if(config.giveaway) {
+                    document.getElementById('modalHeader').innerText = config.giveaway.successModalHeaderText;
+                    document.getElementById('modalMessage').innerText = config.giveaway.successModalMainMessage;
+                    document.getElementById('modalPrompt').innerHTML = config.giveaway.successModalEmailPrompt;
+                }
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#C5A059', '#2C3E2E'] });
+            }
+        });
+    </script>
+</body>
+</html>

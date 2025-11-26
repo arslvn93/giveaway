@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibition No. 1 | Entry</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Cormorant Garamond (Fine Art) & Inter (Swiss) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Security -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    
+    <!-- Animation Stack -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Config -->
+    <script src="config.js"></script>
+
+    <!-- Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    if(typeof config!=='undefined'&&config.settings&&config.settings.facebookPixelId){fbq('init',config.settings.facebookPixelId);} fbq('track','PageView');
+    </script>
+
+    <style>
+        :root {
+            --bg: #F4F4F4; /* Gallery White */
+            --ink: #111111;
+            --border: #D6D6D6;
+            --accent: #0033FF; /* International Klein Blue */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .serif { font-family: 'Cormorant Garamond', serif; }
+
+        /* SMOOTH SCROLL */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+
+        /* UTILITIES */
+        .b-b { border-bottom: 1px solid var(--border); }
+        .b-t { border-top: 1px solid var(--border); }
+        .b-l { border-left: 1px solid var(--border); }
+        .b-r { border-right: 1px solid var(--border); }
+        
+        /* GRID */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 0;
+        }
+
+        /* IMAGES */
+        .art-piece {
+            filter: grayscale(100%);
+            transition: filter 0.5s ease, transform 1s ease;
+        }
+        .art-piece:hover { filter: grayscale(0%); transform: scale(1.02); }
+
+        /* BUTTONS */
+        .btn-museum {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid var(--ink);
+            padding: 1rem 3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+        .btn-museum::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--ink); transform: scaleX(0); transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1); z-index: -1;
+        }
+        .btn-museum:hover::before { transform: scaleX(1); transform-origin: left; }
+        .btn-museum:hover { color: var(--bg); }
+
+        /* HORIZONTAL SCROLL */
+        .horizontal-outer { overflow: hidden; width: 100vw; height: 100vh; }
+        .horizontal-inner { display: flex; flex-wrap: nowrap; height: 100%; }
+        .gallery-panel {
+            width: 100vw; height: 100%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            border-right: 1px solid var(--border);
+            padding: 4rem; position: relative;
+        }
+
+        /* FORM */
+        .input-label {
+            display: block; font-family: 'Inter', sans-serif; font-size: 0.65rem;
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;
+            color: #666;
+        }
+        .input-field {
+            width: 100%; background: transparent; border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem;
+            color: var(--ink); transition: border-color 0.3s; border-radius: 0;
+        }
+        .input-field:focus { outline: none; border-color: var(--accent); }
+
+        /* LOADER */
+        #preloader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .loader-line {
+            width: 1px; height: 0; background: var(--ink);
+            transition: height 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9998;"></canvas>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="text-center">
+            <div class="text-xs font-mono mb-4 tracking-widest">LOADING EXHIBITION</div>
+            <div class="h-32 w-[1px] bg-[#ddd] mx-auto relative overflow-hidden">
+                <div class="loader-line absolute top-0 left-0 w-full" id="loaderBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 border-b border-[#e5e5e5] bg-[#F4F4F4]/90 backdrop-blur-sm">
+        <div class="text-sm font-bold uppercase tracking-tight" id="navBrand">GIVEAWAY</div>
+        <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest">
+            <span id="navDate">Dates Loading...</span>
+            <a href="#entry" class="hover:text-[#0033FF] transition-colors">Acquire Entry</a>
+        </div>
+        <div class="w-4 h-4 bg-[#0033FF] rounded-full"></div>
+    </nav>
+
+    <!-- HERO (The Placard) -->
+    <header class="min-h-screen flex flex-col pt-20 border-b border-[#e5e5e5]">
+        
+        <div class="flex-grow grid md:grid-cols-12">
+            <!-- Left: Typography -->
+            <div class="md:col-span-7 p-8 md:p-16 flex flex-col justify-between border-r border-[#e5e5e5]">
+                <div>
+                    <span class="block text-xs uppercase tracking-[0.3em] mb-6 text-[#666]">Exhibit A</span>
+                    <h1 class="serif text-7xl md:text-9xl leading-[0.9] mb-8">
+                        <span class="block" id="heroTitle1">THE</span>
+                        <span class="block italic text-[#666]" id="heroTitle2">COLLECTION</span>
+                    </h1>
+                    <p class="max-w-md text-sm leading-relaxed text-[#444]" id="heroSubtitle">
+                        Loading curation details...
+                    </p>
+                </div>
+                
+                <div class="mt-12 flex gap-12 items-end">
+                    <a href="#entry" class="btn-museum" id="heroCta">View Entry Protocol</a>
+                    
+                    <!-- Countdown -->
+                    <div id="countdownContainer" class="hidden md:block">
+                        <div class="flex gap-4 text-2xl serif">
+                            <div><span id="d">00</span><sup class="text-[8px] sans-serif ml-1">D</sup></div>
+                            <div><span id="h">00</span><sup class="text-[8px] sans-serif ml-1">H</sup></div>
+                            <div><span id="m">00</span><sup class="text-[8px] sans-serif ml-1">M</sup></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: The Art Piece -->
+            <div class="md:col-span-5 relative overflow-hidden h-[50vh] md:h-auto border-t md:border-t-0 border-[#e5e5e5]">
+                <div class="absolute inset-0 p-8 md:p-12">
+                    <div class="w-full h-full bg-gray-200 relative overflow-hidden">
+                        <img src="" id="heroBg" class="w-full h-full object-cover art-piece scale-110">
+                    </div>
+                </div>
+                <div class="absolute bottom-4 right-4 text-[10px] uppercase tracking-widest bg-white px-2 py-1 border border-gray-200">
+                    Fig 1.0 // Prize
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- THE GALLERY (Horizontal Scroll) -->
+    <section id="gallery" class="horizontal-outer bg-white">
+        <div class="horizontal-inner" id="galleryTrack">
+            
+            <!-- Panel 1: Prize Info -->
+            <div class="gallery-panel">
+                <div class="max-w-2xl">
+                    <div class="flex items-baseline gap-4 mb-4">
+                        <span class="text-4xl text-[#0033FF]">01.</span>
+                        <h2 class="text-sm uppercase tracking-[0.3em]">The Masterpiece</h2>
+                    </div>
+                    <h3 class="serif text-6xl md:text-7xl mb-8" id="prizeName">Prize Name</h3>
+                    <div class="w-24 h-[1px] bg-black mb-8"></div>
+                    <p class="text-lg text-[#444] leading-relaxed mb-8" id="prizeDesc">Description...</p>
+                    <p class="font-mono text-xs uppercase text-[#0033FF]" id="prizeValue">Value: Loading...</p>
+                </div>
+            </div>
+
+            <!-- Panel 2: Manifest (Inclusions) -->
+            <div class="gallery-panel bg-[#F4F4F4]">
+                <div class="max-w-3xl w-full">
+                    <div class="flex items-baseline gap-4 mb-12">
+                        <span class="text-4xl text-[#0033FF]">02.</span>
+                        <h2 class="text-sm uppercase tracking-[0.3em]">Manifest / Included</h2>
+                    </div>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-8" id="prizeIncludes">
+                        <!-- JS Populates -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Panel 3: Visuals -->
+            <div class="gallery-panel p-0">
+                <div class="w-full h-full grid grid-cols-2">
+                    <div class="border-r border-[#e5e5e5] relative overflow-hidden group">
+                        <img src="" id="prizeImg2" class="w-full h-full object-cover art-piece">
+                        <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+                    </div>
+                    <div class="relative overflow-hidden group">
+                        <img src="" id="prizeImg3" class="w-full h-full object-cover art-piece">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- HOW TO ENTER (The Process) -->
+    <section class="py-32 border-b border-[#e5e5e5]">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-12">
+                <div class="md:col-span-4">
+                    <h2 class="serif text-5xl mb-4">Acquisition<br>Process.</h2>
+                    <p class="text-sm text-[#666]">Follow the steps to register your interest.</p>
+                </div>
+                <div class="md:col-span-8 grid gap-0 border-t border-[#e5e5e5]" id="stepsContainer">
+                    <!-- JS Populates -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ENTRY FORM (The Registry) -->
+    <section id="entry" class="py-32 bg-[#fff]">
+        <div class="max-w-2xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-[10px] uppercase tracking-[0.4em] text-[#0033FF]">Registry Open</span>
+                <h2 class="serif text-5xl mt-4 mb-2">Guest Entry</h2>
+                <p class="text-sm text-[#666]" id="formSubtitle">Please complete the form below.</p>
+            </div>
+
+            <div id="turnstileWidget" class="mb-12 flex justify-center"></div>
+
+            <form id="giveawayEntryForm" class="space-y-12">
+                <div>
+                    <label class="input-label">Full Name</label>
+                    <input type="text" id="fullName" class="input-field" placeholder="e.g. John Doe" required>
+                </div>
+                
+                <div>
+                    <label class="input-label">Email Address</label>
+                    <input type="email" id="email" class="input-field" placeholder="e.g. john@example.com" required>
+                </div>
+
+                <div>
+                    <label class="input-label">Phone Number</label>
+                    <input type="tel" id="phoneNumber" class="input-field" placeholder="(555) 000-0000" required>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" class="hidden">
+
+                <div class="flex items-start gap-4 pt-4">
+                    <input type="checkbox" id="contactConsent" required class="mt-1 w-4 h-4 border border-gray-300 rounded-none">
+                    <label for="contactConsent" id="contactConsentLabel" class="text-xs text-[#666] leading-relaxed"></label>
+                </div>
+
+                <div class="pt-8 text-center">
+                    <button type="submit" id="entryFormSubmitButton" class="btn-museum w-full md:w-auto">
+                        Submit Application
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-20 pt-10 border-t border-[#e5e5e5] text-center">
+                <p class="text-[10px] uppercase tracking-widest text-[#999] mb-6" id="socialPrompt">Share Exhibition</p>
+                <div class="flex justify-center gap-8 text-xl text-[#444]" id="socialIcons"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RULES / FOOTER -->
+    <footer class="py-20 border-t border-[#e5e5e5] bg-[#F4F4F4] text-xs">
+        <div class="container mx-auto px-6 grid md:grid-cols-4 gap-12">
+            <div class="col-span-2 pr-12">
+                <h4 class="font-bold uppercase tracking-widest mb-6">Exhibition FAQ</h4>
+                <div class="space-y-4" id="faqContainer">
+                    <!-- JS Populates -->
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-bold uppercase tracking-widest mb-6">Organizer</h4>
+                <p class="mb-1" id="footerOrganizer">Loading...</p>
+                <p class="text-[#666] mb-4" id="footerBrokerage">Loading...</p>
+                <p class="text-[#666]" id="footerAddress">Loading...</p>
+            </div>
+
+            <div>
+                <h4 class="font-bold uppercase tracking-widest mb-6">Legal</h4>
+                <a href="#" id="footerPrivacy" class="block mb-2 hover:text-[#0033FF]">Privacy Policy</a>
+                <p class="text-[#999] mt-4 leading-relaxed" id="footerDisclaimer">Disclaimer...</p>
+                <p class="mt-8 text-[#999]"><span id="footerCopyright">© 2025</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="questionModal" class="fixed inset-0 z-[200] bg-white/95 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="max-w-lg w-full">
+            <div class="flex justify-between items-end mb-8 border-b border-black pb-4">
+                <span class="serif text-2xl italic">Addendum</span>
+                <button id="closeQ" class="text-xs uppercase tracking-widest hover:text-[#0033FF]">Close</button>
+            </div>
+            <div class="h-1 bg-[#eee] mb-8 w-full"><div id="qProgress" class="h-full bg-black w-0 transition-all duration-300"></div></div>
+            <div id="qContainer"></div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 z-[200] bg-[#0033FF] text-white hidden flex items-center justify-center p-4">
+        <div class="text-center max-w-md">
+            <div class="serif text-8xl italic mb-4">Fin.</div>
+            <h2 class="text-xl font-bold uppercase tracking-widest mb-4" id="modalHeader">Acquired</h2>
+            <p class="text-white/80 mb-12" id="modalMessage">Your entry has been cataloged.</p>
+            <button class="border border-white px-8 py-3 text-xs uppercase tracking-widest hover:bg-white hover:text-[#0033FF] transition-colors" onclick="location.reload()">Return</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. VISUAL ENGINE ---
+        const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Preloader
+        window.addEventListener('load', () => {
+            gsap.to("#loaderBar", { height: "100%", duration: 1.5, ease: "power2.inOut" });
+            gsap.to("#preloader", { yPercent: -100, duration: 1, ease: "expo.inOut", delay: 1.5 });
+        });
+
+        // Horizontal Scroll
+        gsap.registerPlugin(ScrollTrigger);
+        const track = document.getElementById('galleryTrack');
+        if (window.innerWidth > 768) {
+            gsap.to(track, {
+                xPercent: -100 * (3 - 1) / 3, // 3 panels
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#gallery",
+                    pin: true,
+                    scrub: 1,
+                    snap: 1 / (3 - 1),
+                    end: "+=3000",
+                }
+            });
+        }
+
+        // --- 2. CONFIG ENGINE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config) return;
+
+            if(config.settings?.primaryColorOverride) {
+                document.documentElement.style.setProperty('--accent', config.settings.primaryColorOverride);
+            }
+
+            // HERO
+            if(config.giveaway) {
+                const t = (config.giveaway.name || "GIVEAWAY").split(" ");
+                const mid = Math.ceil(t.length/2);
+                document.getElementById('heroTitle1').innerText = t.slice(0,mid).join(" ");
+                document.getElementById('heroTitle2').innerText = t.slice(mid).join(" ");
+                
+                document.getElementById('heroSubtitle').innerText = config.giveaway.heroSubheadline;
+                document.getElementById('navDate').innerText = config.giveaway.promotionDates;
+                document.getElementById('heroCta').innerText = config.giveaway.heroCtaText;
+                document.getElementById('navBrand').innerText = config.meta?.navBrandLogoText || "GIVEAWAY";
+
+                if(config.giveaway.heroBackgroundImageUrl) {
+                    document.getElementById('heroBg').src = config.giveaway.heroBackgroundImageUrl;
+                }
+                if(config.giveaway.endDate) startTimer(config.giveaway.endDate);
+            }
+
+            // PRIZE
+            if(config.prize) {
+                document.getElementById('prizeName').innerText = config.prize.name;
+                document.getElementById('prizeValue').innerText = `Est. Value: ${config.prize.value}`;
+                document.getElementById('prizeDesc').innerHTML = config.prize.description;
+
+                if(config.prize.images) {
+                    if(config.prize.images[1]) document.getElementById('prizeImg2').src = config.prize.images[1].src;
+                    if(config.prize.images[2]) document.getElementById('prizeImg3').src = config.prize.images[2].src;
+                    else if(config.prize.images[0]) document.getElementById('prizeImg3').src = config.prize.images[0].src;
+                }
+
+                if(config.prize.includedItems) {
+                    document.getElementById('prizeIncludes').innerHTML = config.prize.includedItems.map(i => 
+                        `<li class="flex items-start gap-4 border-b border-[#ddd] pb-4">
+                            <span class="text-[#0033FF]">●</span> 
+                            <span class="text-sm text-[#444] leading-relaxed">${i.text}</span>
+                        </li>`
+                    ).join('');
+                }
+            }
+
+            // STEPS
+            if(config.howToEnter?.steps) {
+                const cont = document.getElementById('stepsContainer');
+                cont.innerHTML = config.howToEnter.steps.map((s, i) => `
+                    <div class="flex items-start gap-8 py-8 border-b border-[#e5e5e5] group hover:bg-white transition-colors">
+                        <span class="font-mono text-xs text-[#999] mt-1 group-hover:text-[#0033FF]">0${i+1}</span>
+                        <div>
+                            <h3 class="serif text-2xl mb-2">${s.title}</h3>
+                            <p class="text-sm text-[#666] leading-relaxed max-w-xl">${s.description}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // FORM
+            if(config.entryForm) {
+                document.getElementById('formSubtitle').innerText = config.entryForm.subtitle;
+                document.getElementById('socialPrompt').innerText = config.entryForm.socialSharePrompt;
+                
+                if(config.entryForm.sharePlatforms) {
+                    let html = '';
+                    for(const [k,v] of Object.entries(config.entryForm.sharePlatforms)) {
+                        html += `<a href="${v}" target="_blank" class="hover:text-[#0033FF] transition-colors"><i class="fab fa-${k}"></i></a>`;
+                    }
+                    document.getElementById('socialIcons').innerHTML = html;
+                }
+            }
+
+            // FOOTER & FAQ
+            if(config.footerContact) {
+                const fc = config.footerContact;
+                document.getElementById('footerOrganizer').innerText = fc.organizerName;
+                document.getElementById('footerBrokerage').innerText = fc.brokerageName;
+                document.getElementById('footerAddress').innerText = fc.address;
+                document.getElementById('footerDisclaimer').innerText = fc.footerDisclaimer;
+                document.getElementById('footerCopyright').innerText = `© ${new Date().getFullYear()} ${fc.organizerName}`;
+                
+                const priv = config.meta?.privacyPolicyLink || "#";
+                document.getElementById('footerPrivacy').href = priv;
+                document.getElementById('contactConsentLabel').innerHTML = `I agree to be contacted by ${fc.brokerageName}. Reply STOP to opt-out. <a href="${priv}" target="_blank" class="underline">Privacy Policy</a>.`;
+            }
+
+            if(config.rules?.faq) {
+                document.getElementById('faqContainer').innerHTML = config.rules.faq.map(f => `
+                    <div class="border-l-2 border-[#e5e5e5] pl-4">
+                        <p class="font-bold text-sm mb-1">${f.q}</p>
+                        <p class="text-[#666] text-sm leading-relaxed">${f.a}</p>
+                    </div>
+                `).join('');
+            }
+
+            // COUNTDOWN
+            function startTimer(end) {
+                const t = new Date(end).getTime();
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const d = t - now;
+                    if(d<0) return;
+                    document.getElementById('d').innerText = Math.floor(d/(1000*60*60*24)).toString().padStart(2,'0');
+                    document.getElementById('h').innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+                    document.getElementById('m').innerText = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+                },1000);
+            }
+
+            // SUBMISSION
+            let turnstileToken = null;
+            let storedForm = {};
+            let qAnswers = {};
+
+            if(config.settings?.turnstileSiteKey) {
+                setTimeout(() => {
+                    try {
+                        turnstile.render('#turnstileWidget', {
+                            sitekey: config.settings.turnstileSiteKey,
+                            callback: (t) => turnstileToken = t
+                        });
+                    } catch(e){}
+                }, 1500);
+            }
+
+            const form = document.getElementById('giveawayEntryForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if(document.getElementById('website').value) return;
+                if(config.settings?.turnstileSiteKey && !turnstileToken) { alert('Verification required.'); return; }
+                
+                storedForm = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('phoneNumber').value
+                };
+
+                if(config.modalQuestions?.length > 0) openQ();
+                else finalSubmit();
+            });
+
+            const qModal = document.getElementById('questionModal');
+            const qCont = document.getElementById('qContainer');
+            
+            function openQ() {
+                qModal.classList.remove('hidden');
+                qModal.classList.add('flex');
+                renderQ(0);
+            }
+
+            function renderQ(idx) {
+                if(idx >= config.modalQuestions.length) {
+                    qModal.classList.add('hidden');
+                    qModal.classList.remove('flex');
+                    finalSubmit();
+                    return;
+                }
+                
+                const pct = ((idx)/config.modalQuestions.length)*100;
+                document.getElementById('qProgress').style.width = `${pct}%`;
+
+                const q = config.modalQuestions[idx];
+                qCont.innerHTML = `
+                    <h3 class="serif text-2xl mb-8">${q.questionText}</h3>
+                    <div class="grid gap-3">
+                        ${q.options.map(opt => `
+                            <button class="w-full p-4 border border-[#ddd] text-left hover:bg-black hover:text-white transition-colors text-sm q-btn" data-val="${opt.value}">
+                                ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                qCont.querySelectorAll('.q-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        qAnswers[q.id] = btn.dataset.val;
+                        renderQ(idx+1);
+                    });
+                });
+            }
+            document.getElementById('closeQ').addEventListener('click', () => qModal.classList.add('hidden'));
+
+            async function finalSubmit() {
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                
+                if(config.giveaway) {
+                    document.getElementById('modalHeader').innerText = config.giveaway.successModalHeaderText;
+                    document.getElementById('modalMessage').innerHTML = config.giveaway.successModalMainMessage;
+                }
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#0033FF', '#000000'] });
+            }
+        });
+    </script>
+</body>
+</html>

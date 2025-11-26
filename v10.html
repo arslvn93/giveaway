@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0c0c0c]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Experience | Private Reservation</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Cormorant Garamond (Display) & Pinyon Script (Accent) & Montserrat (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@200;300;400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Security -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    
+    <!-- Animation Stack -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Config -->
+    <script src="config.js"></script>
+
+    <!-- Meta Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    if(typeof config!=='undefined'&&config.settings&&config.settings.facebookPixelId){fbq('init',config.settings.facebookPixelId);} fbq('track','PageView');
+    </script>
+
+    <style>
+        :root {
+            --bg: #0C0C0C; /* Charcoal */
+            --paper: #F5F5F0; /* Linen White */
+            --gold: #C5A059; /* Antique Gold */
+            --border: rgba(197, 160, 89, 0.2);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--paper);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .font-script { font-family: 'Pinyon Script', cursive; }
+
+        /* SMOOTH SCROLL */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+
+        /* LUXURY TEXTURES */
+        .grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.04; pointer-events: none; z-index: 9000;
+        }
+        
+        .gold-text {
+            background: linear-gradient(to bottom, #cfc09f 22%, #634f2c 24%, #cfc09f 26%, #cfc09f 27%, #ffecb3 40%, #3a2c0f 78%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: #C5A059;
+        }
+
+        /* CUSTOM CURSOR */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); mix-blend-mode: difference;
+            transition: width 0.3s, height 0.3s, opacity 0.3s;
+        }
+        body.hover-active #cursor { width: 50px; height: 50px; opacity: 0.5; background: white; }
+
+        /* IMAGERY */
+        .vignette {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, rgba(12,12,12,0.2) 0%, rgba(12,12,12,1) 90%);
+            pointer-events: none;
+        }
+        .reveal-img { clip-path: inset(0 0 100% 0); transition: clip-path 1.5s ease-in-out; }
+        .reveal-img.active { clip-path: inset(0 0 0 0); }
+
+        /* BUTTONS */
+        .btn-reserve {
+            border: 1px solid var(--gold); color: var(--gold);
+            padding: 1rem 3rem; font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.9rem;
+            position: relative; overflow: hidden; transition: all 0.5s;
+        }
+        .btn-reserve::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--gold); transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: -1;
+        }
+        .btn-reserve:hover::before { transform: translateY(0); }
+        .btn-reserve:hover { color: #0C0C0C; }
+
+        /* INPUTS (Reservation Card Style) */
+        .input-line {
+            background: transparent; border: none; border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+            width: 100%; padding: 1rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;
+            color: var(--paper); transition: border-color 0.3s; text-align: center;
+        }
+        .input-line:focus { outline: none; border-bottom-color: var(--gold); }
+        .input-line::placeholder { 
+            font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; 
+            text-transform: uppercase; color: #666;
+        }
+
+        /* LOADER */
+        #preloader { position: fixed; inset: 0; background: #0C0C0C; z-index: 10000; display: flex; flex-col; justify-content: center; align-items: center; }
+        
+        /* MENU GRID */
+        .menu-item { border-bottom: 1px solid var(--border); padding: 2rem 0; display: flex; justify-content: space-between; align-items: baseline; transition: background-color 0.3s; }
+        .menu-item:hover { background: rgba(197, 160, 89, 0.05); }
+    </style>
+</head>
+<body>
+
+    <div class="grain"></div>
+    <div id="cursor"></div>
+    <canvas id="confetti-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:50;"></canvas>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="font-script text-[#C5A059] text-3xl mb-4 opacity-0" id="loaderScript">You are invited</div>
+        <div class="font-serif text-2xl uppercase tracking-[0.3em] text-white opacity-0" id="loaderText">TO THE TABLE</div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 py-8 px-8 flex justify-between items-center mix-blend-difference text-[#F5F5F0] opacity-0 transition-opacity duration-1000" id="mainNav">
+        <div class="font-serif text-xl tracking-widest uppercase" id="navBrand">Giveaway</div>
+        <a href="#reservation" class="text-[10px] uppercase tracking-[0.2em] border border-[#F5F5F0] px-4 py-2 rounded-full hover:bg-[#F5F5F0] hover:text-black transition-colors hover-trigger">
+            Reserve Entry
+        </a>
+    </nav>
+
+    <!-- HERO (The Ambiance) -->
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- BG Image -->
+        <div class="absolute inset-0 z-0">
+            <div id="hero-bg" class="w-full h-full bg-cover bg-center opacity-40 scale-110 transition-transform duration-[3s]"></div>
+            <div class="vignette"></div>
+        </div>
+
+        <div class="relative z-10 text-center max-w-4xl px-6 pt-20">
+            <div class="mb-6">
+                <span class="font-script text-4xl md:text-5xl text-[#C5A059] block mb-2 opacity-0 fade-up">An Evening of</span>
+            </div>
+            
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-9xl leading-none mb-8 text-[#F5F5F0] opacity-0 fade-up" style="animation-delay: 0.2s;">
+                <span class="block" id="heroTitle">LUXURY</span>
+            </h1>
+
+            <div class="w-[1px] h-16 bg-[#C5A059] mx-auto mb-8 opacity-0 fade-up" style="animation-delay: 0.4s;"></div>
+
+            <p class="max-w-lg mx-auto text-lg font-light text-gray-400 leading-relaxed mb-12 opacity-0 fade-up" style="animation-delay: 0.5s;" id="heroSubtitle">
+                Loading details...
+            </p>
+
+            <div class="opacity-0 fade-up" style="animation-delay: 0.6s;">
+                <a href="#reservation" class="btn-reserve inline-block hover-trigger" id="heroCta">
+                    Request A Seat
+                </a>
+            </div>
+            
+            <div class="mt-12 text-[10px] uppercase tracking-[0.3em] text-[#C5A059] opacity-0 fade-up" style="animation-delay: 0.7s;" id="heroDates">
+                Dates Loading...
+            </div>
+        </div>
+    </header>
+
+    <!-- THE MENU (Prize Details) -->
+    <section id="menu" class="py-32 px-6 md:px-20 relative">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-24">
+                <span class="font-script text-3xl text-[#C5A059]">The Menu</span>
+                <h2 class="font-serif text-5xl md:text-6xl mt-2" id="prizeName">The Prize</h2>
+                <p class="text-xs uppercase tracking-widest text-gray-500 mt-4" id="prizeValue">Value</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-20 items-start">
+                <!-- Text Side -->
+                <div>
+                    <p class="font-serif text-xl italic text-gray-400 mb-8" id="prizeDesc">Description...</p>
+                    
+                    <div class="space-y-0 border-t border-[rgba(197,160,89,0.2)]">
+                        <!-- JS Populates Menu Items -->
+                        <div id="prizeIncludes"></div>
+                    </div>
+                </div>
+
+                <!-- Image Side (The Plate) -->
+                <div class="relative">
+                    <div class="aspect-[3/4] bg-[#1a1a1a] relative overflow-hidden rounded-t-[10rem] border border-[#C5A059]/20">
+                        <div class="absolute inset-2 border border-[#C5A059]/10 rounded-t-[9.5rem]"></div>
+                        <div class="absolute inset-0 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-1000 ease-out scale-110 hover:scale-100" id="prizeImgMain"></div>
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 bg-[#C5A059] text-black p-6 font-serif italic text-xl max-w-[150px] text-center shadow-2xl">
+                        "A Night to Remember"
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE COURSES (How To Enter) -->
+    <section class="py-32 bg-[#0F0F0F] border-t border-[rgba(197,160,89,0.1)]">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col items-center text-center mb-20">
+                <span class="text-xs uppercase tracking-[0.4em] text-[#C5A059]">The Protocol</span>
+                <h2 class="font-serif text-5xl mt-4">Your Reservation</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12" id="stepsContainer">
+                <!-- JS Populates -->
+            </div>
+        </div>
+    </section>
+
+    <!-- RESERVATION FORM -->
+    <section id="reservation" class="py-32 px-4 relative min-h-screen flex items-center justify-center">
+        <!-- Background Texture -->
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')]"></div>
+        
+        <div class="w-full max-w-xl bg-[#F5F5F0] text-[#0C0C0C] p-12 md:p-20 relative shadow-2xl">
+            <!-- Ornate Border -->
+            <div class="absolute inset-2 border-2 border-[#0C0C0C] pointer-events-none"></div>
+            <div class="absolute inset-3 border border-[#0C0C0C] pointer-events-none"></div>
+
+            <div class="text-center mb-12 relative z-10">
+                <h2 class="font-serif text-5xl mb-2">R.S.V.P.</h2>
+                <p class="font-script text-2xl text-[#C5A059]" id="formSubtitle">Kindly respond</p>
+                
+                <!-- Countdown -->
+                <div class="mt-8 flex justify-center gap-8 font-serif text-xl" id="countdownContainer">
+                    <div><span id="d">00</span>d</div>
+                    <div><span id="h">00</span>h</div>
+                    <div><span id="m">00</span>m</div>
+                </div>
+            </div>
+
+            <div id="turnstileWidget" class="flex justify-center mb-8"></div>
+
+            <form id="giveawayEntryForm" class="space-y-10 relative z-10">
+                <div>
+                    <input type="text" id="fullName" class="input-line hover-trigger text-[#0C0C0C] border-[#0C0C0C]/20 focus:border-[#0C0C0C]" placeholder="Name of Guest" required>
+                </div>
+                <div>
+                    <input type="email" id="email" class="input-line hover-trigger text-[#0C0C0C] border-[#0C0C0C]/20 focus:border-[#0C0C0C]" placeholder="Email Address" required>
+                </div>
+                <div>
+                    <input type="tel" id="phoneNumber" class="input-line hover-trigger text-[#0C0C0C] border-[#0C0C0C]/20 focus:border-[#0C0C0C]" placeholder="Phone Number" required>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" class="hidden">
+
+                <div class="flex justify-center items-center gap-3 opacity-70 hover:opacity-100 transition-opacity">
+                    <input type="checkbox" id="contactConsent" required class="mt-1 accent-[#0C0C0C]">
+                    <label for="contactConsent" id="contactConsentLabel" class="text-[10px] uppercase tracking-widest text-gray-600"></label>
+                </div>
+
+                <div class="text-center pt-6">
+                    <button type="submit" id="entryFormSubmitButton" class="bg-[#0C0C0C] text-[#F5F5F0] px-12 py-4 font-serif text-xl uppercase tracking-widest hover:bg-[#C5A059] transition-colors duration-500 hover-trigger">
+                        Confirm
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-12 text-center">
+                <p class="font-script text-xl mb-4 text-gray-500" id="socialPrompt">Share the table</p>
+                <div class="flex justify-center gap-6 text-2xl text-[#0C0C0C]" id="socialIcons"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-20 border-t border-[#C5A059]/20 text-center font-serif">
+        <div class="container mx-auto px-6">
+            <img id="footerLogo" src="" alt="Logo" class="h-12 mx-auto mb-8 filter invert opacity-70">
+            
+            <div class="flex flex-col md:flex-row justify-center gap-12 text-sm text-gray-400 mb-12">
+                <div>
+                    <span class="block text-[#C5A059] italic mb-1">Hosted By</span>
+                    <span id="footerOrganizer">Organizer</span>
+                </div>
+                <div>
+                    <span class="block text-[#C5A059] italic mb-1">Location</span>
+                    <span id="footerBrokerage">Brokerage</span>
+                </div>
+                <div>
+                    <span class="block text-[#C5A059] italic mb-1">Contact</span>
+                    <a href="#" id="footerEmail" class="hover:text-white transition-colors">Email</a>
+                </div>
+            </div>
+
+            <!-- Simple FAQ Accordion in Footer -->
+            <div class="max-w-2xl mx-auto border-t border-[#C5A059]/20 pt-12" id="faqContainer">
+                <!-- JS Populates -->
+            </div>
+
+            <div class="mt-16 text-xs uppercase tracking-widest text-gray-600">
+                <p id="footerDisclaimer" class="max-w-xl mx-auto mb-4 normal-case italic opacity-50">Disclaimer</p>
+                <span id="footerCopyright">© 2025</span> | <a href="#" id="footerPrivacy" class="hover:text-[#C5A059]">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="questionModal" class="fixed inset-0 z-[200] bg-[#0C0C0C]/95 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="max-w-lg w-full text-center">
+            <div class="font-script text-4xl text-[#C5A059] mb-6">Just a moment</div>
+            <div class="h-[1px] w-20 bg-[#C5A059] mx-auto mb-8"></div>
+            <div id="qContainer"></div>
+            <div class="mt-8 w-full bg-[#1a1a1a] h-1"><div id="qProgress" class="h-full bg-[#C5A059] w-0 transition-all duration-500"></div></div>
+            <button id="closeQ" class="mt-8 text-xs uppercase tracking-widest text-gray-500 hover:text-white">Cancel</button>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 z-[200] bg-[#F5F5F0] text-[#0C0C0C] hidden flex items-center justify-center p-4">
+        <div class="text-center max-w-md border-2 border-[#0C0C0C] p-12 relative">
+            <div class="absolute inset-1 border border-[#0C0C0C] pointer-events-none"></div>
+            <div class="font-serif text-6xl mb-4">Merci</div>
+            <h2 class="text-sm uppercase tracking-[0.3em] mb-8" id="modalHeader">Confirmed</h2>
+            <p class="font-serif italic text-xl text-gray-600 mb-8" id="modalMessage">Your table is waiting.</p>
+            <p class="text-[10px] uppercase tracking-widest text-gray-400" id="modalPrompt">Check email</p>
+            <button class="mt-12 border-b border-[#0C0C0C] pb-1 text-xs uppercase tracking-widest hover:opacity-50 transition-opacity" onclick="location.reload()">Return</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. VISUAL ENGINE ---
+        const lenis = new Lenis({ duration: 1.8, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }); // Slower, heavier scroll
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.2 });
+        });
+        document.querySelectorAll('.hover-trigger, a, button, input').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
+        });
+
+        // Preloader
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+            tl.to("#loaderScript", { opacity: 1, duration: 1, y: -10 })
+              .to("#loaderText", { opacity: 1, duration: 1 }, "-=0.5")
+              .to("#preloader", { y: "-100%", duration: 1.5, ease: "power2.inOut", delay: 0.5 })
+              .call(() => {
+                  gsap.to(".fade-up", { opacity: 1, y: 0, duration: 1.5, stagger: 0.2, ease: "power2.out" });
+                  document.getElementById('mainNav').classList.remove('opacity-0');
+              });
+        });
+
+        // --- 2. CONFIG ENGINE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config) return;
+
+            // HERO
+            if(config.giveaway) {
+                document.getElementById('heroTitle').innerText = config.giveaway.name || "DINNER";
+                document.getElementById('heroSubtitle').innerText = config.giveaway.heroSubheadline;
+                document.getElementById('heroDates').innerText = config.giveaway.promotionDates;
+                document.getElementById('heroCta').innerText = config.giveaway.heroCtaText;
+                document.getElementById('navBrand').innerText = config.meta?.navBrandLogoText || "GIVEAWAY";
+
+                if(config.giveaway.heroBackgroundImageUrl) {
+                    document.getElementById('hero-bg').style.backgroundImage = `url('${config.giveaway.heroBackgroundImageUrl}')`;
+                }
+                if(config.giveaway.endDate) startTimer(config.giveaway.endDate);
+            }
+
+            // PRIZE (The Menu)
+            if(config.prize) {
+                document.getElementById('prizeName').innerText = config.prize.name;
+                document.getElementById('prizeValue').innerText = config.prize.value;
+                document.getElementById('prizeDesc').innerText = config.prize.description;
+
+                if(config.prize.images?.[0]) {
+                    document.getElementById('prizeImgMain').style.backgroundImage = `url('${config.prize.images[0].src}')`;
+                }
+
+                if(config.prize.includedItems) {
+                    document.getElementById('prizeIncludes').innerHTML = config.prize.includedItems.map(i => 
+                        `<div class="menu-item group">
+                            <span class="font-serif text-xl text-[#F5F5F0] group-hover:text-[#C5A059] transition-colors">${i.text}</span>
+                            <span class="text-xs text-[#C5A059] opacity-50">Included</span>
+                        </div>`
+                    ).join('');
+                }
+            }
+
+            // STEPS (Courses)
+            if(config.howToEnter?.steps) {
+                const cont = document.getElementById('stepsContainer');
+                cont.innerHTML = config.howToEnter.steps.map((s, i) => `
+                    <div class="text-center hover:-translate-y-2 transition-transform duration-500">
+                        <div class="font-script text-3xl text-[#C5A059] mb-4">Course 0${i+1}</div>
+                        <h3 class="font-serif text-2xl text-white mb-4">${s.title}</h3>
+                        <p class="font-sans font-light text-sm text-gray-400 leading-relaxed">${s.description}</p>
+                    </div>
+                `).join('');
+            }
+
+            // FORM
+            if(config.entryForm) {
+                document.getElementById('formSubtitle').innerText = config.entryForm.subtitle;
+                document.getElementById('socialPrompt').innerText = config.entryForm.socialSharePrompt;
+                
+                if(config.entryForm.sharePlatforms) {
+                    let html = '';
+                    for(const [k,v] of Object.entries(config.entryForm.sharePlatforms)) {
+                        html += `<a href="${v}" target="_blank" class="hover:text-[#C5A059] transition-colors"><i class="fab fa-${k}"></i></a>`;
+                    }
+                    document.getElementById('socialIcons').innerHTML = html;
+                }
+            }
+
+            // FOOTER / FAQ
+            if(config.footerContact) {
+                const fc = config.footerContact;
+                if(fc.organizerLogoUrl) document.getElementById('footerLogo').src = fc.organizerLogoUrl;
+                document.getElementById('footerOrganizer').innerText = fc.organizerName;
+                document.getElementById('footerBrokerage').innerText = fc.brokerageName;
+                const em = document.getElementById('footerEmail'); em.innerText = fc.agentContact?.email; em.href = `mailto:${fc.agentContact?.email}`;
+                document.getElementById('footerDisclaimer').innerText = fc.footerDisclaimer;
+                document.getElementById('footerCopyright').innerText = `© ${new Date().getFullYear()} ${fc.organizerName}`;
+                
+                const priv = config.meta?.privacyPolicyLink || "#";
+                document.getElementById('footerPrivacy').href = priv;
+                document.getElementById('contactConsentLabel').innerHTML = `I authorize contact from ${fc.brokerageName}. <a href="${priv}" target="_blank" class="underline">Privacy</a>.`;
+            }
+
+            if(config.rules?.faq) {
+                document.getElementById('faqContainer').innerHTML = config.rules.faq.map(f => `
+                    <details class="group mb-4 border-b border-[#C5A059]/10 pb-4">
+                        <summary class="flex justify-between items-center font-serif text-lg cursor-pointer list-none hover:text-[#C5A059] transition-colors">
+                            ${f.q} <span class="text-xs opacity-50 group-open:rotate-45 transition-transform">+</span>
+                        </summary>
+                        <p class="text-sm text-gray-500 mt-4 leading-relaxed font-light italic">${f.a}</p>
+                    </details>
+                `).join('');
+            }
+
+            // COUNTDOWN
+            function startTimer(end) {
+                const t = new Date(end).getTime();
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const d = t - now;
+                    if(d<0) return;
+                    document.getElementById('d').innerText = Math.floor(d/(1000*60*60*24)).toString().padStart(2,'0');
+                    document.getElementById('h').innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+                    document.getElementById('m').innerText = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+                },1000);
+            }
+
+            // SUBMISSION
+            let turnstileToken = null;
+            let storedForm = {};
+            let qAnswers = {};
+
+            if(config.settings?.turnstileSiteKey) {
+                setTimeout(() => {
+                    try {
+                        turnstile.render('#turnstileWidget', {
+                            sitekey: config.settings.turnstileSiteKey,
+                            theme: 'light', // Matches the card
+                            callback: (t) => turnstileToken = t
+                        });
+                    } catch(e){}
+                }, 1500);
+            }
+
+            const form = document.getElementById('giveawayEntryForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if(document.getElementById('website').value) return;
+                if(config.settings?.turnstileSiteKey && !turnstileToken) { alert('Verification Required.'); return; }
+                
+                storedForm = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('phoneNumber').value
+                };
+
+                if(config.modalQuestions?.length > 0) openQ();
+                else finalSubmit();
+            });
+
+            const qModal = document.getElementById('questionModal');
+            const qCont = document.getElementById('qContainer');
+            
+            function openQ() {
+                qModal.classList.remove('hidden');
+                qModal.classList.add('flex');
+                renderQ(0);
+            }
+
+            function renderQ(idx) {
+                if(idx >= config.modalQuestions.length) {
+                    qModal.classList.add('hidden');
+                    qModal.classList.remove('flex');
+                    finalSubmit();
+                    return;
+                }
+                
+                const pct = ((idx)/config.modalQuestions.length)*100;
+                document.getElementById('qProgress').style.width = `${pct}%`;
+
+                const q = config.modalQuestions[idx];
+                qCont.innerHTML = `
+                    <h3 class="font-serif text-3xl text-white mb-8">${q.questionText}</h3>
+                    <div class="space-y-3">
+                        ${q.options.map(opt => `
+                            <button class="w-full py-4 text-center border border-[#333] text-gray-400 hover:border-[#C5A059] hover:text-[#C5A059] transition-colors font-serif text-lg q-btn" data-val="${opt.value}">
+                                ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                qCont.querySelectorAll('.q-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        qAnswers[q.id] = btn.dataset.val;
+                        renderQ(idx+1);
+                    });
+                });
+            }
+            document.getElementById('closeQ').addEventListener('click', () => qModal.classList.add('hidden'));
+
+            async function finalSubmit() {
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                
+                if(config.giveaway) {
+                    document.getElementById('modalHeader').innerText = config.giveaway.successModalHeaderText;
+                    document.getElementById('modalMessage').innerText = config.giveaway.successModalMainMessage.replace(/<[^>]*>?/gm, '');
+                    document.getElementById('modalPrompt').innerHTML = config.giveaway.successModalEmailPrompt;
+                }
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#C5A059', '#F5F5F0'] });
+            }
+        });
+    </script>
+    
+    <style>
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+    </style>
+</body>
+</html>

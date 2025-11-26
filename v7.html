@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM // ENTRY PROTOCOL</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Syncopate (Wide Display) & JetBrains Mono (Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;800&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Tools -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    
+    <!-- Animation Stack -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Config -->
+    <script src="config.js"></script>
+
+    <!-- Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    if(typeof config!=='undefined'&&config.settings&&config.settings.facebookPixelId){fbq('init',config.settings.facebookPixelId);} fbq('track','PageView');
+    </script>
+
+    <style>
+        :root {
+            --bg: #0A0A0A;
+            --fg: #E6E6E6;
+            --acid: #CCFF00; /* High-Vis Green */
+            --border: #333333;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        .font-display { font-family: 'Syncopate', sans-serif; text-transform: uppercase; }
+
+        /* SMOOTH SCROLL */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+
+        /* GRID BACKGROUND */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+
+        /* UTILS */
+        .border-raw { border: 1px solid var(--border); }
+        .border-thick { border: 2px solid var(--fg); }
+        
+        /* MARQUEE */
+        .marquee-container { overflow: hidden; white-space: nowrap; display: flex; }
+        .marquee-content { display: flex; animation: scroll 15s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
+        /* BUTTONS */
+        .btn-brutal {
+            background: var(--acid); color: black;
+            font-family: 'Syncopate', sans-serif; font-weight: 700;
+            padding: 1.5rem 2rem; border: none;
+            position: relative; transition: transform 0.2s;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+        }
+        .btn-brutal:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0px white; }
+        .btn-brutal:active { transform: translate(0, 0); box-shadow: none; }
+
+        /* INPUTS */
+        .input-terminal {
+            background: #111; border: 1px solid var(--border);
+            color: var(--acid); padding: 1.5rem; width: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s;
+        }
+        .input-terminal:focus { outline: none; border-color: var(--acid); background: #000; }
+        .input-terminal::placeholder { color: #444; text-transform: uppercase; }
+
+        /* IMAGE REVEAL */
+        .reveal-img {
+            clip-path: inset(0 100% 0 0);
+            transition: clip-path 1s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+        .reveal-img.active { clip-path: inset(0 0 0 0); }
+
+        /* LOADER */
+        #preloader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 10000;
+            display: flex; flex-col; justify-content: center; padding: 2rem;
+        }
+        .blink { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
+</head>
+<body class="bg-grid">
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="max-w-4xl w-full mx-auto">
+            <div class="flex justify-between font-mono text-xs text-[#444] mb-2">
+                <span>SYSTEM_BOOT</span>
+                <span>V.1.0.4</span>
+            </div>
+            <div class="w-full bg-[#222] h-2 mb-4">
+                <div class="h-full bg-[var(--acid)] w-0" id="loadBar"></div>
+            </div>
+            <div class="text-[var(--acid)] font-display text-4xl md:text-6xl leading-none" id="loadText">
+                INITIALIZING...
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 border-b border-[#222] bg-[#0A0A0A]/90 backdrop-blur-sm px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-[var(--acid)] blink"></div>
+            <span class="font-bold tracking-widest uppercase" id="navBrand">GIVEAWAY</span>
+        </div>
+        <a href="#entry" class="font-mono text-xs border border-[#444] px-3 py-1 hover:bg-[var(--acid)] hover:text-black hover:border-[var(--acid)] transition-colors">
+            // ENTER_PROTOCOL
+        </a>
+    </nav>
+
+    <!-- HERO (The Ticket) -->
+    <header class="min-h-screen pt-24 px-4 pb-12 flex flex-col relative overflow-hidden">
+        
+        <div class="border-raw flex-grow relative flex flex-col md:flex-row overflow-hidden">
+            <!-- Left: Data -->
+            <div class="md:w-2/3 p-8 md:p-12 flex flex-col justify-between border-b border-[#222] md:border-b-0 md:border-r border-[#222] relative z-10 bg-[#0A0A0A]">
+                <div>
+                    <div class="inline-block bg-[#222] text-[#888] px-2 py-1 text-[10px] font-mono mb-4">
+                        ID: <span id="heroDates">LOADING...</span>
+                    </div>
+                    <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-white mb-8">
+                        <span class="block" id="heroTitle1">SYSTEM</span>
+                        <span class="block text-transparent stroke-white" style="-webkit-text-stroke: 1px white;" id="heroTitle2">GIVEAWAY</span>
+                    </h1>
+                    <p class="font-mono text-sm text-[#888] max-w-md" id="heroSubtitle">
+                        Loading parameters...
+                    </p>
+                </div>
+                
+                <div class="mt-12">
+                    <a href="#entry" class="btn-brutal inline-block" id="heroCta">
+                        INITIATE ENTRY
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Visual -->
+            <div class="md:w-1/3 relative min-h-[300px]">
+                <div class="absolute inset-0 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" id="heroBg"></div>
+                <!-- Overlay Grid -->
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/grid-me.png')] opacity-20"></div>
+                
+                <!-- Countdown -->
+                <div class="absolute bottom-0 left-0 w-full bg-[var(--acid)] text-black p-4 font-mono text-xs flex justify-between border-t border-black" id="countdownContainer">
+                    <div>
+                        <span class="block text-[8px] font-bold">DAYS</span>
+                        <span class="text-xl" id="d">00</span>
+                    </div>
+                    <div>
+                        <span class="block text-[8px] font-bold">HOURS</span>
+                        <span class="text-xl" id="h">00</span>
+                    </div>
+                    <div>
+                        <span class="block text-[8px] font-bold">MINS</span>
+                        <span class="text-xl" id="m">00</span>
+                    </div>
+                    <div>
+                        <span class="block text-[8px] font-bold">SECS</span>
+                        <span class="text-xl" id="s">00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marquee -->
+        <div class="border-l border-r border-b border-[#222] py-2 bg-[#111] overflow-hidden">
+            <div class="marquee-container">
+                <div class="marquee-content font-display text-2xl text-[#333]" id="marqueeText">
+                    /// ACCESS GRANTED /// WIN NOW /// SYSTEM READY /// ACCESS GRANTED /// WIN NOW /// SYSTEM READY ///
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- THE PRIZE (The Blueprint) -->
+    <section class="py-20 px-4 border-b border-[#222]">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-12">
+                
+                <!-- Col 1: Specs -->
+                <div class="md:w-1/3 space-y-8">
+                    <div>
+                        <h2 class="font-mono text-[var(--acid)] text-xs mb-2">// TARGET_ASSET</h2>
+                        <h3 class="font-display text-4xl md:text-5xl" id="prizeName">PRIZE</h3>
+                    </div>
+                    <div class="border-l-2 border-[var(--acid)] pl-4">
+                        <p class="text-2xl font-bold" id="prizeValue">VALUE</p>
+                        <p class="text-sm text-[#666]">ESTIMATED MARKET VALUE</p>
+                    </div>
+                    <div class="font-mono text-sm text-[#AAA] leading-relaxed" id="prizeDesc">
+                        Description loading...
+                    </div>
+                    
+                    <div class="pt-8 border-t border-[#222]">
+                        <h4 class="font-bold mb-4 text-xs uppercase">Manifest</h4>
+                        <ul class="space-y-2 font-mono text-xs text-[#888]" id="prizeIncludes">
+                            <!-- JS Populates -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Col 2: Visuals -->
+                <div class="md:w-2/3 grid grid-cols-2 gap-4">
+                    <div class="col-span-2 h-[400px] bg-[#111] border border-[#333] relative overflow-hidden group">
+                        <div class="absolute top-2 left-2 text-[10px] bg-black text-white px-2 py-1 z-10">FIG 01.</div>
+                        <img src="" id="prizeImg1" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="h-[250px] bg-[#111] border border-[#333] relative overflow-hidden group">
+                        <div class="absolute top-2 left-2 text-[10px] bg-black text-white px-2 py-1 z-10">FIG 02.</div>
+                        <img src="" id="prizeImg2" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="h-[250px] bg-[#111] border border-[#333] relative overflow-hidden group">
+                        <div class="absolute top-2 left-2 text-[10px] bg-black text-white px-2 py-1 z-10">FIG 03.</div>
+                        <img src="" id="prizeImg3" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW TO ENTER (The Algorithm) -->
+    <section class="py-20 border-b border-[#222] bg-[#0F0F0F]">
+        <div class="container mx-auto px-4">
+            <h2 class="font-display text-center text-4xl mb-16 text-[#333]">ALGORITHM</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8" id="stepsContainer">
+                <!-- JS Populates -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ENTRY FORM (The Terminal) -->
+    <section id="entry" class="py-32 px-4 relative">
+        <div class="max-w-3xl mx-auto relative z-10">
+            
+            <!-- Terminal Header -->
+            <div class="bg-[var(--acid)] p-4 flex justify-between items-center text-black font-bold text-sm border-t border-l border-r border-[#333]">
+                <span>// SECURE_ENTRY_TERMINAL</span>
+                <span class="animate-pulse">● ONLINE</span>
+            </div>
+
+            <!-- Terminal Body -->
+            <div class="bg-[#080808] border border-[#333] p-8 md:p-12 shadow-[20px_20px_0px_0px_rgba(20,20,20,1)]">
+                
+                <div class="mb-8 text-center">
+                    <h2 class="font-display text-3xl md:text-5xl mb-2">INPUT DATA</h2>
+                    <p class="font-mono text-xs text-[#666]" id="formSubtitle">ALL FIELDS MANDATORY.</p>
+                </div>
+
+                <div id="turnstileWidget" class="mb-8 flex justify-center grayscale"></div>
+
+                <form id="giveawayEntryForm" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-mono text-[10px] text-[#666] mb-1">USER_ID [NAME]</label>
+                            <input type="text" id="fullName" class="input-terminal" placeholder="ENTER_NAME" required>
+                        </div>
+                        <div>
+                            <label class="block font-mono text-[10px] text-[#666] mb-1">COMM_LINK [EMAIL]</label>
+                            <input type="email" id="email" class="input-terminal" placeholder="ENTER_EMAIL" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block font-mono text-[10px] text-[#666] mb-1">SIGNAL_FREQ [PHONE]</label>
+                        <input type="tel" id="phoneNumber" class="input-terminal" placeholder="(000) 000-0000" required>
+                    </div>
+
+                    <!-- Honeypot -->
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" class="hidden">
+
+                    <div class="border border-[#222] p-4 bg-[#0D0D0D]">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="contactConsent" required class="mt-1 accent-[var(--acid)]">
+                            <label for="contactConsent" id="contactConsentLabel" class="font-mono text-[10px] text-[#555] leading-relaxed"></label>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="entryFormSubmitButton" class="w-full bg-white text-black font-display font-bold text-xl py-6 hover:bg-[var(--acid)] transition-colors duration-200 clip-path-polygon">
+                        TRANSMIT DATA >
+                    </button>
+                </form>
+
+                <div class="mt-12 pt-8 border-t border-[#222] text-center">
+                    <p class="font-mono text-[10px] text-[#444] mb-4 uppercase" id="socialPrompt">BOOST SIGNAL</p>
+                    <div class="flex justify-center gap-6 text-2xl text-[#333]" id="socialIcons"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-[#222] py-16 bg-[#050505] font-mono text-xs text-[#444]">
+        <div class="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+            <div class="col-span-2">
+                <img id="footerLogo" src="" class="h-8 mb-4 grayscale opacity-50" alt="Logo">
+                <p id="footerDisclaimer" class="max-w-md leading-relaxed">Disclaimer...</p>
+            </div>
+            <div>
+                <strong class="text-white block mb-2">ENTITY</strong>
+                <p id="footerOrganizer">Organizer</p>
+                <p id="footerBrokerage">Brokerage</p>
+                <p id="footerAddress" class="mt-2">Address</p>
+            </div>
+            <div>
+                <strong class="text-white block mb-2">LINKS</strong>
+                <a href="#" id="footerEmail" class="block hover:text-[var(--acid)]">Contact</a>
+                <a href="#" id="footerPrivacy" class="block mt-2 hover:text-[var(--acid)]">Privacy</a>
+            </div>
+        </div>
+        <div class="text-center mt-16 opacity-30 uppercase">
+            SYSTEM END OF LINE
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="questionModal" class="fixed inset-0 z-[200] bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="max-w-lg w-full border border-[var(--acid)] bg-[#0A0A0A] p-8 relative">
+            <div class="absolute -top-2 -left-2 w-4 h-4 bg-[var(--acid)]"></div>
+            <div class="absolute -bottom-2 -right-2 w-4 h-4 bg-[var(--acid)]"></div>
+            
+            <div class="mb-8">
+                <span class="text-[var(--acid)] font-mono text-xs blink">AWAITING INPUT...</span>
+                <div class="h-1 bg-[#222] mt-2 w-full"><div id="qProgress" class="h-full bg-[var(--acid)] w-0 transition-all"></div></div>
+            </div>
+            <div id="qContainer"></div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 z-[200] bg-[var(--acid)] text-black hidden flex items-center justify-center p-4">
+        <div class="text-center">
+            <h2 class="font-display text-[15vw] leading-none opacity-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">WIN</h2>
+            <div class="relative z-10">
+                <h3 class="font-display text-6xl mb-4" id="modalHeader">ACCEPTED</h3>
+                <p class="font-mono text-xl border-b-2 border-black pb-1 inline-block mb-8" id="modalMessage">Data Logged.</p>
+                <br>
+                <button class="font-mono text-xs bg-black text-[var(--acid)] px-6 py-3 hover:bg-white hover:text-black" onclick="location.reload()">RESET</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- VISUALS ---
+        const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Preloader
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+            tl.to("#loadBar", { width: "100%", duration: 1, ease: "power2.inOut" })
+              .to("#loadText", { opacity: 0, duration: 0.2 })
+              .to("#preloader", { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
+              .from("#heroTitle1", { x: -100, opacity: 0, duration: 1 }, "-=0.5")
+              .from("#heroTitle2", { x: 100, opacity: 0, duration: 1 }, "-=0.8");
+        });
+
+        // --- CONFIG ENGINE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config) return;
+
+            // Theme Override
+            if(config.settings?.primaryColorOverride) {
+                document.documentElement.style.setProperty('--acid', config.settings.primaryColorOverride);
+            }
+
+            // HERO
+            if(config.giveaway) {
+                const t = (config.giveaway.name || "GIVEAWAY").split(" ");
+                const mid = Math.ceil(t.length/2);
+                document.getElementById('heroTitle1').innerText = t.slice(0,mid).join(" ");
+                document.getElementById('heroTitle2').innerText = t.slice(mid).join(" ");
+                
+                document.getElementById('heroSubtitle').innerText = config.giveaway.heroSubheadline;
+                document.getElementById('heroDates').innerText = config.giveaway.promotionDates;
+                document.getElementById('heroCta').innerText = config.giveaway.heroCtaText;
+                document.getElementById('navBrand').innerText = config.meta?.navBrandLogoText || "GIVEAWAY";
+
+                if(config.giveaway.heroBackgroundImageUrl) {
+                    document.getElementById('heroBg').style.backgroundImage = `url('${config.giveaway.heroBackgroundImageUrl}')`;
+                }
+                if(config.giveaway.endDate) startTimer(config.giveaway.endDate);
+
+                // Marquee
+                const m = `/// ${config.giveaway.name} /// ${config.prize?.value || "PRIZE"} /// ENTER NOW /// `;
+                document.getElementById('marqueeText').innerText = m.repeat(4);
+            }
+
+            // PRIZE
+            if(config.prize) {
+                document.getElementById('prizeName').innerText = config.prize.name;
+                document.getElementById('prizeValue').innerText = config.prize.value;
+                document.getElementById('prizeDesc').innerHTML = config.prize.description;
+
+                if(config.prize.images) {
+                    if(config.prize.images[0]) document.getElementById('prizeImg1').src = config.prize.images[0].src;
+                    if(config.prize.images[1]) document.getElementById('prizeImg2').src = config.prize.images[1].src;
+                    if(config.prize.images[2]) document.getElementById('prizeImg3').src = config.prize.images[2].src;
+                    else if(config.prize.images[0]) document.getElementById('prizeImg3').src = config.prize.images[0].src;
+                }
+
+                if(config.prize.includedItems) {
+                    document.getElementById('prizeIncludes').innerHTML = config.prize.includedItems.map(i => 
+                        `<li class="flex items-center gap-2"><span class="text-[var(--acid)]">>></span> ${i.text}</li>`
+                    ).join('');
+                }
+            }
+
+            // STEPS
+            if(config.howToEnter?.steps) {
+                const cont = document.getElementById('stepsContainer');
+                cont.innerHTML = config.howToEnter.steps.map((s, i) => `
+                    <div class="border border-[#222] p-8 hover:bg-[#141414] transition-colors group">
+                        <div class="font-display text-6xl text-[#222] mb-4 group-hover:text-[var(--acid)] transition-colors">0${i+1}</div>
+                        <h3 class="font-bold text-xl mb-2 text-white">${s.title}</h3>
+                        <p class="font-mono text-xs text-[#666] leading-relaxed">${s.description}</p>
+                    </div>
+                `).join('');
+            }
+
+            // FORM
+            if(config.entryForm) {
+                document.getElementById('formSubtitle').innerText = config.entryForm.subtitle;
+                document.getElementById('socialPrompt').innerText = config.entryForm.socialSharePrompt;
+                if(config.entryForm.sharePlatforms) {
+                    let html = '';
+                    for(const [k,v] of Object.entries(config.entryForm.sharePlatforms)) {
+                        html += `<a href="${v}" target="_blank" class="hover:text-[var(--acid)] transition-colors"><i class="fab fa-${k}"></i></a>`;
+                    }
+                    document.getElementById('socialIcons').innerHTML = html;
+                }
+            }
+
+            // FOOTER
+            if(config.footerContact) {
+                const fc = config.footerContact;
+                if(fc.organizerLogoUrl) document.getElementById('footerLogo').src = fc.organizerLogoUrl;
+                document.getElementById('footerOrganizer').innerText = fc.organizerName;
+                document.getElementById('footerBrokerage').innerText = fc.brokerageName;
+                document.getElementById('footerAddress').innerText = fc.address;
+                document.getElementById('footerDisclaimer').innerText = fc.footerDisclaimer;
+                
+                const em = document.getElementById('footerEmail'); 
+                em.innerText = fc.agentContact?.email; em.href = `mailto:${fc.agentContact?.email}`;
+                
+                const priv = config.meta?.privacyPolicyLink || "#";
+                document.getElementById('footerPrivacy').href = priv;
+                document.getElementById('contactConsentLabel').innerHTML = `I AUTHORIZE CONTACT FROM ${fc.brokerageName} VIA PHONE/EMAIL. <a href="${priv}" target="_blank" class="underline text-[var(--acid)]">PRIVACY</a>`;
+            }
+
+            // COUNTDOWN
+            function startTimer(end) {
+                const t = new Date(end).getTime();
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const d = t - now;
+                    if(d<0) return;
+                    document.getElementById('d').innerText = Math.floor(d/(1000*60*60*24)).toString().padStart(2,'0');
+                    document.getElementById('h').innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+                    document.getElementById('m').innerText = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+                    document.getElementById('s').innerText = Math.floor((d%(1000*60))/1000).toString().padStart(2,'0');
+                },1000);
+            }
+
+            // SUBMISSION
+            let turnstileToken = null;
+            let storedForm = {};
+            let qAnswers = {};
+
+            if(config.settings?.turnstileSiteKey) {
+                setTimeout(() => {
+                    try {
+                        turnstile.render('#turnstileWidget', {
+                            sitekey: config.settings.turnstileSiteKey,
+                            theme: 'dark',
+                            callback: (t) => turnstileToken = t
+                        });
+                    } catch(e){}
+                }, 1500);
+            }
+
+            const form = document.getElementById('giveawayEntryForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if(document.getElementById('website').value) return;
+                if(config.settings?.turnstileSiteKey && !turnstileToken) { alert('VERIFICATION_REQUIRED'); return; }
+                
+                storedForm = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('phoneNumber').value
+                };
+
+                if(config.modalQuestions?.length > 0) openQ();
+                else finalSubmit();
+            });
+
+            const qModal = document.getElementById('questionModal');
+            const qCont = document.getElementById('qContainer');
+            
+            function openQ() {
+                qModal.classList.remove('hidden');
+                qModal.classList.add('flex');
+                renderQ(0);
+            }
+
+            function renderQ(idx) {
+                if(idx >= config.modalQuestions.length) {
+                    qModal.classList.add('hidden');
+                    qModal.classList.remove('flex');
+                    finalSubmit();
+                    return;
+                }
+                
+                const pct = ((idx)/config.modalQuestions.length)*100;
+                document.getElementById('qProgress').style.width = `${pct}%`;
+
+                const q = config.modalQuestions[idx];
+                qCont.innerHTML = `
+                    <h3 class="font-display text-2xl text-white mb-8">${q.questionText}</h3>
+                    <div class="space-y-2">
+                        ${q.options.map(opt => `
+                            <button class="w-full p-4 border border-[#333] text-[#888] text-left hover:bg-[var(--acid)] hover:text-black hover:border-[var(--acid)] transition-all font-mono text-xs q-btn" data-val="${opt.value}">
+                                > ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                qCont.querySelectorAll('.q-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        qAnswers[q.id] = btn.dataset.val;
+                        renderQ(idx+1);
+                    });
+                });
+            }
+
+            async function finalSubmit() {
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                
+                if(config.giveaway) {
+                    document.getElementById('modalHeader').innerText = config.giveaway.successModalHeaderText;
+                    document.getElementById('modalMessage').innerHTML = config.giveaway.successModalMainMessage;
+                }
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#CCFF00', '#FFFFFF'] });
+            }
+        });
+    </script>
+</body>
+</html>

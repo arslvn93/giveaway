@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#050505]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Collection | Private Entry</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts: Italiana (Luxury) & Manrope (Modern) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Security -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    
+    <!-- Animation Stack -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Load Config -->
+    <script src="config.js"></script>
+
+    <!-- Meta Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    if(typeof config!=='undefined'&&config.settings&&config.settings.facebookPixelId){fbq('init',config.settings.facebookPixelId);} fbq('track','PageView');
+    </script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --text: #F2F2F2;
+            --gold: #D4AF37;
+            --card-bg: #0F0F0F;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .font-display { font-family: 'Italiana', serif; }
+
+        /* SMOOTH SCROLL */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+
+        /* TEXTURE */
+        .grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.04; pointer-events: none; z-index: 9000;
+        }
+
+        /* CURSOR */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 16px; height: 16px;
+            background: white; border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); mix-blend-mode: difference;
+            transition: width 0.3s, height 0.3s;
+        }
+        body.hover-active #cursor { width: 60px; height: 60px; opacity: 0.5; }
+
+        /* GALLERY */
+        .gallery-wrapper { width: 300%; display: flex; flex-wrap: nowrap; height: 100vh; }
+        .gallery-panel {
+            width: 100vw; height: 100vh; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .panel-bg {
+            position: absolute; inset: 0; background-size: cover; background-position: center;
+            transition: transform 1s ease-out;
+        }
+        /* READABILITY LAYERS */
+        .cinema-blur {
+            position: absolute; inset: 0;
+            background: rgba(5, 5, 5, 0.7); /* Darker overlay */
+            backdrop-filter: blur(8px); /* Heavy blur for readability */
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        /* STACKING CARDS */
+        .stack-wrapper { padding-bottom: 10vh; position: relative; }
+        .stack-card {
+            position: sticky; top: 100px;
+            background: #111; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* BUTTONS */
+        .btn-gold {
+            position: relative; padding: 1.2rem 3rem; border: 1px solid var(--gold);
+            color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem;
+            overflow: hidden; transition: color 0.4s;
+        }
+        .btn-gold::after {
+            content: ''; position: absolute; inset: 0; background: var(--gold);
+            transform: scaleX(0); transform-origin: right; transition: transform 0.4s ease; z-index: -1;
+        }
+        .btn-gold:hover::after { transform: scaleX(1); transform-origin: left; }
+        .btn-gold:hover { color: black; }
+
+        /* NEW FORM INPUTS (FLOATING LABELS) */
+        .form-group { position: relative; margin-bottom: 2rem; }
+        .input-vip {
+            width: 100%; background: transparent; border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem 0; font-family: 'Italiana', serif; font-size: 1.5rem; color: white;
+            outline: none; transition: border-color 0.3s;
+        }
+        .input-vip:focus { border-color: var(--gold); }
+        .input-vip:focus ~ label, .input-vip:not(:placeholder-shown) ~ label {
+            top: -10px; font-size: 0.65rem; color: var(--gold); letter-spacing: 0.2em;
+        }
+        .label-vip {
+            position: absolute; top: 1rem; left: 0;
+            font-family: 'Manrope', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+            color: #666; pointer-events: none; transition: all 0.3s ease;
+        }
+
+        /* PRELOADER */
+        #preloader {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grain"></div>
+    <div id="cursor"></div>
+    <canvas id="confetti-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:50;"></canvas>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="text-center">
+            <h1 class="font-display text-6xl md:text-8xl text-[#D4AF37] opacity-0" id="loaderText">THE COLLECTION</h1>
+            <div class="w-[1px] h-24 bg-white/20 mx-auto mt-8 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-full bg-white h-0" id="loaderBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 p-8 flex justify-between items-center mix-blend-difference text-white opacity-0 transition-opacity duration-1000" id="mainNav">
+        <div class="font-display text-2xl tracking-widest hover-trigger" id="navBrand">GIVEAWAY</div>
+        <a href="#entry" class="border-b border-white pb-1 text-[10px] uppercase tracking-[0.3em] font-bold hover-trigger hover:text-[#D4AF37] hover:border-[#D4AF37] transition-colors">
+            Enter To Win
+        </a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden">
+        <!-- Full Background Image -->
+        <div class="absolute inset-0 z-0">
+            <div id="hero-bg" class="w-full h-full bg-cover bg-center scale-110 transition-transform duration-[3s]"></div>
+            <!-- Scrim -->
+            <div class="absolute inset-0 bg-black/50"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl px-6 flex flex-col items-center h-full justify-center pt-20">
+            
+            <div class="mb-8 overflow-hidden">
+                <p class="translate-y-full transition-transform duration-1000 delay-500 reveal-el text-xs md:text-sm font-mono uppercase tracking-[0.4em] text-[#D4AF37]" id="heroDates">
+                    LOADING...
+                </p>
+            </div>
+            
+            <h1 class="font-display text-6xl md:text-8xl lg:text-9xl leading-none mb-10 text-white drop-shadow-2xl">
+                <div class="overflow-hidden"><span class="block translate-y-full transition-transform duration-1000 delay-700 reveal-el" id="heroTitleLine1">EXCLUSIVE</span></div>
+                <div class="overflow-hidden"><span class="block translate-y-full transition-transform duration-1000 delay-800 reveal-el italic text-[#D4AF37]" id="heroTitleLine2">GIVEAWAY</span></div>
+            </h1>
+
+            <div class="overflow-hidden mb-16">
+                <p class="translate-y-full transition-transform duration-1000 delay-900 reveal-el max-w-xl mx-auto text-lg md:text-xl text-gray-300 font-light leading-relaxed" id="heroSubtitle">
+                    Loading giveaway details...
+                </p>
+            </div>
+
+            <!-- Button moved here to avoid overlap -->
+            <div class="opacity-0 transition-opacity duration-1000 delay-1000 fade-el mb-20">
+                <a href="#entry" class="btn-gold inline-block hover-trigger" id="heroCta">
+                    Enter Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Countdown Pinned to Bottom -->
+        <div class="absolute bottom-12 w-full flex justify-center gap-16 text-center opacity-0 transition-opacity duration-1000 delay-1000 fade-el z-20" id="countdownContainer">
+            <div><span class="block font-display text-4xl text-white" id="d">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Days</span></div>
+            <div><span class="block font-display text-4xl text-white" id="h">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Hrs</span></div>
+            <div><span class="block font-display text-4xl text-white" id="m">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Mins</span></div>
+        </div>
+    </header>
+
+    <!-- PRIZE GALLERY (Horizontal Scroll) -->
+    <section id="prize-gallery" class="relative h-screen overflow-hidden bg-[#050505]">
+        <div class="absolute top-8 left-8 z-20 text-white">
+            <h2 class="font-display text-3xl">The Collection</h2>
+            <p class="text-xs uppercase tracking-widest opacity-70 mt-2" id="prizeValue">Value Loading...</p>
+        </div>
+
+        <div class="gallery-wrapper" id="galleryTrack">
+            
+            <!-- Slide 1: Main Prize -->
+            <div class="gallery-panel">
+                <div class="panel-bg w-full h-full" id="prizeImg1"></div>
+                <!-- Cinema Blur Overlay for Readability -->
+                <div class="cinema-blur"></div>
+                
+                <div class="relative z-10 max-w-4xl text-center px-6">
+                    <span class="text-[#D4AF37] text-xs uppercase tracking-[0.3em] mb-6 block">The Grand Prize</span>
+                    <h3 class="font-display text-7xl md:text-9xl mb-8 text-white drop-shadow-lg" id="prizeName">PRIZE</h3>
+                    <div class="h-[1px] w-24 bg-white/30 mx-auto mb-8"></div>
+                    <div class="text-xl text-white font-light leading-relaxed drop-shadow-md" id="prizeDesc">Description...</div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Inclusions -->
+            <div class="gallery-panel">
+                <div class="panel-bg w-full h-full" id="prizeImg2"></div>
+                <!-- Cinema Blur Overlay -->
+                <div class="cinema-blur"></div>
+
+                <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl w-full px-6 items-center">
+                    <div>
+                        <h3 class="font-display text-5xl md:text-7xl mb-10 text-white">Winning Package</h3>
+                        <ul class="space-y-6" id="prizeIncludes">
+                            <!-- JS Populates -->
+                        </ul>
+                    </div>
+                    <!-- Image Frame -->
+                    <div class="aspect-[3/4] bg-cover bg-center shadow-2xl border border-white/20 relative overflow-hidden">
+                         <div class="absolute inset-0 bg-cover bg-center hover:scale-110 transition-transform duration-[2s]" id="prizeImg3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: CTA -->
+            <div class="gallery-panel">
+                <div class="panel-bg w-full h-full" id="prizeImg4"></div>
+                <div class="absolute inset-0 bg-black/70"></div>
+                <div class="relative z-10 text-center">
+                    <h3 class="font-display text-8xl md:text-[12rem] leading-none mb-12 text-white mix-blend-overlay opacity-50">Acquire</h3>
+                    <a href="#entry" class="btn-gold bg-transparent hover-trigger">Submit Entry</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- STACKING CARDS (Steps & Rules) -->
+    <section id="steps" class="py-32 px-4 md:px-20 bg-[#050505] relative">
+        <div class="text-center mb-24">
+            <span class="text-xs font-mono uppercase tracking-[0.3em] text-gray-500">Directives</span>
+            <h2 class="font-display text-5xl mt-4 text-white">Entry Protocol</h2>
+        </div>
+
+        <div class="max-w-4xl mx-auto stack-wrapper" id="stackContainer">
+            <!-- JS Injects Cards Here -->
+        </div>
+    </section>
+
+    <!-- ENTRY FORM (THE BLACK CARD) -->
+    <section id="entry" class="min-h-screen flex items-center justify-center py-32 px-4 relative">
+        <!-- Background Texture -->
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-5 pointer-events-none"></div>
+        
+        <!-- The Card Container -->
+        <div class="w-full max-w-2xl bg-[#0F0F0F] border border-white/10 p-8 md:p-16 relative z-10 shadow-2xl rounded-sm overflow-hidden">
+            <!-- Decorative Noise on Card -->
+            <div class="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+            
+            <!-- Gold Accent Line -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]"></div>
+
+            <div class="text-center mb-12 relative z-10">
+                <h2 class="font-display text-4xl md:text-6xl text-white mb-2">Registration</h2>
+                <p class="text-[#D4AF37] text-xs font-mono uppercase tracking-widest" id="formSubtitle">Official Entry Form</p>
+                <p class="text-gray-600 text-[10px] mt-2 uppercase tracking-widest" id="entryCount">Limited Time</p>
+            </div>
+
+            <!-- Verification -->
+            <div id="turnstileWidget" class="flex justify-center mb-10 relative z-10"></div>
+
+            <form id="giveawayEntryForm" class="relative z-10">
+                <div class="form-group">
+                    <input type="text" id="fullName" class="input-vip hover-trigger" placeholder=" " required>
+                    <label for="fullName" class="label-vip">Full Designation</label>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="email" class="input-vip hover-trigger" placeholder=" " required>
+                    <label for="email" class="label-vip">Digital Contact</label>
+                </div>
+
+                <div class="form-group">
+                    <input type="tel" id="phoneNumber" class="input-vip hover-trigger" placeholder=" " required>
+                    <label for="phoneNumber" class="label-vip">Frequency</label>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" class="hidden">
+
+                <div class="flex items-start gap-4 opacity-60 hover:opacity-100 transition-opacity mt-8">
+                    <input type="checkbox" id="contactConsent" required class="mt-1 bg-transparent border-white/20 accent-[#D4AF37]">
+                    <label for="contactConsent" id="contactConsentLabel" class="text-xs text-gray-400 leading-relaxed font-light"></label>
+                </div>
+
+                <div class="text-center pt-12">
+                    <button type="submit" id="entryFormSubmitButton" class="w-full bg-[#D4AF37] text-black font-bold uppercase tracking-[0.2em] py-4 text-sm hover:bg-white transition-colors hover-trigger">
+                        Secure Entry
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-12 border-t border-white/5 pt-8 text-center relative z-10">
+                <p class="text-[10px] uppercase tracking-widest text-gray-600 mb-4" id="socialPrompt">Amplify</p>
+                <div class="flex justify-center gap-8 text-xl text-gray-500" id="socialIcons"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-20 bg-black text-center border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <img id="footerLogo" src="" alt="Logo" class="h-12 mx-auto mb-12 grayscale opacity-60">
+            
+            <div class="grid md:grid-cols-3 gap-12 text-xs uppercase tracking-widest text-gray-500 mb-16 max-w-5xl mx-auto">
+                <div>
+                    <strong class="block text-white mb-2" id="footerOrganizer">Organizer</strong>
+                    <span id="footerBrokerage">Brokerage</span>
+                </div>
+                <div>
+                    <strong class="block text-white mb-2">Contact</strong>
+                    <a href="#" id="footerEmail" class="hover:text-[#D4AF37] transition-colors">Email</a>
+                </div>
+                <div>
+                    <strong class="block text-white mb-2">Legal</strong>
+                    <a href="#" id="footerPrivacy" class="hover:text-[#D4AF37] transition-colors">Privacy Policy</a>
+                </div>
+            </div>
+
+            <p class="text-[10px] text-gray-700 max-w-2xl mx-auto leading-relaxed" id="footerDisclaimer">Disclaimer</p>
+            <div class="mt-8 text-[10px] text-gray-800">
+                <span id="footerCopyright">© 2025</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <!-- Question Modal -->
+    <div id="questionModal" class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="max-w-lg w-full relative border border-white/10 bg-[#0F0F0F] p-10 shadow-2xl">
+            <button id="closeQ" class="absolute top-4 right-4 text-white text-xl hover:text-[#D4AF37]">&times;</button>
+            <div class="mb-8">
+                <span class="text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest">Validation</span>
+                <div class="w-full bg-gray-800 h-[2px] mt-2"><div id="qProgress" class="h-full bg-[#D4AF37] w-0 transition-all duration-500"></div></div>
+            </div>
+            <div id="qContainer"></div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-[200] bg-white text-black hidden flex items-center justify-center p-4">
+        <div class="text-center max-w-md w-full">
+            <div class="mb-8 text-[#D4AF37] text-6xl"><i class="fa-solid fa-check-circle"></i></div>
+            <h2 class="font-display text-6xl mb-4" id="modalHeader">Confirmed</h2>
+            <p class="text-gray-500 text-lg font-light mb-8" id="modalMessage">Your entry is confirmed.</p>
+            <div class="h-[1px] w-16 bg-gray-200 mx-auto mb-8"></div>
+            <p class="text-xs uppercase tracking-widest text-gray-400" id="modalPrompt">Check your email.</p>
+            <button class="mt-12 text-xs font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-[#D4AF37] hover:border-[#D4AF37] transition-colors" onclick="location.reload()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. VISUAL ENGINE (GSAP + Lenis) ---
+        const lenis = new Lenis({ duration: 1.5, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+        document.querySelectorAll('.hover-trigger, a, button, input').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
+        });
+
+        // Preloader & Init
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+            tl.to("#loaderBar", { height: "100%", duration: 1.5, ease: "power2.inOut" })
+              .to("#loaderText", { opacity: 1, duration: 0.5 }, "-=1")
+              .to("#preloader", { y: "-100%", duration: 1.2, ease: "expo.inOut", delay: 0.2 })
+              .call(() => {
+                  document.querySelectorAll('.reveal-el').forEach(el => el.classList.remove('translate-y-full'));
+                  document.querySelectorAll('.fade-el').forEach(el => el.classList.remove('opacity-0'));
+                  document.getElementById('mainNav').classList.remove('opacity-0');
+              });
+        });
+
+        // Horizontal Scroll
+        gsap.registerPlugin(ScrollTrigger);
+        const track = document.getElementById('galleryTrack');
+        if (window.innerWidth > 768) {
+            gsap.to(track, {
+                xPercent: -100 * (3 - 1) / 3, // 3 slides
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#prize-gallery",
+                    pin: true,
+                    scrub: 1,
+                    snap: 1 / (3 - 1),
+                    end: "+=3000",
+                }
+            });
+        }
+
+        // --- 2. CONFIG LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config) return;
+
+            // Theme Override
+            if(config.settings?.primaryColorOverride) {
+                document.documentElement.style.setProperty('--gold', config.settings.primaryColorOverride);
+            }
+
+            // HERO
+            if(config.giveaway) {
+                const t = (config.giveaway.name || "GIVEAWAY").split(" ");
+                const mid = Math.ceil(t.length/2);
+                document.getElementById('heroTitleLine1').innerText = t.slice(0,mid).join(" ");
+                document.getElementById('heroTitleLine2').innerText = t.slice(mid).join(" ");
+                
+                document.getElementById('heroSubtitle').innerText = config.giveaway.heroSubheadline;
+                document.getElementById('heroDates').innerText = config.giveaway.promotionDates;
+                document.getElementById('heroCta').innerText = config.giveaway.heroCtaText;
+                document.getElementById('navBrand').innerText = config.meta?.navBrandLogoText || "GIVEAWAY";
+                document.getElementById('loaderText').innerText = config.meta?.navBrandLogoText || "THE PRIZE";
+
+                if(config.giveaway.heroBackgroundImageUrl) {
+                    document.getElementById('hero-bg').style.backgroundImage = `url('${config.giveaway.heroBackgroundImageUrl}')`;
+                }
+                if(config.giveaway.endDate) startTimer(config.giveaway.endDate);
+            }
+
+            // PRIZE (Museum)
+            if(config.prize) {
+                document.getElementById('prizeName').innerText = config.prize.name;
+                document.getElementById('prizeValue').innerText = config.prize.value;
+                document.getElementById('prizeDesc').innerHTML = config.prize.description;
+
+                // Image Logic
+                if(config.prize.images) {
+                    if(config.prize.images[0]) document.getElementById('prizeImg1').style.backgroundImage = `url('${config.prize.images[0].src}')`;
+                    if(config.prize.images[1]) document.getElementById('prizeImg2').style.backgroundImage = `url('${config.prize.images[1].src}')`;
+                    if(config.prize.images[2]) document.getElementById('prizeImg3').style.backgroundImage = `url('${config.prize.images[2].src}')`;
+                    if(config.prize.images[3]) document.getElementById('prizeImg4').style.backgroundImage = `url('${config.prize.images[3].src}')`;
+                    else document.getElementById('prizeImg4').style.backgroundImage = `url('${config.prize.images[0].src}')`;
+                }
+
+                if(config.prize.includedItems) {
+                    document.getElementById('prizeIncludes').innerHTML = config.prize.includedItems.map(i => 
+                        `<li class="flex items-center gap-4 text-white font-light border-b border-white/10 pb-4">
+                            <span class="text-[#D4AF37] text-xl">✦</span> ${i.text}
+                        </li>`
+                    ).join('');
+                }
+            }
+
+            // STACK CARDS (How To + Rules)
+            const stack = document.getElementById('stackContainer');
+            let offset = 100;
+            
+            // 1. How To Enter Steps (as Cards)
+            if(config.howToEnter?.steps) {
+                config.howToEnter.steps.forEach((s, i) => {
+                    const card = document.createElement('div');
+                    card.className = "stack-card p-10 md:p-16 mb-12 max-w-3xl mx-auto relative";
+                    card.style.top = `${offset + (i*30)}px`;
+                    
+                    // Use secondary images as background if available to add depth
+                    let bgStyle = "";
+                    if(config.prize.images && config.prize.images[i+1]) {
+                        bgStyle = `background: linear-gradient(to right, #111 30%, rgba(17,17,17,0.4)), url('${config.prize.images[i+1].src}'); background-size: cover; background-position: center;`;
+                    }
+
+                    card.style.cssText += bgStyle;
+                    
+                    card.innerHTML = `
+                        <div class="relative z-10 md:w-3/4">
+                            <div class="flex justify-between items-start mb-8">
+                                <span class="font-display text-6xl text-[#D4AF37] opacity-80">0${i+1}</span>
+                                <span class="text-[10px] uppercase tracking-widest text-gray-400">Step</span>
+                            </div>
+                            <h3 class="font-display text-3xl md:text-4xl mb-4 text-white">${s.title}</h3>
+                            <p class="text-white font-light leading-relaxed text-sm drop-shadow-md">${s.description}</p>
+                        </div>
+                    `;
+                    stack.appendChild(card);
+                });
+                offset += (config.howToEnter.steps.length * 30);
+            }
+
+            // 2. FAQ Card
+            if(config.rules?.faq) {
+                const rCard = document.createElement('div');
+                rCard.className = "stack-card p-10 md:p-16 max-w-3xl mx-auto bg-[#0F0F0F]";
+                rCard.style.top = `${offset + 50}px`;
+                let html = `<h3 class="font-display text-3xl mb-8 text-white">Fine Print</h3><div class="space-y-8">`;
+                config.rules.faq.forEach(f => {
+                    html += `<div><p class="font-bold text-[#D4AF37] text-sm mb-2">${f.q}</p><p class="text-gray-500 text-xs font-light leading-relaxed">${f.a}</p></div>`;
+                });
+                html += `</div>`;
+                rCard.innerHTML = html;
+                stack.appendChild(rCard);
+            }
+
+            // FORM
+            if(config.entryForm) {
+                document.getElementById('formSubtitle').innerText = config.entryForm.subtitle;
+                document.getElementById('entryCount').innerText = config.entryForm.entryCountText;
+                document.getElementById('socialPrompt').innerText = config.entryForm.socialSharePrompt;
+                
+                if(config.entryForm.sharePlatforms) {
+                    let html = '';
+                    for(const [k,v] of Object.entries(config.entryForm.sharePlatforms)) {
+                        html += `<a href="${v}" target="_blank" class="hover:text-[#D4AF37] transition-colors"><i class="fab fa-${k}"></i></a>`;
+                    }
+                    document.getElementById('socialIcons').innerHTML = html;
+                }
+            }
+
+            // FOOTER
+            if(config.footerContact) {
+                const fc = config.footerContact;
+                if(fc.organizerLogoUrl) document.getElementById('footerLogo').src = fc.organizerLogoUrl;
+                document.getElementById('footerOrganizer').innerText = fc.organizerName;
+                document.getElementById('footerBrokerage').innerText = fc.brokerageName;
+                document.getElementById('footerEmail').innerText = fc.agentContact?.email || "Email";
+                document.getElementById('footerEmail').href = `mailto:${fc.agentContact?.email}`;
+                document.getElementById('footerDisclaimer').innerText = fc.footerDisclaimer;
+                document.getElementById('footerCopyright').innerText = `© ${new Date().getFullYear()} ${fc.organizerName}`;
+                
+                const priv = config.meta?.privacyPolicyLink || "#";
+                document.getElementById('footerPrivacy').href = priv;
+                document.getElementById('contactConsentLabel').innerHTML = `I agree to be contacted by ${fc.brokerageName}. Reply STOP to opt-out. <a href="${priv}" target="_blank" class="underline text-white">Privacy Policy</a>.`;
+            }
+
+            // COUNTDOWN
+            function startTimer(end) {
+                const t = new Date(end).getTime();
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const d = t - now;
+                    if(d<0) return;
+                    document.getElementById('d').innerText = Math.floor(d/(1000*60*60*24)).toString().padStart(2,'0');
+                    document.getElementById('h').innerText = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+                    document.getElementById('m').innerText = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+                },1000);
+            }
+
+            // SUBMISSION
+            let turnstileToken = null;
+            let storedForm = {};
+            let qAnswers = {};
+
+            if(config.settings?.turnstileSiteKey) {
+                setTimeout(() => {
+                    try {
+                        turnstile.render('#turnstileWidget', {
+                            sitekey: config.settings.turnstileSiteKey,
+                            theme: 'dark',
+                            callback: (t) => turnstileToken = t
+                        });
+                    } catch(e){}
+                }, 1500);
+            }
+
+            const form = document.getElementById('giveawayEntryForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if(document.getElementById('website').value) return;
+                if(config.settings?.turnstileSiteKey && !turnstileToken) { alert('Verification required.'); return; }
+                
+                storedForm = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('phoneNumber').value
+                };
+
+                if(config.modalQuestions?.length > 0) openQ();
+                else finalSubmit();
+            });
+
+            const qModal = document.getElementById('questionModal');
+            const qCont = document.getElementById('qContainer');
+            
+            function openQ() {
+                qModal.classList.remove('hidden');
+                qModal.classList.add('flex');
+                renderQ(0);
+            }
+
+            function renderQ(idx) {
+                if(idx >= config.modalQuestions.length) {
+                    qModal.classList.add('hidden');
+                    qModal.classList.remove('flex');
+                    finalSubmit();
+                    return;
+                }
+                
+                const pct = ((idx)/config.modalQuestions.length)*100;
+                document.getElementById('qProgress').style.width = `${pct}%`;
+
+                const q = config.modalQuestions[idx];
+                qCont.innerHTML = `
+                    <h3 class="font-display text-3xl text-white mb-8">${q.questionText}</h3>
+                    <div class="space-y-3">
+                        ${q.options.map(opt => `
+                            <button class="w-full p-4 border border-gray-700 text-white text-left hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-black transition-all duration-300 q-btn uppercase text-xs tracking-widest" data-val="${opt.value}">
+                                ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                qCont.querySelectorAll('.q-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        qAnswers[q.id] = btn.dataset.val;
+                        renderQ(idx+1);
+                    });
+                });
+            }
+            document.getElementById('closeQ').addEventListener('click', () => qModal.classList.add('hidden'));
+
+            async function finalSubmit() {
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                
+                if(config.giveaway) {
+                    document.getElementById('modalHeader').innerText = config.giveaway.successModalHeaderText;
+                    document.getElementById('modalMessage').innerHTML = config.giveaway.successModalMainMessage;
+                }
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFFFFF'] });
+                
+                // In production:
+                // const payload = { ...storedForm, questions: qAnswers, turnstileToken };
+                // await fetch(config.settings.webhookUrl, ...);
+            }
+        });
+    </script>
+</body>
+</html>
