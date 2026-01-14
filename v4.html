@@ -622,16 +622,61 @@
             document.getElementById('closeQ').addEventListener('click', () => qModal.classList.add('hidden'));
 
             async function finalSubmit() {
-                const sModal = document.getElementById('successModal');
-                sModal.classList.remove('hidden');
-                sModal.classList.add('flex');
-                
-                if(config.giveaway) {
-                    document.getElementById('modalHeader').innerText = config.giveaway.successModalHeaderText;
-                    document.getElementById('modalMessage').innerHTML = config.giveaway.successModalMainMessage;
-                    document.getElementById('modalPrompt').innerHTML = config.giveaway.successModalEmailPrompt;
+                // Build payload with form data, question answers, and config settings
+                const finalPayload = {
+                    fullName: storedForm.fullName || "",
+                    email: storedForm.email || "",
+                    phoneNumber: storedForm.phoneNumber || "",
+                    giveawayName: config.giveaway?.name || "N/A",
+                    submittedAt: new Date().toISOString(),
+                    questions: [],
+                    deploymentInfo: config.deploymentInfo || {},
+                    ghlWebhookUrl: config.settings?.ghlWebhookUrl || "",
+                    salesGeniusAppApi: config.settings?.salesGeniusAppApi || "",
+                    followUpBossEmail: config.settings?.followUpBossEmail || "",
+                    agentEmail: config.footerContact?.email || "",
+                    turnstileToken: turnstileToken || ""
+                };
+
+                // Map question answers to the payload format expected by the API
+                for (const questionId in qAnswers) {
+                    if (Object.hasOwnProperty.call(qAnswers, questionId)) {
+                        const answerValue = qAnswers[questionId];
+                        const questionObj = config.modalQuestions.find(q => q.id === questionId);
+                        if (questionObj) {
+                            const optionObj = questionObj.options.find(opt => opt.value === answerValue);
+                            finalPayload.questions.push({
+                                question: questionObj.questionText,
+                                answer: optionObj ? optionObj.text : answerValue
+                            });
+                        }
+                    }
                 }
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFFFFF'] });
+
+                // Use Netlify Function as secure proxy (keeps auth credentials server-side)
+                const functionUrl = "/.netlify/functions/submit-entry";
+
+                try {
+                    const response = await fetch(functionUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(finalPayload)
+                    });
+
+                    if (!response.ok) {
+                        const responseData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                        console.error("Submission failed:", response.status, responseData);
+                        alert('There was an issue submitting your entry. Please try again.');
+                    } else {
+                        // Redirect to thank you page on successful submission
+                        window.location.href = 'thankyou.html';
+                    }
+                } catch (error) {
+                    console.error("Submission error:", error);
+                    alert('An error occurred while submitting your entry. Please check your connection and try again.');
+                }
             }
         });
     </script>
