@@ -85,9 +85,9 @@ const config = {
   "howToEnter": {
     "steps": [
       {
-        "icon": "fas fa-edit",
-        "title": "Fill Out the Form",
-        "description": "Enter your name and email in the quick form below—done in under 30 seconds!"
+        "icon": "fas fa-instagram",
+        "title": "Follow Instagram Account",
+        "description": "Follow our Instagram account to stay connected and get updates on the giveaway."
       },
       {
         "icon": "fas fa-question-circle",

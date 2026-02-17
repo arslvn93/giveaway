@@ -90,6 +90,12 @@
             box-shadow: 0 -20px 50px rgba(0,0,0,0.8);
             overflow: hidden;
         }
+        @media (max-width: 768px) {
+            .stack-card {
+                position: relative;
+                top: auto !important;
+            }
+        }
 
         /* BUTTONS */
         .btn-gold {
@@ -140,7 +146,7 @@
     </div>
 
     <!-- NAV -->
-    <nav class="fixed top-0 w-full z-50 p-8 flex justify-between items-center mix-blend-difference text-white opacity-0 transition-opacity duration-1000" id="mainNav">
+    <nav class="relative w-full z-50 p-8 flex justify-between items-center mix-blend-difference text-white opacity-0 transition-opacity duration-1000" id="mainNav">
         <div class="font-display text-2xl tracking-widest hover-trigger" id="navBrand">GIVEAWAY</div>
         <a href="#entry" class="border-b border-white pb-1 text-[10px] uppercase tracking-[0.3em] font-bold hover-trigger hover:text-[#D4AF37] hover:border-[#D4AF37] transition-colors">
             Enter To Win
@@ -180,13 +186,13 @@
                     Enter Now
                 </a>
             </div>
-        </div>
 
-        <!-- Countdown -->
-        <div class="absolute bottom-12 w-full flex justify-center gap-16 text-center opacity-0 transition-opacity duration-1000 delay-1000 fade-el" id="countdownContainer">
-            <div><span class="block font-display text-4xl text-white" id="d">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Days</span></div>
-            <div><span class="block font-display text-4xl text-white" id="h">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Hrs</span></div>
-            <div><span class="block font-display text-4xl text-white" id="m">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Mins</span></div>
+            <!-- Countdown -->
+            <div class="mt-10 md:mt-12 w-full flex justify-center gap-8 md:gap-16 text-center opacity-0 transition-opacity duration-1000 delay-1000 fade-el" id="countdownContainer">
+                <div><span class="block font-display text-4xl text-white" id="d">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Days</span></div>
+                <div><span class="block font-display text-4xl text-white" id="h">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Hrs</span></div>
+                <div><span class="block font-display text-4xl text-white" id="m">00</span><span class="text-[10px] uppercase tracking-widest text-[#D4AF37]">Mins</span></div>
+            </div>
         </div>
     </header>
 
@@ -202,7 +208,7 @@
             <!-- Slide 1: Main -->
             <div class="gallery-panel">
                 <div class="panel-bg w-full h-full" id="prizeImg1"></div>
-                <div class="absolute inset-0 bg-black/40"></div>
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
                 <div class="relative z-10 max-w-4xl text-center px-6">
                     <span class="text-[#D4AF37] text-xs uppercase tracking-[0.3em] mb-6 block">Grand Prize</span>
                     <h3 class="font-display text-7xl md:text-9xl mb-8 text-white" id="prizeName">PRIZE</h3>
@@ -241,7 +247,7 @@
 
     <!-- STACKING CARDS (Steps & Rules) -->
     <section id="steps" class="py-32 px-4 md:px-20 bg-[#0a0a0a] relative">
-        <div class="text-center mb-24">
+        <div class="text-center mb-12 md:mb-16">
             <span class="text-xs font-mono uppercase tracking-[0.3em] text-gray-500">The Process</span>
             <h2 class="font-display text-5xl mt-4 text-white">How To Enter</h2>
         </div>
@@ -467,19 +473,18 @@
                     card.className = "stack-card p-10 md:p-16 mb-12 max-w-3xl mx-auto relative";
                     card.style.top = `${offset + (i*30)}px`;
                     
-                    // Use secondary images as background if available
+                    // Use secondary images as background - fallback to another image if index missing
                     let bgStyle = "";
-                    if(config.prize.images && config.prize.images[i+1]) {
-                        bgStyle = `background: linear-gradient(to right, #111 40%, transparent), url('${config.prize.images[i+1].src}'); background-size: cover; background-position: center;`;
+                    if(config.prize?.images && config.prize.images.length > 0) {
+                        const img = config.prize.images[i+1] || config.prize.images[i % config.prize.images.length] || config.prize.images[0];
+                        bgStyle = `background: linear-gradient(to right, #111 40%, transparent), url('${img.src}'); background-size: cover; background-position: center;`;
                     }
-
-                    card.style.cssText += bgStyle;
+                    if(bgStyle) card.style.cssText += bgStyle;
                     
                     card.innerHTML = `
                         <div class="relative z-10 md:w-2/3">
-                            <div class="flex justify-between items-start mb-8">
+                            <div class="mb-8">
                                 <span class="font-display text-6xl text-[#D4AF37] opacity-80">0${i+1}</span>
-                                <span class="text-[10px] uppercase tracking-widest text-gray-400">Step</span>
                             </div>
                             <h3 class="font-display text-3xl md:text-4xl mb-4 text-white">${s.title}</h3>
                             <p class="text-gray-300 font-light leading-relaxed text-sm">${s.description}</p>
@@ -493,13 +498,20 @@
             // 2. FAQ Card
             if(config.rules?.faq) {
                 const rCard = document.createElement('div');
-                rCard.className = "stack-card p-10 md:p-16 max-w-3xl mx-auto bg-[#0F0F0F]";
+                rCard.className = "stack-card p-10 md:p-16 mb-12 max-w-3xl mx-auto relative";
                 rCard.style.top = `${offset + 50}px`;
-                let html = `<h3 class="font-display text-3xl mb-8 text-white">Fine Print</h3><div class="space-y-8">`;
+                // Same background treatment as step cards - use first image or fallback
+                if(config.prize?.images && config.prize.images[0]) {
+                    rCard.style.background = `linear-gradient(to right, #111 40%, transparent), url('${config.prize.images[0].src}'); background-size: cover; background-position: center;`;
+                }
+                let html = `
+                    <div class="relative z-10 md:w-2/3">
+                        <h3 class="font-display text-3xl md:text-4xl mb-4 text-white">Fine Print</h3>
+                        <div class="space-y-6">`;
                 config.rules.faq.forEach(f => {
                     html += `<div><p class="font-bold text-[#D4AF37] text-sm mb-2">${f.q}</p><p class="text-gray-500 text-xs font-light leading-relaxed">${f.a}</p></div>`;
                 });
-                html += `</div>`;
+                html += `</div></div>`;
                 rCard.innerHTML = html;
                 stack.appendChild(rCard);
             }
@@ -531,7 +543,7 @@
                 
                 const priv = config.meta?.privacyPolicyLink || "#";
                 document.getElementById('footerPrivacy').href = priv;
-                document.getElementById('contactConsentLabel').innerHTML = `I agree to be contacted by ${fc.brokerageName}. Reply STOP to opt-out. <a href="${priv}" target="_blank" class="underline text-white">Privacy Policy</a>.`;
+                document.getElementById('contactConsentLabel').innerHTML = `I agree to be contacted by ${[fc.organizerName, fc.brokerageName].filter(Boolean).join(' & ')} via call, email, and text. To opt-out, you can reply 'stop' at any time or click the unsubscribe link in the emails. Message and data rates may apply. <a href="${priv}" target="_blank" class="underline text-white">Privacy Policy</a>.`;
             }
 
             // COUNTDOWN
