@@ -301,6 +301,7 @@ const confettiCanvas = document.getElementById('confetti-canvas');
                 };
 
                 for (const platform in config.footerContact.social) {
+                    if (platform === 'facebook') continue;  // Hide Facebook on thank you page
                     const url = config.footerContact.social[platform];
                     if (url && platformDetails[platform]) {
                         const iconBox = document.createElement('div');
